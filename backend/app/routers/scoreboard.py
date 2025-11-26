@@ -41,22 +41,22 @@ def get_scoreboard(game_identifier: str, db: Session = Depends(get_db)):
 
         # Get score history (score per phase)
         score_history = []
-        if game.current_phase_id:
-            phases = db.query(ScenarioPhase).filter(
-                ScenarioPhase.scenario_id == game.scenario_id
-            ).order_by(ScenarioPhase.order_index).all()
-            
-            for phase in phases:
-                phase_score = db.query(func.coalesce(func.sum(ScoreEvent.delta), 0)).filter(
-                    ScoreEvent.game_id == game.id,
-                    ScoreEvent.team_id == team.id,
-                    ScoreEvent.phase_id == phase.id
-                ).scalar()
-                score_history.append({
-                    "phase_name": phase.name,
-                    "phase_order": phase.order_index,
-                    "score": int(phase_score) if phase_score else 0
-                })
+        # Get all phases for this scenario, regardless of current phase
+        phases = db.query(ScenarioPhase).filter(
+            ScenarioPhase.scenario_id == game.scenario_id
+        ).order_by(ScenarioPhase.order_index).all()
+        
+        for phase in phases:
+            phase_score = db.query(func.coalesce(func.sum(ScoreEvent.delta), 0)).filter(
+                ScoreEvent.game_id == game.id,
+                ScoreEvent.team_id == team.id,
+                ScoreEvent.phase_id == phase.id
+            ).scalar()
+            score_history.append({
+                "phase_name": phase.name,
+                "phase_order": phase.order_index,
+                "score": int(phase_score) if phase_score else 0
+            })
 
         # Get recent decision
         recent_decision = None
