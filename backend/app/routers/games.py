@@ -7,6 +7,7 @@ from app.database import get_db
 from app.auth import get_current_gm
 from app.models import Game, Scenario, ScenarioPhase, Team, GameStatus, PhaseState, Player, PlayerVote, PhaseDecision, DecisionStatus, ScoreEvent
 from app.schemas import GameCreate, GameResponse
+from app.scoring import calculate_team_decision_score, calculate_weighted_score
 
 router = APIRouter()
 
@@ -116,6 +117,11 @@ def lock_decisions(game_id: int, db: Session = Depends(get_db), current_gm=Depen
     if not game.current_phase_id:
         raise HTTPException(status_code=400, detail="No current phase")
 
+    # Get current phase
+    current_phase = db.query(ScenarioPhase).filter(ScenarioPhase.id == game.current_phase_id).first()
+    if not current_phase:
+        raise HTTPException(status_code=404, detail="Current phase not found")
+
     # Aggregate votes for all teams before locking
     teams = db.query(Team).filter(Team.game_id == game_id).all()
     for team in teams:
@@ -162,10 +168,74 @@ def lock_decisions(game_id: int, db: Session = Depends(get_db), current_gm=Depen
                     status=DecisionStatus.SUBMITTED
                 )
                 db.add(decision)
+    
+    db.flush()  # Ensure decisions are in database before scoring
+    
+    # Get all decisions for this phase and auto-score them
+    decisions = db.query(PhaseDecision).filter(
+        PhaseDecision.game_id == game_id,
+        PhaseDecision.phase_id == current_phase.id,
+        PhaseDecision.status == DecisionStatus.SUBMITTED
+    ).all()
+    
+    # Calculate average team size for weighting
+    team_sizes = {}
+    for team in teams:
+        player_count = db.query(Player).filter(Player.team_id == team.id).count()
+        team_sizes[team.id] = player_count
+    
+    average_team_size = sum(team_sizes.values()) / len(team_sizes) if team_sizes else 1
+    
+    # Auto-score each decision
+    for decision in decisions:
+        # Get team role
+        team = db.query(Team).filter(Team.id == decision.team_id).first()
+        if not team:
+            continue
+        
+        # Extract selected action from decision.actions
+        selected_actions = []
+        if isinstance(decision.actions, dict):
+            if "selected" in decision.actions:
+                selected_actions = decision.actions["selected"]
+            elif isinstance(decision.actions, list):
+                selected_actions = decision.actions
+        elif isinstance(decision.actions, list):
+            selected_actions = decision.actions
+        
+        # Calculate base score
+        base_score, explanation = calculate_team_decision_score(
+            phase_order_index=current_phase.order_index,
+            team_role=team.role,
+            selected_actions=selected_actions
+        )
+        
+        # Apply team size weighting (set normalize=True to enable, False to disable)
+        final_score = calculate_weighted_score(
+            base_score=base_score,
+            team_size=team_sizes.get(team.id, 1),
+            average_team_size=average_team_size,
+            normalize=False  # Set to True to enable team size normalization
+        )
+        
+        # Update decision
+        decision.score_awarded = final_score
+        decision.gm_notes = f"Auto-scored: {explanation}"
+        decision.status = DecisionStatus.SCORED
+        
+        # Create score event
+        score_event = ScoreEvent(
+            game_id=game_id,
+            team_id=decision.team_id,
+            phase_id=current_phase.id,
+            delta=final_score,
+            reason=f"Phase {current_phase.order_index + 1} auto-scored: {explanation}"
+        )
+        db.add(score_event)
 
     game.phase_state = PhaseState.DECISION_LOCK
     db.commit()
-    return {"message": "Decisions locked"}
+    return {"message": "Decisions locked and auto-scored"}
 
 
 @router.post("/{game_id}/phase/resolve")
