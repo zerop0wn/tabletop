@@ -60,6 +60,10 @@ try:
                 db.delete(phase)
             print(f"Deleted {len(phases)} phases")
         
+        # 7. Delete games that reference this scenario (they'll be broken anyway)
+        games_count = db.query(Game).filter(Game.scenario_id == scenario_id).delete(synchronize_session=False)
+        print(f"Deleted {games_count} games that referenced this scenario")
+        
         # Now delete the scenario
         db.delete(scenario)
         db.commit()
