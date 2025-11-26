@@ -5,7 +5,7 @@ This deletes the old scenario and recreates it with team-specific artifacts.
 from app.database import SessionLocal
 from app.models import (
     Scenario, ScenarioPhase, Artifact, scenario_phase_artifacts,
-    PhaseDecision, PlayerVote, ScoreEvent
+    PhaseDecision, PlayerVote, ScoreEvent, Game, Team, Player
 )
 from sqlalchemy import delete
 
@@ -22,14 +22,36 @@ try:
         
         if phase_id_list:
             # Delete in order to respect foreign key constraints:
-            # 1. Update games to set current_phase_id to NULL (references phase_id)
-            from app.models import Game
-            games_updated = db.query(Game).filter(
-                Game.current_phase_id.in_(phase_id_list)
-            ).update({Game.current_phase_id: None}, synchronize_session=False)
-            print(f"Updated {games_updated} games to remove phase references")
+            # 1. Get all games that reference this scenario
+            games = db.query(Game).filter(Game.scenario_id == scenario_id).all()
+            game_ids = [g.id for g in games]
             
-            # 2. Delete phase_decisions (references phase_id)
+            if game_ids:
+                # 1a. Update games to set current_phase_id to NULL (references phase_id)
+                games_updated = db.query(Game).filter(
+                    Game.current_phase_id.in_(phase_id_list)
+                ).update({Game.current_phase_id: None}, synchronize_session=False)
+                print(f"Updated {games_updated} games to remove phase references")
+                
+                # 1b. Delete players (which will cascade to player_votes)
+                players_count = db.query(Player).filter(
+                    Player.game_id.in_(game_ids)
+                ).delete(synchronize_session=False)
+                print(f"Deleted {players_count} players")
+                
+                # 1c. Delete teams
+                teams_count = db.query(Team).filter(
+                    Team.game_id.in_(game_ids)
+                ).delete(synchronize_session=False)
+                print(f"Deleted {teams_count} teams")
+                
+                # 1d. Delete games
+                games_count = db.query(Game).filter(
+                    Game.scenario_id == scenario_id
+                ).delete(synchronize_session=False)
+                print(f"Deleted {games_count} games")
+            
+            # 2. Delete phase_decisions (references phase_id) - only if not already deleted
             phase_decisions_count = db.query(PhaseDecision).filter(
                 PhaseDecision.phase_id.in_(phase_id_list)
             ).delete(synchronize_session=False)
@@ -60,9 +82,15 @@ try:
                 db.delete(phase)
             print(f"Deleted {len(phases)} phases")
         
-        # 7. Delete games that reference this scenario (they'll be broken anyway)
-        games_count = db.query(Game).filter(Game.scenario_id == scenario_id).delete(synchronize_session=False)
-        print(f"Deleted {games_count} games that referenced this scenario")
+        # 7. Delete any remaining games that reference this scenario
+        remaining_games = db.query(Game).filter(Game.scenario_id == scenario_id).all()
+        if remaining_games:
+            remaining_game_ids = [g.id for g in remaining_games]
+            # Delete players and teams for remaining games
+            db.query(Player).filter(Player.game_id.in_(remaining_game_ids)).delete(synchronize_session=False)
+            db.query(Team).filter(Team.game_id.in_(remaining_game_ids)).delete(synchronize_session=False)
+            games_count = db.query(Game).filter(Game.scenario_id == scenario_id).delete(synchronize_session=False)
+            print(f"Deleted {games_count} remaining games that referenced this scenario")
         
         # Now delete the scenario
         db.delete(scenario)
