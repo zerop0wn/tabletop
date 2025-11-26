@@ -72,6 +72,11 @@ export default function AudienceView() {
       const response = await apiClient.get<Scoreboard>(
         `/games/${gameIdentifier}/scoreboard`
       )
+      // Debug: log score history
+      console.log('Scoreboard data:', response.data)
+      response.data.teams.forEach(team => {
+        console.log(`Team ${team.team_name} score_history:`, team.score_history)
+      })
       setScoreboard(response.data)
       setLoading(false)
     } catch (err) {
@@ -270,13 +275,13 @@ export default function AudienceView() {
                   )}
 
                   {/* Score History Mini Chart */}
-                  {team.score_history.length > 0 && (
-                    <div className="mt-4 p-3 bg-gray-800/50 rounded-lg">
-                      <div className="text-xs text-gray-400 mb-2">Score by Phase</div>
+                  <div className="mt-4 p-3 bg-gray-800/50 rounded-lg">
+                    <div className="text-xs text-gray-400 mb-2">Score by Phase</div>
+                    {team.score_history && team.score_history.length > 0 ? (
                       <div className="flex items-end justify-between h-12 gap-1">
                         {team.score_history.map((entry, idx) => {
                           const maxPhaseScore = Math.max(...team.score_history.map(e => e.score), 1)
-                          const height = (entry.score / maxPhaseScore) * 100
+                          const height = maxPhaseScore > 0 ? (entry.score / maxPhaseScore) * 100 : 5
                           return (
                             <div key={idx} className="flex-1 flex flex-col items-center">
                               <div
@@ -293,8 +298,14 @@ export default function AudienceView() {
                           )
                         })}
                       </div>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="text-xs text-gray-500 text-center py-4">
+                        {team.score_history === undefined 
+                          ? 'Loading phase data...' 
+                          : 'No phase scores yet'}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )
             })}
