@@ -73,9 +73,13 @@ export default function AudienceView() {
         `/games/${gameIdentifier}/scoreboard`
       )
       // Debug: log score history
-      console.log('Scoreboard data:', response.data)
       response.data.teams.forEach(team => {
         console.log(`Team ${team.team_name} score_history:`, team.score_history)
+        if (team.score_history) {
+          team.score_history.forEach((entry, idx) => {
+            console.log(`  Phase ${idx + 1}:`, entry)
+          })
+        }
       })
       setScoreboard(response.data)
       setLoading(false)
@@ -278,22 +282,31 @@ export default function AudienceView() {
                   <div className="mt-4 p-3 bg-gray-800/50 rounded-lg">
                     <div className="text-xs text-gray-400 mb-2">Score by Phase</div>
                     {team.score_history && team.score_history.length > 0 ? (
-                      <div className="flex items-end justify-between h-12 gap-1">
+                      <div className="flex items-end justify-between h-16 gap-1">
                         {team.score_history.map((entry, idx) => {
-                          const maxPhaseScore = Math.max(...team.score_history.map(e => e.score), 1)
-                          const height = maxPhaseScore > 0 ? (entry.score / maxPhaseScore) * 100 : 5
+                          const allScores = team.score_history.map(e => e.score)
+                          const maxPhaseScore = Math.max(...allScores, 1)
+                          // Ensure minimum height of 10% so bars are always visible, even with 0 scores
+                          const height = maxPhaseScore > 0 
+                            ? Math.max((entry.score / maxPhaseScore) * 90, entry.score > 0 ? 10 : 5)
+                            : 5
                           return (
-                            <div key={idx} className="flex-1 flex flex-col items-center">
+                            <div key={`${team.team_id}-${entry.phase_order}-${idx}`} className="flex-1 flex flex-col items-center min-w-0">
                               <div
                                 className={`w-full rounded-t transition-all duration-500 ${
                                   team.team_role === 'red' ? 'bg-red-500' : 'bg-blue-500'
-                                }`}
-                                style={{ height: `${Math.max(height, 5)}%` }}
+                                } ${entry.score === 0 ? 'opacity-30' : 'opacity-100'}`}
+                                style={{ height: `${height}%`, minHeight: '4px' }}
                                 title={`Phase ${entry.phase_order + 1}: ${entry.score} pts`}
                               ></div>
-                              <div className="text-[8px] text-gray-500 mt-1">
+                              <div className="text-[8px] text-gray-500 mt-1 truncate w-full text-center">
                                 P{entry.phase_order + 1}
                               </div>
+                              {entry.score > 0 && (
+                                <div className="text-[8px] text-gray-400 mt-0.5">
+                                  {entry.score}
+                                </div>
+                              )}
                             </div>
                           )
                         })}
