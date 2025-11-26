@@ -3,7 +3,10 @@ Script to update existing scenario with team-specific artifacts.
 This deletes the old scenario and recreates it with team-specific artifacts.
 """
 from app.database import SessionLocal
-from app.models import Scenario, ScenarioPhase, Artifact, scenario_phase_artifacts
+from app.models import (
+    Scenario, ScenarioPhase, Artifact, scenario_phase_artifacts,
+    PhaseDecision, PlayerVote, ScoreEvent
+)
 from sqlalchemy import delete
 
 db = SessionLocal()
@@ -18,7 +21,26 @@ try:
         phase_id_list = [p.id for p in phases]
         
         if phase_id_list:
-            # Delete artifact associations first
+            # Delete in order to respect foreign key constraints:
+            # 1. Delete phase_decisions (references phase_id)
+            phase_decisions_count = db.query(PhaseDecision).filter(
+                PhaseDecision.phase_id.in_(phase_id_list)
+            ).delete(synchronize_session=False)
+            print(f"Deleted {phase_decisions_count} phase decisions")
+            
+            # 2. Delete player_votes (references phase_id)
+            player_votes_count = db.query(PlayerVote).filter(
+                PlayerVote.phase_id.in_(phase_id_list)
+            ).delete(synchronize_session=False)
+            print(f"Deleted {player_votes_count} player votes")
+            
+            # 3. Delete score_events (references phase_id)
+            score_events_count = db.query(ScoreEvent).filter(
+                ScoreEvent.phase_id.in_(phase_id_list)
+            ).delete(synchronize_session=False)
+            print(f"Deleted {score_events_count} score events")
+            
+            # 4. Delete artifact associations
             db.execute(
                 delete(scenario_phase_artifacts).where(
                     scenario_phase_artifacts.c.phase_id.in_(phase_id_list)
@@ -26,7 +48,7 @@ try:
             )
             print(f"Deleted artifact associations for {len(phase_id_list)} phases")
             
-            # Delete phases explicitly (before deleting scenario to avoid constraint violation)
+            # 5. Delete phases explicitly (before deleting scenario to avoid constraint violation)
             for phase in phases:
                 db.delete(phase)
             print(f"Deleted {len(phases)} phases")
