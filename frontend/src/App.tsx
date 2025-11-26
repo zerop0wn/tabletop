@@ -18,7 +18,7 @@ function App() {
               <p className="text-xl text-gray-600 mb-8">Turn-Based Incident Response Training Platform</p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <a href="/gm/login" className="p-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                  <h2 className="text-xl font-semibold mb-2">Game Master</h2>
+                  <h2 className="text-xl font-semibold mb-2">Game Manager</h2>
                   <p className="text-sm">Manage scenarios and games</p>
                 </a>
                 <a href="/play/join" className="p-6 bg-green-600 text-white rounded-lg hover:bg-green-700">

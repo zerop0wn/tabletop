@@ -2,7 +2,8 @@ import axios from 'axios'
 
 // Use /api proxy when running in browser (works for both local and Docker)
 // The Vite proxy will handle routing to the backend
-const API_BASE_URL = '/api'
+// For production/EC2, you may need to set VITE_API_BASE_URL environment variable
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,

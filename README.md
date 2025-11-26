@@ -4,7 +4,7 @@ A production-ready turn-based cyber incident response tabletop platform for runn
 
 ## 🎯 Features
 
-- **GM Console**: Game Master interface for managing scenarios, phases, and scoring
+- **GM Console**: Game Manager interface for managing scenarios, phases, and scoring
 - **Team Decision Pad**: Interface for Red/Blue teams to submit decisions
 - **Audience View**: Public scoreboard for displaying game progress
 - **Polling-Based**: All real-time updates use HTTP polling (no websockets)
@@ -110,7 +110,7 @@ After seeding data, you can log in as GM with:
 
 ## 📖 Usage Guide
 
-### For Game Masters
+### For Game Managers
 
 1. **Login**: Navigate to `/gm/login` and log in with GM credentials
 2. **Create Game**: Select a scenario and create a new game
@@ -139,7 +139,7 @@ After seeding data, you can log in as GM with:
 
 ### Core Models
 
-- **GMUser**: Game Master accounts
+- **GMUser**: Game Manager accounts
 - **Scenario**: Reusable scenario templates
 - **ScenarioPhase**: Phases within a scenario
 - **Artifact**: Evidence items (logs, screenshots, etc.)

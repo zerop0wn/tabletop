@@ -28,6 +28,7 @@ services:
       JWT_SECRET_KEY: dev-secret-key-change-in-production
       JWT_ALGORITHM: HS256
       JWT_EXPIRATION_HOURS: 24
+      CORS_ORIGINS: "http://localhost:5173,http://localhost:3000"  # Add your EC2 IP here: http://YOUR_EC2_IP:5173
     depends_on:
       db:
         condition: service_healthy
@@ -44,7 +45,7 @@ services:
     depends_on:
       - backend
     environment:
-      - VITE_API_URL=http://backend:8000
+      - VITE_API_URL=http://backend:8000  # For browser access, this will be proxied via Vite
 
 volumes:
   postgres_data:
