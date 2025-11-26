@@ -122,11 +122,48 @@ export interface DecisionSubmit {
   free_text_justification: string
 }
 
+export interface ScoreHistoryEntry {
+  phase_name: string
+  phase_order: number
+  score: number
+}
+
+export interface RecentEvent {
+  delta: number
+  reason: string
+  created_at?: string
+}
+
+export interface GlobalEvent {
+  team_id: number
+  team_name: string
+  team_role: string
+  delta: number
+  reason: string
+  created_at?: string
+}
+
+export interface RecentDecision {
+  action?: string
+  score_awarded?: number
+  submitted_at?: string
+}
+
+export interface VotingStatus {
+  total_players: number
+  votes_submitted: number
+  all_voted: boolean
+}
+
 export interface TeamScore {
   team_id: number
   team_name: string
   team_role: string
   total_score: number
+  recent_events: RecentEvent[]
+  score_history: ScoreHistoryEntry[]
+  recent_decision?: RecentDecision
+  voting_status?: VotingStatus
 }
 
 export interface Scoreboard {
@@ -135,5 +172,6 @@ export interface Scoreboard {
   current_phase_name?: string
   phase_state: string
   teams: TeamScore[]
+  recent_events: GlobalEvent[]
 }
 

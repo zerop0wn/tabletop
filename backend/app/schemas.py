@@ -188,11 +188,48 @@ class VotingStatusResponse(BaseModel):
 
 
 # Scoreboard schemas
+class ScoreHistoryEntry(BaseModel):
+    phase_name: str
+    phase_order: int
+    score: int
+
+
+class RecentEvent(BaseModel):
+    delta: int
+    reason: str
+    created_at: Optional[str] = None
+
+
+class GlobalEvent(BaseModel):
+    team_id: int
+    team_name: str
+    team_role: str
+    delta: int
+    reason: str
+    created_at: Optional[str] = None
+
+
+class RecentDecision(BaseModel):
+    action: Optional[str] = None
+    score_awarded: Optional[int] = None
+    submitted_at: Optional[str] = None
+
+
+class VotingStatus(BaseModel):
+    total_players: int
+    votes_submitted: int
+    all_voted: bool
+
+
 class TeamScore(BaseModel):
     team_id: int
     team_name: str
     team_role: str
     total_score: int
+    recent_events: List[RecentEvent] = []
+    score_history: List[ScoreHistoryEntry] = []
+    recent_decision: Optional[RecentDecision] = None
+    voting_status: Optional[VotingStatus] = None
 
 
 class ScoreboardResponse(BaseModel):
@@ -201,6 +238,7 @@ class ScoreboardResponse(BaseModel):
     current_phase_name: Optional[str] = None
     phase_state: PhaseState
     teams: List[TeamScore] = []
+    recent_events: List[GlobalEvent] = []
 
 
 # Update forward references
