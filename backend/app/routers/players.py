@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import select
+import sqlalchemy as sa
 from app.database import get_db
-from app.models import Game, Team, Player, ScenarioPhase, PhaseDecision, DecisionStatus, PlayerVote
+from app.models import Game, Team, Player, ScenarioPhase, PhaseDecision, DecisionStatus, PlayerVote, Artifact, scenario_phase_artifacts
 from app.schemas import JoinRequest, JoinResponse, PlayerStateResponse, VotingStatusResponse, PlayerVoteResponse
 from typing import Optional
 
@@ -70,7 +72,18 @@ def get_player_state(game_id: int, player_id: int, db: Session = Depends(get_db)
         current_phase = db.query(ScenarioPhase).filter(ScenarioPhase.id == game.current_phase_id).first()
         if current_phase:
             phase_briefing_text = current_phase.briefing_text
-            artifacts = current_phase.artifacts
+            # Filter artifacts by team role
+            team_role = player.team.role
+            # Get artifacts for this phase that are either for this team or for both teams (team_role is None)
+            artifact_ids = db.execute(
+                sa.select(scenario_phase_artifacts.c.artifact_id).where(
+                    scenario_phase_artifacts.c.phase_id == current_phase.id
+                ).where(
+                    (scenario_phase_artifacts.c.team_role == team_role) | 
+                    (scenario_phase_artifacts.c.team_role.is_(None))
+                )
+            ).scalars().all()
+            artifacts = db.query(Artifact).filter(Artifact.id.in_(artifact_ids)).all() if artifact_ids else []
             if player.team.role == "red":
                 team_objective = current_phase.red_objective
             else:

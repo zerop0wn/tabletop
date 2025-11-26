@@ -878,11 +878,846 @@ def create_pdf_placeholder(filename, title, content):
             f.write("(This is a placeholder. Install reportlab to generate actual PDFs: pip install reportlab)\n")
         print(f"Created text placeholder: {filename} (install reportlab for PDFs)")
 
+def create_initial_access():
+    """Create Red Team initial access confirmation."""
+    content = """Initial Access Confirmation Report
+=====================================
+Target: WS-FIN-042
+User: finance.user@corp.local
+Time: 2024-01-15 08:17:23 UTC
+Status: SUCCESS
+
+PAYLOAD DEPLOYMENT
+------------------
+Payload: invoice_download.ps1
+Delivery Method: Phishing email link
+Execution: SUCCESS
+Detection: NONE (evaded EDR)
+
+SYSTEM INFORMATION COLLECTED
+-----------------------------
+Hostname: WS-FIN-042
+OS: Windows 10 Enterprise Build 19045
+Domain: CORP.LOCAL
+User: finance.user@corp.local
+Privileges: Standard User
+IP Address: 192.168.0.42
+MAC Address: 00:0C:29:AB:CD:EF
+
+PERSISTENCE MECHANISMS DEPLOYED
+--------------------------------
+✓ Scheduled Task: UpdateCheck
+  - Trigger: Every 5 minutes
+  - Command: powershell.exe -File C:\\Users\\finance.user\\AppData\\Local\\Temp\\payload.dll
+  - Status: ACTIVE
+
+✓ Registry Run Key: HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run
+  - Value: UpdateCheck
+  - Status: ACTIVE
+
+C2 COMMUNICATION
+----------------
+Server: 185.220.101.45:443
+Protocol: HTTPS (TLS 1.3)
+Beacon Interval: 300 seconds
+Status: CONNECTED
+Last Check-in: 2024-01-15 08:17:25 UTC
+
+COMMANDS EXECUTED
+-----------------
+✓ System enumeration
+✓ User privilege check
+✓ Network interface enumeration
+✓ Domain information gathering
+
+NEXT STEPS
+----------
+- Begin network reconnaissance
+- Identify high-value targets
+- Prepare for privilege escalation
+- Maintain low profile to avoid detection
+"""
+    with open(ARTIFACTS_DIR / "initial_access_phase1.txt", 'w') as f:
+        f.write(content)
+    print("Created: initial_access_phase1.txt")
+
+def create_c2_status():
+    """Create Red Team C2 status report."""
+    content = """C2 Communication Status Report
+==================================
+Server: 185.220.101.45:443
+Status: OPERATIONAL
+Last Update: 2024-01-15 08:17:25 UTC
+
+CONNECTION DETAILS
+-----------------
+Protocol: HTTPS (TLS 1.3)
+Cipher Suite: TLS_AES_256_GCM_SHA384
+Beacon Interval: 300 seconds (5 minutes)
+Connection Type: Long-lived persistent
+Latency: 45ms average
+
+COMMUNICATION LOG
+-----------------
+08:17:25 - Initial beacon established
+08:17:26 - System info received
+08:17:27 - Commands sent: enumerate_system
+08:17:30 - Response received: system enumerated
+08:17:31 - Commands sent: create_persistence
+08:17:32 - Response received: persistence created
+08:17:33 - Commands sent: network_scan
+08:17:35 - Response received: scan initiated
+
+COMMANDS QUEUED
+---------------
+- network_reconnaissance
+- privilege_escalation_prep
+- credential_harvesting
+
+DETECTION STATUS
+----------------
+EDR Alerts: 0
+SIEM Alerts: 0
+Network Monitoring: 0
+Firewall Blocks: 0
+
+Status: UNDETECTED - Operations proceeding normally
+
+BEACON STATISTICS
+-----------------
+Total Beacons: 73
+Successful: 73 (100%)
+Failed: 0
+Average Response Time: 45ms
+Data Transferred: 2.3 MB (outbound), 1.2 MB (inbound)
+
+RECOMMENDATION
+--------------
+C2 communication stable. Continue operations as planned.
+No changes to beacon interval or encryption required.
+"""
+    with open(ARTIFACTS_DIR / "c2_status_phase1.txt", 'w') as f:
+        f.write(content)
+    print("Created: c2_status_phase1.txt")
+
+def create_recon_results():
+    """Create Red Team reconnaissance results."""
+    content = """Network Reconnaissance Results
+===============================
+Scan Period: 2024-01-15 08:30:00 - 10:30:00 UTC
+Source: WS-FIN-042 (192.168.0.42)
+Status: COMPLETE
+
+TARGETS IDENTIFIED
+------------------
+1. DC-01 (192.168.0.10)
+   Type: Domain Controller
+   OS: Windows Server 2019
+   Open Ports: 53, 88, 135, 139, 445, 3389, 5985
+   Services: Active Directory, DNS, Kerberos
+   Priority: CRITICAL
+
+2. FS-01 (192.168.0.20)
+   Type: File Server
+   OS: Windows Server 2019
+   Open Ports: 135, 139, 445, 3389, 5985
+   Shares Discovered:
+     - \\FS-01\\Finance (12.5 GB, 1,234 files)
+     - \\FS-01\\R&D\\Proprietary (450 MB, 156 files)
+   Priority: HIGH
+
+3. FS-02 (192.168.0.21)
+   Type: File Server
+   OS: Windows Server 2019
+   Open Ports: 135, 139, 445, 3389, 5985
+   Shares Discovered:
+     - \\FS-02\\HR (8.2 GB, 856 files)
+     - \\FS-02\\HR\\PII (4.1 GB, 342 files) - HIGHLY SENSITIVE
+   Priority: HIGH
+
+4. BACKUP-01 (192.168.0.30)
+   Type: Backup Server
+   OS: Windows Server 2019
+   Open Ports: 135, 139, 445, 3389, 5985
+   Backup Software: Veeam Backup & Replication
+   Priority: CRITICAL
+
+NETWORK TOPOLOGY
+----------------
+Subnet: 192.168.0.0/24
+Total Hosts: 256
+Active Hosts: 45
+Scanned: 45 (100%)
+Vulnerable Services: SMB (445), RDP (3389), WinRM (5985)
+
+PERSISTENCE VERIFICATION
+------------------------
+✓ Scheduled Task: UpdateCheck - ACTIVE
+✓ Registry Run Key: UpdateCheck - ACTIVE
+✓ WMI Event Subscription: Created
+✓ Service Creation: Attempted (requires admin)
+
+All persistence mechanisms verified and operational.
+
+NEXT PHASE OBJECTIVES
+---------------------
+1. Escalate privileges to domain admin
+2. Harvest credentials from memory
+3. Move laterally to identified targets
+4. Access sensitive data shares
+5. Compromise backup systems
+"""
+    with open(ARTIFACTS_DIR / "recon_results_phase2.txt", 'w') as f:
+        f.write(content)
+    print("Created: recon_results_phase2.txt")
+
+def create_persistence_status():
+    """Create Red Team persistence status."""
+    content = """Persistence Mechanisms Status Report
+=========================================
+Target: WS-FIN-042
+Verification Time: 2024-01-15 10:30:00 UTC
+Status: ALL ACTIVE
+
+DEPLOYED MECHANISMS
+-------------------
+1. Scheduled Task: UpdateCheck
+   Location: Task Scheduler
+   Trigger: Every 5 minutes
+   Command: powershell.exe -File C:\\Users\\finance.user\\AppData\\Local\\Temp\\payload.dll
+   Status: ✓ ACTIVE
+   Last Run: 2024-01-15 10:28:15 UTC
+   Next Run: 2024-01-15 10:33:15 UTC
+
+2. Registry Run Key
+   Location: HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run
+   Value Name: UpdateCheck
+   Value Data: C:\\Users\\finance.user\\AppData\\Local\\Temp\\payload.dll
+   Status: ✓ ACTIVE
+   Verified: YES
+
+3. WMI Event Subscription
+   Event Filter: ProcessStart
+   Consumer: ActiveScriptEventConsumer
+   Script: payload.dll
+   Status: ✓ ACTIVE
+
+4. Service Creation
+   Service Name: SystemUpdate
+   Attempted: YES
+   Status: FAILED (requires admin privileges)
+   Note: Will retry after privilege escalation
+
+VERIFICATION RESULTS
+---------------------
+All active persistence mechanisms verified.
+System will maintain access after:
+- User logout: YES
+- System reboot: YES
+- Security tool removal: PARTIAL (WMI survives)
+
+DETECTION STATUS
+----------------
+EDR Detection: NONE
+SIEM Alerts: NONE
+Manual Review: NONE
+
+All persistence mechanisms remain undetected.
+
+RECOMMENDATION
+--------------
+Persistence established successfully. Ready to proceed with
+privilege escalation and lateral movement phases.
+"""
+    with open(ARTIFACTS_DIR / "persistence_status_phase2.txt", 'w') as f:
+        f.write(content)
+    print("Created: persistence_status_phase2.txt")
+
+def create_credential_success():
+    """Create Red Team credential harvesting success report."""
+    content = """Credential Harvesting Success Report
+=========================================
+Target: WS-FIN-042
+Time: 2024-01-15 10:45:23 UTC
+Status: SUCCESS
+
+TECHNIQUE USED
+--------------
+Method: Memory Dump (lsass.exe)
+Tool: Mimikatz (in-memory execution)
+Process: lsass.exe (PID: 512)
+Result: Domain Admin credentials obtained
+
+CREDENTIALS OBTAINED
+--------------------
+Username: svc_backup
+Domain: CORP
+Password Hash: [NTLM Hash]
+LM Hash: [LM Hash]
+SID: S-1-5-21-1234567890-123456789-123456789-1105
+
+PRIVILEGES
+----------
+- Domain Admin
+- Backup Operator
+- Local Administrator (all systems)
+- Service Account
+
+ACCESS VERIFICATION
+-------------------
+DC-01 (Domain Controller):
+  Status: ✓ ACCESS GRANTED
+  Method: Pass-the-Hash
+  Time: 2024-01-15 10:45:24 UTC
+
+FS-01 (File Server):
+  Status: ✓ ACCESS GRANTED
+  Method: Pass-the-Hash
+  Time: 2024-01-15 10:46:12 UTC
+
+FS-02 (File Server):
+  Status: ✓ ACCESS GRANTED
+  Method: Pass-the-Hash
+  Time: 2024-01-15 10:52:33 UTC
+
+BACKUP-01 (Backup Server):
+  Status: ✓ ACCESS GRANTED
+  Method: Pass-the-Hash
+  Time: 2024-01-15 11:15:47 UTC
+
+ALL TARGET SYSTEMS ACCESSIBLE
+
+NEXT STEPS
+----------
+- Begin lateral movement to file servers
+- Access sensitive data shares
+- Compromise backup systems
+- Prepare for data exfiltration
+"""
+    with open(ARTIFACTS_DIR / "credential_success_phase3.txt", 'w') as f:
+        f.write(content)
+    print("Created: credential_success_phase3.txt")
+
+def create_lateral_status():
+    """Create Red Team lateral movement status."""
+    content = """Lateral Movement Status Report
+===============================
+Period: 2024-01-15 10:46:00 - 11:30:00 UTC
+Status: COMPLETE
+
+SYSTEMS COMPROMISED
+-------------------
+1. DC-01 (Domain Controller)
+   Access: FULL DOMAIN ADMIN
+   Time: 2024-01-15 10:45:24 UTC
+   Activities:
+     ✓ SYSVOL accessed
+     ✓ Group Policy enumeration complete
+     ✓ Domain trust relationships mapped
+   Status: OPERATIONAL
+
+2. FS-01 (File Server)
+   Access: FULL ADMIN
+   Time: 2024-01-15 10:46:12 UTC
+   Shares Accessed:
+     ✓ \\FS-01\\Finance
+       - Files Enumerated: 1,234
+       - Directories: 45
+       - Total Size: 12.5 GB
+       - Access: READ/WRITE
+     ✓ \\FS-01\\R&D\\Proprietary
+       - Files Enumerated: 156
+       - Directories: 12
+       - Total Size: 450 MB
+       - Access: READ/WRITE
+   Status: OPERATIONAL
+
+3. FS-02 (File Server)
+   Access: FULL ADMIN
+   Time: 2024-01-15 10:52:33 UTC
+   Shares Accessed:
+     ✓ \\FS-02\\HR
+       - Files Enumerated: 856
+       - Directories: 23
+       - Total Size: 8.2 GB
+       - Access: READ/WRITE
+     ✓ \\FS-02\\HR\\PII
+       - Files Enumerated: 342
+       - Directories: 12
+       - Total Size: 4.1 GB
+       - Classification: HIGHLY SENSITIVE
+       - Access: READ/WRITE
+   Status: OPERATIONAL
+
+4. BACKUP-01 (Backup Server)
+   Access: FULL ADMIN
+   Time: 2024-01-15 11:15:47 UTC
+   Backup Catalog:
+     ✓ System_Backup_2024-01-14: ACCESSIBLE
+     ✓ Database_Backup_2024-01-14: ACCESSIBLE
+     ✓ FileServer_Backup_2024-01-14: ACCESSIBLE
+     ✓ Total Backup Files: 2,109
+     ✓ Total Size: 1.2 TB
+   Status: OPERATIONAL
+
+DATA IDENTIFIED FOR EXFILTRATION
+--------------------------------
+- Customer Databases: 45 GB
+- Financial Records: 120 GB
+- Employee PII: 8.2 GB
+- Intellectual Property: 105 GB
+- Legal Documents: 85 GB
+Total: 363.2 GB identified
+
+DETECTION STATUS
+----------------
+Security Alerts: 0
+SIEM Correlations: 0
+Manual Detection: 0
+
+All lateral movement completed without detection.
+
+READY FOR DATA EXFILTRATION PHASE
+"""
+    with open(ARTIFACTS_DIR / "lateral_status_phase3.txt", 'w') as f:
+        f.write(content)
+    print("Created: lateral_status_phase3.txt")
+
+def create_exfiltration_progress():
+    """Create Red Team exfiltration progress."""
+    content = """Data Exfiltration Progress Report
+===================================
+Period: 2024-01-15 11:00:00 - 17:00:00 UTC
+Status: COMPLETE
+
+TARGET SYSTEMS
+--------------
+FS-01 (File Server):
+  Status: COMPLETE (100%)
+  Data Transferred: 270 GB
+  Transfer Rate: 45 GB/hour
+  Duration: 6 hours
+  Upload Destination: Mega.nz
+
+FS-02 (File Server):
+  Status: COMPLETE (100%)
+  Data Transferred: 180 GB
+  Transfer Rate: 30 GB/hour
+  Duration: 6 hours
+  Upload Destination: Dropbox
+
+TOTAL DATA EXFILTRATED: 450 GB
+
+DATA CATEGORIES COLLECTED
+-------------------------
+✓ Customer Databases: 45 GB
+  - Records: 125,000
+  - Estimated Value: $6.25M
+
+✓ Financial Records: 120 GB
+  - Q1-Q4 2023 Financials
+  - Q1 2024 Financials
+  - Budget Documents
+  - Vendor Contracts
+
+✓ Employee PII: 8.2 GB
+  - Records: 2,400
+  - Includes: SSNs, Salaries, Medical Records
+
+✓ Intellectual Property: 105 GB
+  - Proprietary Algorithms
+  - Research Data
+  - Patent Applications
+  - Source Code
+
+✓ Legal Documents: 85 GB
+  - Contracts
+  - NDAs
+  - Compliance Records
+  - Legal Correspondence
+
+✓ System Backups: 87 GB
+  - Recent backup sets
+  - Configuration files
+
+UPLOAD STATUS
+-------------
+Mega.nz: 270 GB uploaded ✓
+Dropbox: 180 GB uploaded ✓
+Total: 450 GB / 450 GB (100%)
+
+VERIFICATION
+------------
+All data verified and accessible at upload destinations.
+Data integrity: 100%
+Encryption: AES-256 (at rest)
+
+LEVERAGE ASSESSMENT
+-------------------
+Data Value: $50+ million
+Regulatory Impact: HIGH
+Publication Threat: CREDIBLE
+Negotiation Position: STRONG
+
+STATUS: EXFILTRATION COMPLETE
+Ready for encryption deployment phase.
+"""
+    with open(ARTIFACTS_DIR / "exfiltration_progress_phase4.txt", 'w') as f:
+        f.write(content)
+    print("Created: exfiltration_progress_phase4.txt")
+
+def create_stolen_data_inventory():
+    """Create Red Team stolen data inventory."""
+    content = """Stolen Data Inventory
+=====================
+Compilation Date: 2024-01-15 17:00:00 UTC
+Total Data: 450 GB
+Status: VERIFIED AND ARCHIVED
+
+HIGH-VALUE DATA CATEGORIES
+---------------------------
+
+1. Customer PII Database
+   Volume: 45 GB
+   Records: 125,000
+   Data Types:
+     - Names, Addresses, Phone Numbers
+     - Email Addresses
+     - Credit Card Information (last 4 digits)
+     - Purchase History
+   Estimated Value: $6.25M ($50/record)
+   Regulatory Impact: GDPR, CCPA
+
+2. Financial Records
+   Volume: 120 GB
+   Contents:
+     - Q1-Q4 2023 Financial Statements
+     - Q1 2024 Financial Statements
+     - Budget Forecasts
+     - Vendor Payment Records
+     - Tax Documents
+   Estimated Value: $10M+ (competitive intelligence)
+
+3. Employee Data
+   Volume: 8.2 GB
+   Records: 2,400
+   Data Types:
+     - Social Security Numbers
+     - Salaries and Compensation
+     - Medical Records
+     - Background Check Results
+     - Performance Reviews
+   Estimated Value: $2.4M
+   Regulatory Impact: HIPAA, GDPR
+
+4. Intellectual Property
+   Volume: 105 GB
+   Contents:
+     - Proprietary Algorithms
+     - Research Data
+     - Patent Applications
+     - Source Code Repositories
+     - Product Designs
+   Estimated Value: $30M+ (competitive advantage)
+
+5. Legal Documents
+   Volume: 85 GB
+   Contents:
+     - Vendor Contracts
+     - Non-Disclosure Agreements
+     - Compliance Records
+     - Legal Correspondence
+     - Merger/Acquisition Documents
+   Estimated Value: $5M+ (legal leverage)
+
+6. System Backups
+   Volume: 87 GB
+   Contents:
+     - Recent System Backups
+     - Configuration Files
+     - Database Dumps
+   Estimated Value: $1M+ (operational intelligence)
+
+TOTAL ESTIMATED VALUE: $50+ million
+
+PUBLICATION STRATEGY
+--------------------
+If ransom not paid within 72 hours:
+- Leak site publication scheduled
+- Data categorized for maximum impact
+- Customer notification threat
+- Regulatory body notification threat
+
+NEGOTIATION LEVERAGE
+--------------------
+✓ High-value data exfiltrated
+✓ Regulatory violations exposed
+✓ Competitive intelligence obtained
+✓ Customer trust at risk
+✓ Legal implications significant
+
+STATUS: MAXIMUM LEVERAGE ACHIEVED
+"""
+    with open(ARTIFACTS_DIR / "stolen_data_inventory_phase4.txt", 'w') as f:
+        f.write(content)
+    print("Created: stolen_data_inventory_phase4.txt")
+
+def create_encryption_status():
+    """Create Red Team encryption deployment status."""
+    content = """Ransomware Deployment Status Report
+====================================
+Deployment Time: 2024-01-15 14:30:00 UTC
+Status: COMPLETE
+
+ENCRYPTION STATISTICS
+---------------------
+Total Systems Encrypted: 200+
+Encryption Rate: 100%
+Ransomware Variant: LockBit 3.0
+Encryption Algorithm: AES-256 + RSA-2048
+
+SYSTEMS ENCRYPTED BY CATEGORY
+-----------------------------
+File Servers: 15/15 (100%)
+  - FS-01: ENCRYPTED
+  - FS-02: ENCRYPTED
+  - [13 additional file servers]
+
+Application Servers: 8/8 (100%)
+  - ERP System: ENCRYPTED (OFFLINE)
+  - CRM System: ENCRYPTED (OFFLINE)
+  - Email Server: ENCRYPTED (PARTIAL)
+  - [5 additional application servers]
+
+Workstations: 150/150 (100%)
+  - All Finance Department: ENCRYPTED
+  - All HR Department: ENCRYPTED
+  - All R&D Department: ENCRYPTED
+  - [Additional workstations]
+
+Backup Systems: 1/1 (100%)
+  - BACKUP-01: ENCRYPTED
+  - Onsite Backups: ENCRYPTED
+  - Note: Offsite backups may exist (36 hours old)
+
+Domain Controllers: 2/2 (100%)
+  - DC-01: ENCRYPTED
+  - DC-02: ENCRYPTED
+
+RANSOM NOTE DEPLOYMENT
+----------------------
+Status: DEPLOYED
+Systems: All encrypted systems
+Message: LockBit 3.0 standard note
+Bitcoin Address: [REDACTED]
+Deadline: 72 hours from deployment
+Contact: Tor .onion address provided
+
+BUSINESS IMPACT
+---------------
+Critical Systems Offline:
+  - ERP System: OFFLINE
+  - Email Server: PARTIAL
+  - Customer Portal: OFFLINE
+  - File Shares: INACCESSIBLE
+
+Estimated Revenue Loss: $500K/day
+Recovery Time (if paying): 2-3 weeks
+Recovery Time (if using backups): 48-72 hours (if available)
+
+LEVERAGE POINTS
+---------------
+✓ All systems encrypted
+✓ Onsite backups encrypted
+✓ Business operations halted
+✓ Data exfiltrated (450 GB)
+✓ Data publication threat available
+
+STATUS: MAXIMUM IMPACT ACHIEVED
+Awaiting victim response and negotiation.
+"""
+    with open(ARTIFACTS_DIR / "encryption_status_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: encryption_status_phase5.txt")
+
+def create_negotiation_status():
+    """Create Red Team negotiation status."""
+    content = """Ransom Negotiation Status
+==========================
+Demand: 50 BTC (~$1.2M USD at current rates)
+Deadline: 72 hours from deployment
+Deployment Time: 2024-01-15 14:30:00 UTC
+Deadline: 2024-01-18 14:30:00 UTC
+
+COMMUNICATION CHANNEL
+---------------------
+Method: Tor .onion address
+Status: OPERATIONAL
+Encryption: End-to-end encrypted
+Anonymity: Full (Tor network)
+
+VICTIM RESPONSE STATUS
+----------------------
+Initial Contact: PENDING
+Counter-Offer: PENDING
+Payment Status: PENDING
+Negotiation Progress: 0%
+
+LEVERAGE ASSESSMENT
+-------------------
+Current Leverage: MAXIMUM
+
+✓ All systems encrypted (200+)
+✓ Onsite backups encrypted
+✓ Data exfiltrated (450 GB)
+✓ Business operations halted
+✓ Data publication threat available
+✓ Regulatory violations exposed
+
+NEGOTIATION STRATEGY
+--------------------
+Phase 1 (0-24 hours): Wait for initial contact
+Phase 2 (24-48 hours): Begin negotiation if contacted
+Phase 3 (48-72 hours): Increase pressure, threaten publication
+Phase 4 (72+ hours): Publish data if no payment
+
+DATA PUBLICATION PLAN
+----------------------
+If ransom not paid:
+- Leak site publication: READY
+- Data categorized: YES
+- Customer notification: PREPARED
+- Regulatory notification: PREPARED
+- Media release: PREPARED
+
+PAYMENT TRACKING
+----------------
+Bitcoin Address: [REDACTED]
+Blockchain: Monitoring active
+Payment Received: 0 BTC
+Payment Required: 50 BTC
+Payment Deadline: 2024-01-18 14:30:00 UTC
+
+RECOMMENDATION
+--------------
+Maintain communication channel.
+Wait for victim to initiate contact.
+Be prepared to negotiate if contacted.
+Execute publication plan if deadline passes without payment.
+
+STATUS: AWAITING VICTIM RESPONSE
+"""
+    with open(ARTIFACTS_DIR / "negotiation_status_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: negotiation_status_phase5.txt")
+
+def create_attack_summary():
+    """Create Red Team attack summary."""
+    content = """Attack Summary Report - Mission Accomplished
+==========================================
+Campaign: Ransomware Deployment
+Target: CORP.LOCAL
+Duration: 9 hours 15 minutes
+Status: SUCCESS
+
+TIMELINE
+--------
+08:15 UTC - Initial Access (Phishing email)
+08:17 UTC - Payload Execution (PowerShell)
+08:17 UTC - Persistence Established
+08:30 UTC - Network Reconnaissance Begins
+10:30 UTC - Reconnaissance Complete
+10:45 UTC - Privilege Escalation (Domain Admin)
+10:46 UTC - Lateral Movement Begins
+11:30 UTC - Lateral Movement Complete
+11:00 UTC - Data Exfiltration Begins
+17:00 UTC - Data Exfiltration Complete (450 GB)
+14:30 UTC - Ransomware Deployment
+14:35 UTC - Encryption Complete (200+ systems)
+
+RESULTS
+-------
+✓ Initial Access: SUCCESS
+✓ Persistence: SUCCESS (4 mechanisms)
+✓ Privilege Escalation: SUCCESS (Domain Admin)
+✓ Lateral Movement: SUCCESS (4 critical systems)
+✓ Data Exfiltration: SUCCESS (450 GB)
+✓ Ransomware Deployment: SUCCESS (200+ systems)
+✓ Backup Encryption: SUCCESS (onsite backups)
+
+SYSTEMS COMPROMISED
+-------------------
+- Domain Controllers: 2/2
+- File Servers: 15/15
+- Application Servers: 8/8
+- Workstations: 150/150
+- Backup Systems: 1/1
+
+DATA EXFILTRATED
+----------------
+Total: 450 GB
+Categories:
+  - Customer PII: 125,000 records
+  - Financial Records: Complete Q1-Q4 2023, Q1 2024
+  - Employee Data: 2,400 records
+  - Intellectual Property: Proprietary algorithms, research
+  - Legal Documents: Contracts, NDAs
+
+Estimated Value: $50+ million
+
+BUSINESS IMPACT
+---------------
+Revenue Loss: $500K/day
+Systems Offline: 200+
+Critical Services: ERP, Email, Customer Portal
+Recovery Time: 48-72 hours (if backups available)
+Recovery Time: 2-3 weeks (if paying ransom)
+
+DETECTION EVASION
+-----------------
+EDR Alerts Triggered: 0
+SIEM Correlations: 0
+Manual Detection: 0
+Security Response: DELAYED
+
+All phases completed without detection until encryption phase.
+
+NEGOTIATION STATUS
+------------------
+Demand: 50 BTC (~$1.2M USD)
+Deadline: 72 hours
+Payment Received: 0 BTC
+Status: AWAITING VICTIM RESPONSE
+
+LEVERAGE
+--------
+✓ All systems encrypted
+✓ Backups encrypted
+✓ Data exfiltrated
+✓ Business operations halted
+✓ Data publication threat available
+
+Maximum leverage achieved.
+
+FINAL STATUS
+------------
+Mission: ACCOMPLISHED
+Impact: MAXIMUM
+Detection: MINIMAL
+Leverage: MAXIMUM
+
+Ready for negotiation or data publication phase.
+"""
+    with open(ARTIFACTS_DIR / "attack_summary_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: attack_summary_phase5.txt")
+
 if __name__ == "__main__":
     print("Generating realistic artifact files...")
     print(f"Artifacts directory: {ARTIFACTS_DIR}\n")
     
-    # Create text files
+    # Create Blue Team text files (defender perspective)
+    print("Creating Blue Team artifacts (defender perspective)...")
     create_edr_alert()
     create_nmap_scan()
     create_c2_traffic()
@@ -890,6 +1725,20 @@ if __name__ == "__main__":
     create_lateral_movement()
     create_exfiltration_traffic()
     create_backup_status()
+    
+    # Create Red Team text files (attacker perspective)
+    print("\nCreating Red Team artifacts (attacker perspective)...")
+    create_initial_access()
+    create_c2_status()
+    create_recon_results()
+    create_persistence_status()
+    create_credential_success()
+    create_lateral_status()
+    create_exfiltration_progress()
+    create_stolen_data_inventory()
+    create_encryption_status()
+    create_negotiation_status()
+    create_attack_summary()
     
     # Create image placeholders
     create_image_placeholder(

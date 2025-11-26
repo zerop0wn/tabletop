@@ -97,6 +97,7 @@ scenario_phase_artifacts = Table(
     Base.metadata,
     Column("phase_id", Integer, ForeignKey("scenario_phases.id"), primary_key=True),
     Column("artifact_id", Integer, ForeignKey("artifacts.id"), primary_key=True),
+    Column("team_role", String, nullable=True),  # "red", "blue", or None for both teams
 )
 
 
