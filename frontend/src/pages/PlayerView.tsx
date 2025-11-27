@@ -312,7 +312,7 @@ export default function PlayerView() {
 
             <div className="mb-6">
               <label className="block font-semibold mb-2">
-                How effective do you believe your organization would be at detecting and responding to this phase?
+                How effective do you believe your organization would be at detecting and responding to this phase? <span className="text-red-500">*</span>
               </label>
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-600 w-24">1 (Least Likely)</span>
@@ -323,10 +323,14 @@ export default function PlayerView() {
                   value={effectivenessRating}
                   onChange={(e) => setEffectivenessRating(parseInt(e.target.value))}
                   className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  required
                 />
                 <span className="text-sm text-gray-600 w-24 text-right">10 (Highly Likely)</span>
                 <span className="text-2xl font-bold w-12 text-center text-blue-600">{effectivenessRating}</span>
               </div>
+              {(!effectivenessRating || effectivenessRating < 1 || effectivenessRating > 10) && (
+                <p className="text-sm text-red-500 mt-1">Please select a rating before submitting</p>
+              )}
             </div>
 
             <div className="mb-6">
