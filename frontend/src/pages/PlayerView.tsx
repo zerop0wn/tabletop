@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import apiClient from '../api/client'
 import { PlayerState } from '../types'
@@ -70,27 +70,63 @@ export default function PlayerView() {
     return () => clearInterval(interval)
   }, [gameId, playerId])
 
+  // Track previous phase ID to detect phase changes
+  const prevPhaseIdRef = useRef<number | null>(null)
+  const prevHasVotedRef = useRef<boolean>(false)
+
   useEffect(() => {
-    if (state?.has_voted) {
-      // Get the player's vote from voting status
+    if (!state) return
+
+    const currentPhaseId = state.current_phase?.id || null
+    const hasVoted = state.has_voted || false
+    const phaseChanged = prevPhaseIdRef.current !== currentPhaseId
+    const voteStatusChanged = prevHasVotedRef.current !== hasVoted
+
+    // Only reset form if phase changed or vote status changed
+    if (phaseChanged || voteStatusChanged) {
+      if (hasVoted) {
+        // Get the player's vote from voting status
+        const myVote = state.team_voting_status?.votes.find(v => v.player_id === parseInt(playerId || '0'))
+        if (myVote) {
+          setSelectedAction(myVote.selected_action)
+          setEffectivenessRating(myVote.effectiveness_rating || 5)
+          setComments(myVote.comments || '')
+        }
+        setSubmitted(true)
+      } else if (state.decision) {
+        // Legacy: if decision exists, show it
+        setSelectedAction(state.decision.actions?.selected?.[0] || '')
+        setEffectivenessRating(5)
+        setComments('')
+        setSubmitted(true)
+      } else if (state.phase_state === 'open_for_decisions') {
+        // Only reset if phase changed and we're in voting state
+        if (phaseChanged) {
+          setSubmitted(false)
+          setSelectedAction('')
+          setEffectivenessRating(5)
+          setComments('')
+        }
+        // Don't reset if phase didn't change - preserve user's input
+      } else {
+        // Phase is not open for decisions
+        setSubmitted(false)
+        setSelectedAction('')
+        setEffectivenessRating(5)
+        setComments('')
+      }
+
+      // Update refs
+      prevPhaseIdRef.current = currentPhaseId
+      prevHasVotedRef.current = hasVoted
+    } else if (hasVoted) {
+      // If we have a vote, make sure we're showing it (in case vote data updated)
       const myVote = state.team_voting_status?.votes.find(v => v.player_id === parseInt(playerId || '0'))
       if (myVote) {
         setSelectedAction(myVote.selected_action)
         setEffectivenessRating(myVote.effectiveness_rating || 5)
         setComments(myVote.comments || '')
       }
-      setSubmitted(true)
-    } else if (state?.decision) {
-      // Legacy: if decision exists, show it
-      setSelectedAction(state.decision.actions?.selected?.[0] || '')
-      setEffectivenessRating(5)
-      setComments('')
-      setSubmitted(true)
-    } else {
-      setSubmitted(false)
-      setSelectedAction('')
-      setEffectivenessRating(5)
-      setComments('')
     }
   }, [state, playerId])
 
