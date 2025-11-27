@@ -107,8 +107,12 @@ export default function PlayerView() {
 
   const handleSubmit = async () => {
     if (!gameId || !playerId || !state?.current_phase) return
-    if (!selectedAction || effectivenessRating < 1 || effectivenessRating > 10) {
+    if (!selectedAction) {
       alert('Please select an action to vote for')
+      return
+    }
+    if (!effectivenessRating || effectivenessRating < 1 || effectivenessRating > 10) {
+      alert('Please select an effectiveness rating (1-10) before submitting your vote')
       return
     }
 
@@ -348,7 +352,7 @@ export default function PlayerView() {
 
             <button
               onClick={handleSubmit}
-              disabled={submitting || !selectedAction}
+              disabled={submitting || !selectedAction || !effectivenessRating || effectivenessRating < 1 || effectivenessRating > 10}
               className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
             >
               {submitting ? 'Submitting...' : submitted ? 'Update Vote' : 'Submit Vote'}
