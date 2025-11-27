@@ -169,16 +169,16 @@ def get_voting_status(
         vote_responses = []
         for vote in votes:
             player = db.query(Player).filter(Player.id == vote.player_id).first()
-                vote_responses.append(PlayerVoteResponse(
-                    id=vote.id,
-                    player_id=vote.player_id,
-                    player_name=player.display_name if player else "Unknown",
-                    selected_action=vote.selected_action,
-                    effectiveness_rating=vote.effectiveness_rating,
-                    comments=vote.comments,
-                    justification=vote.justification,
-                    voted_at=vote.voted_at
-                ))
+            vote_responses.append(PlayerVoteResponse(
+                id=vote.id,
+                player_id=vote.player_id,
+                player_name=player.display_name if player else "Unknown",
+                selected_action=vote.selected_action,
+                effectiveness_rating=vote.effectiveness_rating,
+                comments=vote.comments,
+                justification=vote.justification,
+                voted_at=vote.voted_at
+            ))
         
         status_list.append(VotingStatusResponse(
             team_id=team.id,
