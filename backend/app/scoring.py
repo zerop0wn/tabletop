@@ -2,12 +2,13 @@
 Automated scoring system for team decisions.
 Awards points based on how well selected actions align with phase objectives.
 """
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 
-# Scoring configuration: (phase_order_index, team_role) -> Dict of (action_name, points)
+# Scoring configuration: (scenario_name, phase_order_index, team_role) -> Dict of (action_name, points)
 # Points: 10 = optimal, 7 = good, 4 = acceptable, 1 = poor, 0 = counterproductive
 
-SCORING_MATRIX: Dict[Tuple[int, str], Dict[str, int]] = {
+# Ransomware Incident Response scenario scoring
+RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     # Phase 1: Initial Compromise (order_index=0)
     (0, "red"): {
         "Establish persistence": 10,  # Primary objective
@@ -89,20 +90,121 @@ SCORING_MATRIX: Dict[Tuple[int, str], Dict[str, int]] = {
     },
 }
 
+# Email Bomb & Social Engineering Attack scenario scoring
+EMAIL_BOMB_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
+    # Phase 1: Email Bomb Deployment (order_index=0)
+    (0, "red"): {
+        "Establish persistence": 10,  # Deploy email bomb infrastructure
+        "Cover tracks": 7,           # Make emails appear legitimate
+        "Move laterally": 4,        # Too early, no access yet
+        "Escalate privileges": 3,   # Too early
+        "Exfiltrate data": 1,       # Way too early
+    },
+    (0, "blue"): {
+        "Block IP address": 10,     # Block email sources
+        "Collect forensic evidence": 8,  # Analyze email patterns
+        "Deploy countermeasures": 7, # Email filtering rules
+        "Escalate to management": 6, # Alert user before social engineering
+        "Isolate host": 4,          # Too early, no compromise yet
+    },
+    
+    # Phase 2: Social Engineering Call (order_index=1)
+    (1, "red"): {
+        "Establish persistence": 10,  # Establish trust and rapport
+        "Cover tracks": 8,            # Appear legitimate
+        "Move laterally": 4,          # Too early, no credentials yet
+        "Escalate privileges": 3,     # Too early
+        "Exfiltrate data": 1,         # Way too early
+    },
+    (1, "blue"): {
+        "Escalate to management": 10, # Alert user immediately
+        "Collect forensic evidence": 8, # Document call details
+        "Deploy countermeasures": 6,  # User awareness training
+        "Block IP address": 5,        # May not have IP yet
+        "Isolate host": 3,           # Too early
+    },
+    
+    # Phase 3: Credential Harvesting (order_index=2)
+    (2, "red"): {
+        "Establish persistence": 10,  # Harvest and verify credentials
+        "Cover tracks": 7,            # Hide fake portal
+        "Move laterally": 5,          # Starting to test access
+        "Escalate privileges": 4,     # Too early
+        "Exfiltrate data": 2,         # Too early
+    },
+    (2, "blue"): {
+        "Block IP address": 10,       # Block fake portal
+        "Collect forensic evidence": 9, # Document credential compromise
+        "Deploy countermeasures": 8,  # Force password reset
+        "Escalate to management": 7,   # Breach notification
+        "Isolate host": 6,            # Isolate compromised account
+    },
+    
+    # Phase 4: Initial Access & Privilege Escalation (order_index=3)
+    (3, "red"): {
+        "Escalate privileges": 10,    # Gain admin access
+        "Move laterally": 9,          # Access multiple systems
+        "Establish persistence": 8,    # Create backdoors
+        "Cover tracks": 7,            # Hide access
+        "Exfiltrate data": 4,         # Starting to prepare
+    },
+    (3, "blue"): {
+        "Isolate host": 10,           # Isolate compromised account
+        "Deploy countermeasures": 9,  # Revoke access, reset passwords
+        "Collect forensic evidence": 8, # Document unauthorized access
+        "Escalate to management": 7,   # Coordinate response
+        "Block IP address": 6,        # May be too late
+    },
+    
+    # Phase 5: Lateral Movement & Data Exfiltration (order_index=4)
+    (4, "red"): {
+        "Exfiltrate data": 10,       # Primary objective
+        "Move laterally": 9,          # Access more systems
+        "Cover tracks": 8,            # Hide exfiltration
+        "Establish persistence": 7,    # Maintain access
+        "Escalate privileges": 5,     # Already done
+    },
+    (4, "blue"): {
+        "Block IP address": 10,       # Stop exfiltration
+        "Isolate host": 9,            # Contain breach
+        "Collect forensic evidence": 8, # Document data loss
+        "Escalate to management": 8,    # Breach notification, compliance
+        "Deploy countermeasures": 6,   # May be too late
+    },
+}
 
-def get_optimal_score(phase_order_index: int, team_role: str, selected_action: str) -> int:
+# Map scenario names to their scoring matrices
+SCORING_MATRICES: Dict[str, Dict[Tuple[int, str], Dict[str, int]]] = {
+    "Ransomware Incident Response": RANSOMWARE_SCORING,
+    "Email Bomb & Social Engineering Attack": EMAIL_BOMB_SCORING,
+}
+
+
+def get_optimal_score(
+    scenario_name: str,
+    phase_order_index: int,
+    team_role: str,
+    selected_action: str
+) -> int:
     """
-    Get the score for a selected action based on phase and team role.
+    Get the score for a selected action based on scenario, phase and team role.
     Returns 0 if action not found in matrix.
     """
+    # Get the appropriate scoring matrix for this scenario
+    scoring_matrix = SCORING_MATRICES.get(scenario_name)
+    if not scoring_matrix:
+        # Fallback to ransomware scoring if scenario not found
+        scoring_matrix = RANSOMWARE_SCORING
+    
     key = (phase_order_index, team_role)
-    if key not in SCORING_MATRIX:
+    if key not in scoring_matrix:
         return 0
     
-    return SCORING_MATRIX[key].get(selected_action, 0)
+    return scoring_matrix[key].get(selected_action, 0)
 
 
 def calculate_team_decision_score(
+    scenario_name: str,
     phase_order_index: int,
     team_role: str,
     selected_actions: List[str]
@@ -122,7 +224,7 @@ def calculate_team_decision_score(
     if not primary_action or not isinstance(primary_action, str):
         return (0, "Invalid action format")
     
-    score = get_optimal_score(phase_order_index, team_role, primary_action)
+    score = get_optimal_score(scenario_name, phase_order_index, team_role, primary_action)
     
     # Determine explanation
     if score >= 9:

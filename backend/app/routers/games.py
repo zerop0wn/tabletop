@@ -203,8 +203,13 @@ def lock_decisions(game_id: int, db: Session = Depends(get_db), current_gm=Depen
         elif isinstance(decision.actions, list):
             selected_actions = decision.actions
         
+        # Get scenario name for scoring
+        scenario = db.query(Scenario).filter(Scenario.id == game.scenario_id).first()
+        scenario_name = scenario.name if scenario else "Ransomware Incident Response"
+        
         # Calculate base score
         base_score, explanation = calculate_team_decision_score(
+            scenario_name=scenario_name,
             phase_order_index=current_phase.order_index,
             team_role=team.role,
             selected_actions=selected_actions

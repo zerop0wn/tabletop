@@ -403,6 +403,361 @@ def seed_data():
     else:
         print("Scenario already exists")
 
+    # Create Email Bomb & Social Engineering scenario
+    scenario2 = db.query(Scenario).filter(Scenario.name == "Email Bomb & Social Engineering Attack").first()
+    if not scenario2:
+        scenario2 = Scenario(
+            name="Email Bomb & Social Engineering Attack",
+            description="A sophisticated social engineering attack combining email bombing with IT support impersonation. The attacker floods the target's inbox with thousands of emails, then calls posing as IT support to 'help' resolve the issue. This creates urgency and trust, allowing the attacker to harvest credentials and gain unauthorized access to sensitive systems and data.",
+            miro_board_url="https://miro.com/app/board/example2"
+        )
+        db.add(scenario2)
+        db.flush()
+
+        # Phase 1: Email Bomb Deployment
+        phase1_eb = ScenarioPhase(
+            scenario_id=scenario2.id,
+            order_index=0,
+            name="Phase 1: Email Bomb Deployment",
+            briefing_text="At 09:15 AM, a senior executive's inbox began receiving an unusually high volume of emails. Within 30 minutes, over 8,000 emails flooded the inbox, rendering it nearly unusable. The emails appear to be from various sources - newsletters, marketing campaigns, subscription confirmations - but analysis shows they're all originating from a coordinated attack infrastructure. The executive cannot access critical emails, and the email system is experiencing performance degradation. Meanwhile, security monitoring has detected the unusual email volume spike.",
+            red_objective="Successfully deploy email bomb attack to overwhelm target inbox. Ensure emails appear legitimate and diverse to avoid immediate spam filtering. Monitor delivery success rate. Create sense of urgency and confusion. Prepare for follow-up social engineering call by researching target's IT support procedures and contact information.",
+            blue_objective="Detect the email bomb attack early through volume monitoring and pattern analysis. Identify the attack infrastructure and email sources. Alert the target user before they fall for social engineering. Implement email filtering rules to block further emails. Document the attack for security awareness training.",
+            default_duration_seconds=900,
+            miro_frame_url="https://miro.com/app/board/example2/frame1"
+        )
+        db.add(phase1_eb)
+        db.flush()
+
+        # Phase 2: Social Engineering Call (IT Support Impersonation)
+        phase2_eb = ScenarioPhase(
+            scenario_id=scenario2.id,
+            order_index=1,
+            name="Phase 2: Social Engineering Call",
+            briefing_text="At 09:45 AM, just 30 minutes after the email bomb began, the executive received a phone call from someone claiming to be from IT Support. The caller identified themselves as 'Mike from IT' and said they noticed the email issue affecting the executive's account. They offered to help resolve it immediately. The caller sounded professional, referenced the email problem, and asked the executive to verify their identity by providing their username. Security logs show no legitimate IT support ticket was created for this issue, and the phone number doesn't match known IT support contacts.",
+            red_objective="Successfully impersonate IT support and establish trust with the target. Use the email bomb as pretext to create urgency. Guide the target to a fake support portal or credential entry page. Maintain professional demeanor and follow established IT support procedures to appear legitimate. Avoid raising suspicion while gathering information.",
+            blue_objective="Detect the suspicious support call through monitoring and user reporting. Verify that no legitimate IT support ticket exists. Identify social engineering indicators (urgency, unsolicited contact, credential requests). Alert the user before they provide credentials. Document the social engineering attempt for security awareness.",
+            default_duration_seconds=900,
+            miro_frame_url="https://miro.com/app/board/example2/frame2"
+        )
+        db.add(phase2_eb)
+        db.flush()
+
+        # Phase 3: Credential Harvesting
+        phase3_eb = ScenarioPhase(
+            scenario_id=scenario2.id,
+            order_index=2,
+            name="Phase 3: Credential Harvesting",
+            briefing_text="The executive, frustrated with the email issue and trusting the 'IT support' caller, followed instructions to access a 'secure support portal' at support-corp-help[.]tk. The portal requested the executive's corporate username and password to 'verify identity and restore email access.' The executive provided credentials. Security monitoring now shows authentication attempts from an unknown IP address (203.0.113.45) using the executive's credentials. The fake support portal has logged the credentials and the attacker is testing them against various corporate systems.",
+            red_objective="Successfully harvest credentials through the fake support portal. Verify credentials work against corporate systems. Test access to email, file shares, and other resources. Establish persistence mechanisms if possible. Avoid triggering security alerts while testing credentials.",
+            blue_objective="Detect credential compromise through authentication monitoring and anomaly detection. Identify failed login attempts from suspicious IPs. Detect password change or reset attempts. Immediately force password reset and revoke all active sessions. Investigate the fake support portal and block access. Alert the user about credential compromise.",
+            default_duration_seconds=900,
+            miro_frame_url="https://miro.com/app/board/example2/frame3"
+        )
+        db.add(phase3_eb)
+        db.flush()
+
+        # Phase 4: Initial Access & Privilege Escalation
+        phase4_eb = ScenarioPhase(
+            scenario_id=scenario2.id,
+            order_index=3,
+            name="Phase 4: Initial Access & Privilege Escalation",
+            briefing_text="The attacker has successfully logged into the executive's email account from IP address 203.0.113.45. Security logs show the attacker is accessing sensitive emails, including confidential business communications, financial reports, and customer data. The attacker is also attempting to access file shares and attempting to escalate privileges by searching for administrator credentials in emails. The executive's account has access to several critical systems including customer relationship management (CRM) and financial systems. The attacker appears to be mapping the executive's access and identifying high-value targets.",
+            red_objective="Successfully access the compromised email account and other systems. Search emails for sensitive information, credentials, and access details. Attempt to escalate privileges by finding administrator credentials or access methods. Map the executive's access to critical systems. Identify valuable data for exfiltration. Avoid detection while exploring systems.",
+            blue_objective="Detect unauthorized access to the executive's account. Identify what systems and data the attacker has accessed. Revoke compromised credentials and force password reset. Isolate the compromised account from critical systems. Monitor for privilege escalation attempts. Document the attacker's access for forensic analysis.",
+            default_duration_seconds=900,
+            miro_frame_url="https://miro.com/app/board/example2/frame4"
+        )
+        db.add(phase4_eb)
+        db.flush()
+
+        # Phase 5: Lateral Movement & Data Exfiltration
+        phase5_eb = ScenarioPhase(
+            scenario_id=scenario2.id,
+            order_index=4,
+            name="Phase 5: Lateral Movement & Data Exfiltration",
+            briefing_text="The situation has escalated significantly. The attacker has used the executive's credentials to access multiple systems including the CRM database, financial records, and customer data. Network monitoring shows the attacker is moving laterally to other systems and exfiltrating data. Analysis indicates approximately 2.5 GB of sensitive data has been transferred to external servers, including customer PII, financial records, and confidential business communications. The attacker is also attempting to maintain persistent access by creating forwarding rules in the executive's email and accessing backup systems. Security teams are working to contain the breach, but the attacker maintains access through the compromised credentials.",
+            red_objective="Successfully move laterally to critical systems using the executive's access. Access and exfiltrate sensitive data including customer information, financial records, and business intelligence. Create persistence mechanisms (email forwarding, backup access) to maintain access. Exfiltrate data before detection. Cover tracks by deleting logs and evidence where possible.",
+            blue_objective="Detect lateral movement and data exfiltration through network monitoring and access logs. Identify what data has been accessed and exfiltrated. Block ongoing exfiltration attempts. Revoke all compromised credentials and reset passwords. Remove persistence mechanisms (email forwarding rules, etc.). Assess data loss for compliance reporting (GDPR, CCPA). Prepare breach notification if required.",
+            default_duration_seconds=1200,
+            miro_frame_url="https://miro.com/app/board/example2/frame5"
+        )
+        db.add(phase5_eb)
+        db.flush()
+
+        # Create artifacts for Email Bomb scenario
+        # Phase 1 Artifacts
+        # Blue Team Artifacts
+        artifact1_blue_eb = Artifact(
+            name="Email Server Volume Alert",
+            type=ArtifactType.LOG_SNIPPET,
+            description="Email server monitoring alert showing massive volume spike. User: executive@corp.local received 8,247 emails in 30 minutes. Normal baseline: 50-100 emails/day. Emails from 200+ different domains, all appearing to be legitimate newsletters and marketing emails. Server performance degraded. Pattern suggests coordinated email bomb attack.",
+            file_url="/api/artifacts/files/email_volume_alert_phase1.txt",
+            notes_for_gm="Email server log showing volume spike and pattern analysis."
+        )
+        db.add(artifact1_blue_eb)
+        db.flush()
+
+        artifact2_blue_eb = Artifact(
+            name="Email Header Analysis",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Analysis of email headers from the email bomb. All emails contain similar patterns: X-Originating-IP addresses from cloud hosting providers (AWS, Azure), SPF records show 'softfail' or 'neutral', DKIM signatures missing or invalid. Email subjects are diverse (newsletters, confirmations, marketing) but all sent within 30-minute window. Sender addresses appear legitimate but domains are newly registered or compromised.",
+            file_url="/api/artifacts/files/email_header_analysis_phase1.txt",
+            notes_for_gm="Email header analysis showing attack infrastructure."
+        )
+        db.add(artifact2_blue_eb)
+        db.flush()
+
+        # Red Team Artifacts
+        artifact1_red_eb = Artifact(
+            name="Email Bomb Deployment Status",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Email Bomb Deployment Report:\nTarget: executive@corp.local\nEmails Sent: 8,247\nDelivery Success Rate: 94.2%\nTime Window: 30 minutes\nEmail Types: Newsletters (45%), Marketing (30%), Confirmations (15%), Other (10%)\nInfrastructure: 200+ sending domains, cloud hosting providers\nStatus: SUCCESS - Target inbox overwhelmed\nNext Step: Initiate support call within 30-60 minutes",
+            file_url="/api/artifacts/files/email_bomb_status_phase1.txt",
+            notes_for_gm="Red Team sees their successful email bomb deployment."
+        )
+        db.add(artifact1_red_eb)
+        db.flush()
+
+        artifact2_red_eb = Artifact(
+            name="Target Research & Call Script",
+            type=ArtifactType.INTEL_REPORT,
+            description="Target Research Summary:\nTarget: Senior Executive\nRole: VP of Operations\nIT Support Contact: Internal helpdesk (ext. 5555)\nSupport Hours: 8 AM - 6 PM EST\nSupport Portal: support.corp.local\nCall Script Prepared:\n- Identify as 'Mike from IT Support'\n- Reference email issue\n- Offer immediate assistance\n- Guide to support portal\nStatus: Ready for Phase 2",
+            file_url="/api/artifacts/files/call_script_phase1.txt",
+            notes_for_gm="Red Team sees their research and call script."
+        )
+        db.add(artifact2_red_eb)
+        db.flush()
+
+        # Phase 2 Artifacts
+        # Blue Team Artifacts
+        artifact3_blue_eb = Artifact(
+            name="Support Call Log",
+            type=ArtifactType.LOG_SNIPPET,
+            description="Phone system log showing incoming call to executive's extension. Caller ID: +1-555-0123 (not in known IT support contact list). Call duration: 12 minutes. Call recorded. Transcript shows caller identified as 'Mike from IT Support', referenced email issue, asked user to verify identity. No legitimate IT support ticket exists for this issue. Security team notified.",
+            file_url="/api/artifacts/files/support_call_log_phase2.txt",
+            notes_for_gm="Phone system log showing suspicious support call."
+        )
+        db.add(artifact3_blue_eb)
+        db.flush()
+
+        artifact4_blue_eb = Artifact(
+            name="Social Engineering Indicators Report",
+            type=ArtifactType.INTEL_REPORT,
+            description="Social Engineering Analysis:\nIndicators:\n- Unsolicited contact (no ticket)\n- Urgency created (email issue)\n- Identity verification request\n- Caller ID doesn't match IT support\n- Timing suspicious (30 min after email bomb)\nRisk Level: HIGH\nRecommendation: Alert user immediately, verify no credentials provided",
+            file_url="/api/artifacts/files/se_indicators_phase2.txt",
+            notes_for_gm="Social engineering detection report."
+        )
+        db.add(artifact4_blue_eb)
+        db.flush()
+
+        # Red Team Artifacts
+        artifact3_red_eb = Artifact(
+            name="Support Call Success Report",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Social Engineering Call Report:\nTarget: Executive\nCall Duration: 12 minutes\nOutcome: SUCCESS\nTrust Established: YES\nTarget Agreed to: Access support portal\nPortal URL Provided: support-corp-help.tk\nNext Step: Credential harvesting via portal\nStatus: Target is proceeding to portal",
+            file_url="/api/artifacts/files/call_success_phase2.txt",
+            notes_for_gm="Red Team sees their successful social engineering call."
+        )
+        db.add(artifact3_red_eb)
+        db.flush()
+
+        artifact4_red_eb = Artifact(
+            name="Fake Support Portal Status",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Fake Support Portal Status:\nURL: support-corp-help.tk\nStatus: OPERATIONAL\nSSL Certificate: Valid (Let's Encrypt)\nDesign: Matches corporate IT portal\nLogin Form: Active\nCredential Capture: Ready\nVisitor Tracking: Active\nStatus: Waiting for target to access portal",
+            file_url="/api/artifacts/files/portal_status_phase2.txt",
+            notes_for_gm="Red Team sees their fake portal status."
+        )
+        db.add(artifact4_red_eb)
+        db.flush()
+
+        # Phase 3 Artifacts
+        # Blue Team Artifacts
+        artifact5_blue_eb = Artifact(
+            name="Authentication Anomaly Alert",
+            type=ArtifactType.LOG_SNIPPET,
+            description="Authentication monitoring alert: Multiple failed login attempts detected for executive@corp.local from IP 203.0.113.45 (unknown, not in corporate network). Attempts targeting: Email (OWA), VPN, File Shares, CRM system. Pattern suggests credential testing. User's password was changed 2 hours ago through 'support portal' - but no legitimate support ticket exists. Risk: CREDENTIALS COMPROMISED",
+            file_url="/api/artifacts/files/auth_anomaly_phase3.txt",
+            notes_for_gm="Authentication logs showing credential compromise."
+        )
+        db.add(artifact5_blue_eb)
+        db.flush()
+
+        artifact6_blue_eb = Artifact(
+            name="Fake Portal Analysis",
+            type=ArtifactType.INTEL_REPORT,
+            description="Fake Support Portal Analysis:\nDomain: support-corp-help.tk\nRegistration: 3 days ago (newly registered)\nHosting: Cloud provider (AWS)\nSSL: Valid certificate (Let's Encrypt)\nDesign: Cloned from legitimate IT portal\nFunctionality: Captures credentials, logs all input\nAccess Logs: Show executive accessed portal\nRecommendation: Block domain, force password reset immediately",
+            file_url="/api/artifacts/files/portal_analysis_phase3.txt",
+            notes_for_gm="Analysis of the fake support portal."
+        )
+        db.add(artifact6_blue_eb)
+        db.flush()
+
+        # Red Team Artifacts
+        artifact5_red_eb = Artifact(
+            name="Credential Harvesting Success",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Credential Harvesting Report:\nTarget: executive@corp.local\nCredentials Captured: SUCCESS\nUsername: executive@corp.local\nPassword: [REDACTED]\nPortal Access: Confirmed\nCredential Testing:\n- Email (OWA): SUCCESS\n- VPN: SUCCESS\n- File Shares: SUCCESS\n- CRM: SUCCESS\nAll systems accessible. Ready for Phase 4.",
+            file_url="/api/artifacts/files/credential_success_phase3.txt",
+            notes_for_gm="Red Team sees their successful credential harvest."
+        )
+        db.add(artifact5_red_eb)
+        db.flush()
+
+        artifact6_red_eb = Artifact(
+            name="Access Verification Report",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Access Verification Report:\nSystems Accessible:\n✓ Email (OWA): Full access\n✓ VPN: Connected\n✓ File Shares: Read/Write access\n✓ CRM System: Full access\n✓ Financial Systems: Read access\nAccount Privileges: Executive-level\nPersistence: Email forwarding rule created\nStatus: All systems operational, ready for data collection",
+            file_url="/api/artifacts/files/access_verification_phase3.txt",
+            notes_for_gm="Red Team sees their verified access."
+        )
+        db.add(artifact6_red_eb)
+        db.flush()
+
+        # Phase 4 Artifacts
+        # Blue Team Artifacts
+        artifact7_blue_eb = Artifact(
+            name="Unauthorized Access Alert",
+            type=ArtifactType.LOG_SNIPPET,
+            description="Security alert: Unauthorized access detected. User executive@corp.local logged into email from IP 203.0.113.45 (external, not corporate). Access pattern shows: Reading confidential emails, searching for 'password', 'credentials', 'admin', accessing file shares, attempting CRM access. User's location: Corporate office (legitimate), but access from external IP suggests account compromise. Immediate action required.",
+            file_url="/api/artifacts/files/unauthorized_access_phase4.txt",
+            notes_for_gm="Security alert showing unauthorized access."
+        )
+        db.add(artifact7_blue_eb)
+        db.flush()
+
+        artifact8_blue_eb = Artifact(
+            name="Privilege Escalation Attempt Log",
+            type=ArtifactType.LOG_SNIPPET,
+            description="Privilege escalation attempt detected. Attacker searching executive's email for: 'administrator password', 'service account', 'API key', 'database credentials'. Multiple file share access attempts to admin directories. Attempted access to backup systems. All escalation attempts logged. User account has executive privileges but not domain admin - attacker seeking higher-level access.",
+            file_url="/api/artifacts/files/privilege_escalation_phase4.txt",
+            notes_for_gm="Logs showing privilege escalation attempts."
+        )
+        db.add(artifact8_blue_eb)
+        db.flush()
+
+        # Red Team Artifacts
+        artifact7_red_eb = Artifact(
+            name="Email Access & Intelligence Gathering",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Email Intelligence Report:\nEmails Accessed: 1,247\nSensitive Emails Found:\n- Financial reports: 23\n- Customer data: 45\n- Business strategy: 12\n- Credential references: 8 (no admin creds found)\nHigh-Value Targets Identified:\n- CRM database access\n- Customer PII\n- Financial records\n- Business intelligence\nStatus: Intelligence gathering complete, ready for exfiltration",
+            file_url="/api/artifacts/files/email_intel_phase4.txt",
+            notes_for_gm="Red Team sees their email intelligence gathering."
+        )
+        db.add(artifact7_red_eb)
+        db.flush()
+
+        artifact8_red_eb = Artifact(
+            name="System Access Map",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="System Access Map:\nSystems Under Control:\n1. Email (OWA): Full access, forwarding enabled\n2. File Shares: \\FS-01\\Executive, \\FS-01\\Finance\n3. CRM System: Read/Write access\n4. Financial Portal: Read access\nData Identified:\n- Customer database: 45,000 records\n- Financial records: Q1-Q4\n- Business documents: 2,100 files\nPrivilege Escalation: Attempted, no admin creds found\nStatus: Ready for data exfiltration",
+            file_url="/api/artifacts/files/system_map_phase4.txt",
+            notes_for_gm="Red Team sees their system access map."
+        )
+        db.add(artifact8_red_eb)
+        db.flush()
+
+        # Phase 5 Artifacts
+        # Blue Team Artifacts
+        artifact9_blue_eb = Artifact(
+            name="Lateral Movement Detection",
+            type=ArtifactType.LOG_SNIPPET,
+            description="Lateral movement detected. Attacker using executive credentials to access: CRM database (customer records), Financial systems (Q4 reports), File shares (confidential documents). Network monitoring shows data transfers to external IP 198.51.100.45. Transfer volume: ~2.5 GB over 2 hours. Traffic encrypted (HTTPS) but pattern suggests data exfiltration. Multiple systems accessed in sequence.",
+            file_url="/api/artifacts/files/lateral_movement_phase5.txt",
+            notes_for_gm="Logs showing lateral movement."
+        )
+        db.add(artifact9_blue_eb)
+        db.flush()
+
+        artifact10_blue_eb = Artifact(
+            name="Data Exfiltration Analysis",
+            type=ArtifactType.INTEL_REPORT,
+            description="Data Exfiltration Analysis:\nVolume: 2.5 GB\nTime Period: 2 hours\nDestination: 198.51.100.45\nData Types: Customer PII, financial records, business documents\nSystems Accessed: CRM, File Shares, Email\nData Classification:\n- Customer PII: 45,000 records (HIGH RISK)\n- Financial Data: Q4 reports (CONFIDENTIAL)\n- Business Intelligence: Strategic documents (PROPRIETARY)\nRegulatory Impact: GDPR, CCPA violation potential\nRecommendation: Immediate containment and breach assessment",
+            file_url="/api/artifacts/files/exfiltration_analysis_phase5.txt",
+            notes_for_gm="Data exfiltration analysis report."
+        )
+        db.add(artifact10_blue_eb)
+        db.flush()
+
+        artifact11_blue_eb = Artifact(
+            name="Persistence Mechanisms Found",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Persistence Mechanisms Detected:\n1. Email Forwarding Rule: All emails forwarded to attacker@external.com\n2. Backup System Access: Attempted access to backup credentials\n3. Calendar Access: Attacker monitoring executive's calendar\n4. Contact List Access: Attacker copied executive's contacts\nActions Taken:\n- Removed email forwarding rule\n- Revoked backup access\n- Reset all credentials\n- Isolated account from critical systems",
+            file_url="/api/artifacts/files/persistence_found_phase5.txt",
+            notes_for_gm="Persistence mechanisms that were found and removed."
+        )
+        db.add(artifact11_blue_eb)
+        db.flush()
+
+        # Red Team Artifacts
+        artifact9_red_eb = Artifact(
+            name="Data Exfiltration Progress",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Data Exfiltration Status: IN PROGRESS\n\nData Collected:\n- Customer Database: 45,000 records (1.8 GB)\n- Financial Records: Q4 reports (450 MB)\n- Business Documents: 2,100 files (250 MB)\n\nUpload Status:\n- Destination: 198.51.100.45\n- Transferred: 2.5 GB / 2.5 GB (100%)\n- Encryption: AES-256\n- Status: COMPLETE\n\nPersistence Maintained:\n✓ Email forwarding active\n✓ Backup access attempted\n✓ Calendar monitoring active",
+            file_url="/api/artifacts/files/exfiltration_progress_phase5.txt",
+            notes_for_gm="Red Team sees their exfiltration progress."
+        )
+        db.add(artifact9_red_eb)
+        db.flush()
+
+        artifact10_red_eb = Artifact(
+            name="Stolen Data Inventory",
+            type=ArtifactType.INTEL_REPORT,
+            description="Stolen Data Inventory:\n\nHigh-Value Data:\n- Customer PII: 45,000 records\n  * Names, addresses, phone numbers\n  * Email addresses\n  * Purchase history\n  * Estimated value: $2.25M\n\n- Financial Records: Q4 2023\n  * Revenue reports\n  * Budget forecasts\n  * Vendor contracts\n  * Estimated value: $5M+\n\n- Business Intelligence:\n  * Strategic plans\n  * Market analysis\n  * Competitive intelligence\n  * Estimated value: $10M+\n\nTotal Estimated Value: $17M+\nStatus: All data successfully exfiltrated",
+            file_url="/api/artifacts/files/stolen_data_inventory_phase5.txt",
+            notes_for_gm="Red Team sees their stolen data inventory."
+        )
+        db.add(artifact10_red_eb)
+        db.flush()
+
+        artifact11_red_eb = Artifact(
+            name="Attack Summary Report",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Attack Summary - Mission Accomplished\n\nTimeline:\n- Email Bomb: 09:15 UTC (8,247 emails)\n- Support Call: 09:45 UTC (12 minutes)\n- Credential Harvest: 10:00 UTC\n- Initial Access: 10:15 UTC\n- Data Exfiltration: 10:30-12:30 UTC (2.5 GB)\n\nResults:\n✓ Email bomb successful\n✓ Social engineering successful\n✓ Credentials harvested\n✓ Full system access obtained\n✓ 2.5 GB data exfiltrated\n✓ Persistence mechanisms deployed\n\nStatus: Attack complete, data secured, persistence maintained",
+            file_url="/api/artifacts/files/attack_summary_phase5.txt",
+            notes_for_gm="Red Team sees their complete attack summary."
+        )
+        db.add(artifact11_red_eb)
+        db.flush()
+
+        # Associate artifacts with phases and team roles
+        # Phase 1: Email Bomb Deployment
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1_eb.id, artifact_id=artifact1_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1_eb.id, artifact_id=artifact2_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1_eb.id, artifact_id=artifact1_red_eb.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1_eb.id, artifact_id=artifact2_red_eb.id, team_role="red"))
+
+        # Phase 2: Social Engineering Call
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase2_eb.id, artifact_id=artifact3_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase2_eb.id, artifact_id=artifact4_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase2_eb.id, artifact_id=artifact3_red_eb.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase2_eb.id, artifact_id=artifact4_red_eb.id, team_role="red"))
+
+        # Phase 3: Credential Harvesting
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3_eb.id, artifact_id=artifact5_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3_eb.id, artifact_id=artifact6_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3_eb.id, artifact_id=artifact5_red_eb.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3_eb.id, artifact_id=artifact6_red_eb.id, team_role="red"))
+
+        # Phase 4: Initial Access & Privilege Escalation
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4_eb.id, artifact_id=artifact7_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4_eb.id, artifact_id=artifact8_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4_eb.id, artifact_id=artifact7_red_eb.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4_eb.id, artifact_id=artifact8_red_eb.id, team_role="red"))
+
+        # Phase 5: Lateral Movement & Data Exfiltration
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_eb.id, artifact_id=artifact9_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_eb.id, artifact_id=artifact10_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_eb.id, artifact_id=artifact11_blue_eb.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_eb.id, artifact_id=artifact9_red_eb.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_eb.id, artifact_id=artifact10_red_eb.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_eb.id, artifact_id=artifact11_red_eb.id, team_role="red"))
+
+        db.commit()
+        print("Created Email Bomb scenario with 5 phases and 22 artifacts (11 per team)")
+    else:
+        print("Email Bomb scenario already exists")
+
 
 if __name__ == "__main__":
     try:

@@ -1712,6 +1712,1867 @@ Ready for negotiation or data publication phase.
         f.write(content)
     print("Created: attack_summary_phase5.txt")
 
+# ============================================================================
+# Email Bomb & Social Engineering Attack Scenario Artifacts
+# ============================================================================
+
+def create_email_volume_alert():
+    """Create email server volume alert for Blue Team."""
+    content = """Email Server Monitoring Alert
+========================================
+Alert ID: EMAIL-2024-0115-091530
+Timestamp: 2024-01-15 09:15:30 UTC
+Severity: CRITICAL
+Alert Type: Unusual Email Volume Spike
+
+Affected User: executive@corp.local
+Baseline: 50-100 emails/day (normal)
+Current Volume: 8,247 emails in 30 minutes
+Volume Increase: 8,200% above baseline
+
+Email Breakdown:
+----------------
+Newsletter Subscriptions: 3,712 (45%)
+Marketing Campaigns: 2,474 (30%)
+Confirmation Emails: 1,237 (15%)
+Other: 824 (10%)
+
+Source Analysis:
+----------------
+Unique Sending Domains: 203
+Top Sending Domains:
+  - newsletter-subscription.com (1,245 emails)
+  - marketing-campaigns.net (987 emails)
+  - email-confirmations.org (654 emails)
+  - promotional-offers.info (523 emails)
+  - subscription-services.biz (412 emails)
+
+IP Address Analysis:
+-----------------
+Unique Source IPs: 187
+Geographic Distribution:
+  - United States: 45%
+  - Netherlands: 23%
+  - Germany: 18%
+  - Other: 14%
+
+Email Server Performance:
+-------------------------
+Inbox Processing: DEGRADED
+Server Load: 85% (normal: 15-25%)
+Response Time: 2.3 seconds (normal: <0.5s)
+Storage Impact: +2.1 GB in 30 minutes
+
+Pattern Analysis:
+-----------------
+All emails sent within 30-minute window
+Similar subject line patterns
+Diverse sender addresses but coordinated timing
+SPF records: 67% softfail, 23% neutral
+DKIM signatures: Missing or invalid (89%)
+
+Recommendation:
+---------------
+This pattern indicates a coordinated EMAIL BOMB attack.
+Immediate action required:
+1. Block top sending domains
+2. Alert user before social engineering follow-up
+3. Implement temporary email filtering rules
+4. Monitor for suspicious support calls
+
+Status: ACTIVE ATTACK IN PROGRESS
+"""
+    with open(ARTIFACTS_DIR / "email_volume_alert_phase1.txt", 'w') as f:
+        f.write(content)
+    print("Created: email_volume_alert_phase1.txt")
+
+
+def create_email_header_analysis():
+    """Create email header analysis for Blue Team."""
+    content = """Email Header Analysis Report
+==================================
+Analysis Date: 2024-01-15 09:20:00 UTC
+Analyst: Security Operations Center
+Sample Size: 50 emails from email bomb attack
+
+Header Pattern Analysis:
+------------------------
+All emails contain similar header patterns:
+- X-Originating-IP: Cloud hosting providers (AWS, Azure, GCP)
+- Received: Multiple hops through legitimate mail servers
+- Return-Path: Diverse but newly registered domains
+- Message-ID: Sequential patterns suggesting automation
+
+SPF Record Analysis:
+--------------------
+Domain: newsletter-subscription.com
+SPF Record: v=spf1 include:_spf.google.com ~all
+Result: SOFTFAIL (67% of emails)
+
+Domain: marketing-campaigns.net
+SPF Record: v=spf1 ip4:192.0.2.0/24 ~all
+Result: NEUTRAL (23% of emails)
+
+Domain: email-confirmations.org
+SPF Record: v=spf1 include:amazonses.com ~all
+Result: PASS but domain registered 3 days ago
+
+DKIM Signature Analysis:
+------------------------
+Valid DKIM: 11% (6/50 emails)
+Invalid/Missing DKIM: 89% (44/50 emails)
+This is highly unusual for legitimate bulk email
+
+DMARC Policy:
+-------------
+Most domains: No DMARC policy
+Some domains: p=none (no enforcement)
+No domains: p=quarantine or p=reject
+
+Domain Age Analysis:
+--------------------
+Domain Registration Dates:
+- 0-7 days old: 78% of domains
+- 8-30 days old: 15% of domains
+- 31+ days old: 7% of domains
+
+Conclusion: Coordinated attack using newly registered domains
+
+Email Content Analysis:
+-----------------------
+Subject Lines: Diverse but generic
+  - "Your subscription confirmation"
+  - "Special offer just for you"
+  - "Confirm your email address"
+  - "Newsletter subscription"
+
+Body Content: Minimal HTML, mostly text
+Links: Present but not malicious (legitimate-looking)
+Attachments: None
+
+Timing Analysis:
+----------------
+All emails sent within 30-minute window
+Peak sending: 09:15-09:20 UTC (5,000 emails)
+Sending pattern: Burst-like, not gradual
+Suggests automated script or botnet
+
+Threat Assessment:
+------------------
+Confidence Level: 95% EMAIL BOMB ATTACK
+Purpose: Overwhelm inbox, create urgency
+Expected Follow-up: Social engineering call
+Risk Level: HIGH
+
+Recommended Actions:
+--------------------
+1. Block all identified sending domains
+2. Implement temporary rate limiting
+3. Alert user immediately
+4. Monitor for support calls
+5. Document for security awareness training
+"""
+    with open(ARTIFACTS_DIR / "email_header_analysis_phase1.txt", 'w') as f:
+        f.write(content)
+    print("Created: email_header_analysis_phase1.txt")
+
+
+def create_email_bomb_status():
+    """Create email bomb deployment status for Red Team."""
+    content = """Email Bomb Deployment Report
+====================================
+Operation: INBOX OVERWHELM
+Target: executive@corp.local
+Status: SUCCESS
+
+Deployment Summary:
+-------------------
+Total Emails Sent: 8,247
+Delivery Success Rate: 94.2% (7,769 delivered)
+Failed Deliveries: 478 (5.8%)
+Time Window: 30 minutes (09:15-09:45 UTC)
+Peak Sending Rate: 275 emails/minute
+
+Email Distribution:
+-------------------
+Newsletter Subscriptions: 3,712 (45%)
+  - Purpose: Appear legitimate
+  - Source: 45 different domains
+  - Success Rate: 96%
+
+Marketing Campaigns: 2,474 (30%)
+  - Purpose: Create urgency
+  - Source: 38 different domains
+  - Success Rate: 93%
+
+Confirmation Emails: 1,237 (15%)
+  - Purpose: Mimic legitimate services
+  - Source: 32 different domains
+  - Success Rate: 95%
+
+Other: 824 (10%)
+  - Purpose: Diversify pattern
+  - Source: 28 different domains
+  - Success Rate: 92%
+
+Infrastructure:
+--------------
+Sending Domains: 203 unique domains
+Sending IPs: 187 unique IP addresses
+Cloud Providers: AWS (45%), Azure (30%), GCP (25%)
+Geographic Distribution: US, NL, DE (to appear legitimate)
+
+Email Characteristics:
+----------------------
+SPF Records: Configured for softfail/neutral
+DKIM: Mostly missing (to avoid tracking)
+Subject Lines: Generic and diverse
+Content: Minimal, legitimate-looking
+Attachments: None (to avoid detection)
+
+Target Impact:
+--------------
+Inbox Status: OVERWHELMED
+User Access: Severely degraded
+Email System: Performance impacted
+User Frustration: HIGH (confirmed via monitoring)
+
+Next Steps:
+-----------
+1. Monitor target's response
+2. Prepare support call script
+3. Research target's IT support procedures
+4. Set up fake support portal
+5. Initiate social engineering call within 30-60 minutes
+
+Timeline:
+---------
+09:15 UTC: Email bomb deployment started
+09:45 UTC: Email bomb deployment completed
+09:50 UTC: Target inbox confirmed overwhelmed
+10:00 UTC: Support call scheduled
+
+Status: PHASE 1 COMPLETE - Ready for Phase 2
+"""
+    with open(ARTIFACTS_DIR / "email_bomb_status_phase1.txt", 'w') as f:
+        f.write(content)
+    print("Created: email_bomb_status_phase1.txt")
+
+
+def create_call_script():
+    """Create call script for Red Team."""
+    content = """Social Engineering Call Script
+==================================
+Target: Executive (VP of Operations)
+Scenario: Email Bomb Follow-up
+Caller Identity: Mike from IT Support
+Call Duration: 10-15 minutes
+
+Pre-Call Research:
+------------------
+Target Name: [Executive Name]
+Role: VP of Operations
+Department: Operations
+IT Support Contact: Internal helpdesk (ext. 5555)
+Support Hours: 8 AM - 6 PM EST
+Support Portal: support.corp.local
+Support Procedures: Standard identity verification
+
+Call Script:
+------------
+[Opening - Build Rapport]
+"Hello, this is Mike from IT Support. I'm calling because we've detected an unusual email issue affecting your account. Is this a good time to talk?"
+
+[Create Urgency]
+"We've noticed your inbox has been flooded with emails in the past hour - over 8,000 emails. This is preventing you from accessing your important messages, correct?"
+
+[Establish Legitimacy]
+"I can help you resolve this right away. We've seen this before - it's usually caused by a subscription service that got your email address. We can clean it up in about 5 minutes."
+
+[Identity Verification - REVERSE]
+"To make sure I'm talking to the right person, can you confirm your username? It should be executive@corp.local, correct?"
+
+[Guide to Portal]
+"Great. Now, to fix this quickly, I need you to access our secure support portal. Can you open your browser and go to support-corp-help.tk? That's support-corp-help dot T-K."
+
+[Portal Instructions]
+"Once you're there, you'll see a login page. This is our secure verification system. I need you to enter your corporate username and password so we can verify your identity and restore your email access."
+
+[Handle Objections]
+If asked about unusual URL:
+"This is our temporary support portal we use for urgent issues. The regular portal is down for maintenance, but this one is secure and verified."
+
+If asked about password:
+"I understand your concern. This is just for verification - we need to confirm it's really you before we can make changes to your account. It's the same security process we always use."
+
+[Closing]
+"Perfect. Once you've logged in, I'll be able to see your account and clean up those emails. This should only take a few minutes. Can you let me know when you've logged in?"
+
+[Post-Call]
+- Monitor fake portal for credentials
+- Verify credentials work
+- Prepare for Phase 3
+
+Key Points:
+-----------
+- Sound professional and helpful
+- Use the email bomb as pretext
+- Create urgency but not panic
+- Guide, don't demand
+- Be patient if target is hesitant
+
+Status: READY FOR EXECUTION
+"""
+    with open(ARTIFACTS_DIR / "call_script_phase1.txt", 'w') as f:
+        f.write(content)
+    print("Created: call_script_phase1.txt")
+
+
+def create_support_call_log():
+    """Create support call log for Blue Team."""
+    content = """Phone System Call Log
+==========================
+Call ID: CALL-2024-0115-094512
+Date: 2024-01-15
+Time: 09:45:12 UTC
+Duration: 12 minutes 34 seconds
+
+Call Details:
+-------------
+Caller ID: +1-555-0123
+Caller Name: [Not in directory]
+Call Type: Incoming
+Destination: Executive Extension (x-1234)
+Call Quality: Good
+Recording: YES (available)
+
+Caller Information:
+-------------------
+Phone Number: +1-555-0123
+Carrier: Unknown
+Location: Not available
+Number Type: Mobile (suspected VoIP)
+Number Reputation: Not in known IT support contacts
+
+Call Transcript Summary:
+------------------------
+[09:45:12] Caller: "Hello, this is Mike from IT Support. I'm calling because we've detected an unusual email issue affecting your account."
+
+[09:45:18] Executive: "Yes, my inbox is completely flooded. I can't access anything."
+
+[09:45:25] Caller: "We've noticed over 8,000 emails in the past hour. I can help you resolve this right away."
+
+[09:45:32] Executive: "That would be great. How long will this take?"
+
+[09:45:38] Caller: "About 5 minutes. First, I need to verify your identity. Can you confirm your username is executive@corp.local?"
+
+[09:45:45] Executive: "Yes, that's correct."
+
+[09:45:50] Caller: "Perfect. Now, to fix this quickly, I need you to access our secure support portal. Can you go to support-corp-help.tk?"
+
+[09:46:05] Executive: "That URL looks unusual. Is that the normal support portal?"
+
+[09:46:12] Caller: "This is our temporary portal for urgent issues. The regular one is down for maintenance, but this is secure and verified."
+
+[09:46:25] Executive: "Okay, I'm there. What do I need to do?"
+
+[09:46:32] Caller: "You'll see a login page. Enter your corporate username and password so we can verify your identity and restore your email access."
+
+[09:47:15] Executive: "I've logged in. Now what?"
+
+[09:47:22] Caller: "Great! I can see your account now. Let me clean up those emails. This will take just a few minutes. You should see your inbox return to normal shortly."
+
+[09:47:35] Executive: "Thank you so much for your help!"
+
+[09:47:40] Caller: "You're welcome. If you have any issues, just call us back. Have a great day!"
+
+[09:47:45] Call ended.
+
+Red Flags Identified:
+---------------------
+1. Caller ID not in known IT support contacts
+2. No legitimate IT support ticket exists
+3. Unusual URL (support-corp-help.tk)
+4. Request for password (IT never asks for passwords)
+5. Timing suspicious (30 minutes after email bomb)
+6. Urgency created artificially
+7. Caller verified identity in reverse (unusual)
+
+Security Assessment:
+--------------------
+Confidence: 95% SOCIAL ENGINEERING ATTACK
+Risk Level: CRITICAL
+Action Required: IMMEDIATE
+
+Recommendations:
+----------------
+1. Alert executive immediately
+2. Verify no credentials were provided
+3. Block fake support portal domain
+4. Force password reset if credentials provided
+5. Document for security awareness training
+
+Status: SECURITY INCIDENT - ACTION REQUIRED
+"""
+    with open(ARTIFACTS_DIR / "support_call_log_phase2.txt", 'w') as f:
+        f.write(content)
+    print("Created: support_call_log_phase2.txt")
+
+
+def create_se_indicators():
+    """Create social engineering indicators report for Blue Team."""
+    content = """Social Engineering Indicators Report
+==========================================
+Incident ID: SE-2024-0115-094512
+Date: 2024-01-15
+Time: 09:45:12 UTC
+Analyst: Security Operations Center
+
+Incident Summary:
+-----------------
+Executive received unsolicited phone call from individual claiming to be IT Support. Call occurred 30 minutes after email bomb attack began. Caller attempted to guide executive to fake support portal and request credentials.
+
+Social Engineering Indicators:
+-------------------------------
+1. UNSOLICITED CONTACT
+   - No legitimate IT support ticket exists
+   - Executive did not request support
+   - Caller initiated contact
+
+2. URGENCY CREATED
+   - Email bomb used as pretext
+   - "I can help you resolve this right away"
+   - "This will only take 5 minutes"
+   - Creates time pressure
+
+3. IDENTITY VERIFICATION REVERSED
+   - Caller asked executive to verify identity
+   - Normal process: IT verifies caller's identity
+   - Red flag: Asking target to verify themselves
+
+4. UNUSUAL REQUEST
+   - Request for password (IT never asks for passwords)
+   - Unusual URL (support-corp-help.tk)
+   - Not the standard support portal
+
+5. TIMING SUSPICIOUS
+   - Call occurred 30 minutes after email bomb
+   - Too coincidental to be legitimate
+   - Suggests coordinated attack
+
+6. CALLER ID VERIFICATION
+   - Phone number not in known IT support contacts
+   - Number appears to be VoIP (easily spoofed)
+   - No caller name in directory
+
+7. PROFESSIONAL BUT PRESSURE
+   - Caller sounded professional
+   - But created sense of urgency
+   - Guided rather than demanded (sophisticated)
+
+Attack Pattern:
+---------------
+This matches the classic "Email Bomb + Support Call" social engineering attack:
+1. Overwhelm inbox (email bomb) ✓
+2. Create urgency and frustration ✓
+3. Call posing as IT support ✓
+4. Use email issue as pretext ✓
+5. Guide to fake portal ✓
+6. Harvest credentials (in progress)
+
+Threat Assessment:
+------------------
+Confidence: 95% SOCIAL ENGINEERING ATTACK
+Sophistication: HIGH
+Risk Level: CRITICAL
+
+Immediate Actions:
+------------------
+1. ✓ Alert executive immediately
+2. ✓ Verify if credentials were provided
+3. ✓ Block fake support portal domain
+4. ✓ Force password reset if credentials provided
+5. ✓ Monitor for unauthorized access
+6. ✓ Document incident
+
+User Response:
+--------------
+Executive accessed fake portal and may have provided credentials.
+Status: CREDENTIALS POTENTIALLY COMPROMISED
+
+Next Steps:
+-----------
+1. Force password reset immediately
+2. Revoke all active sessions
+3. Monitor for unauthorized access
+4. Investigate fake support portal
+5. Prepare for credential testing phase
+
+Status: ACTIVE INCIDENT - CONTAINMENT IN PROGRESS
+"""
+    with open(ARTIFACTS_DIR / "se_indicators_phase2.txt", 'w') as f:
+        f.write(content)
+    print("Created: se_indicators_phase2.txt")
+
+
+def create_call_success():
+    """Create call success report for Red Team."""
+    content = """Social Engineering Call Report
+==================================
+Target: Executive (VP of Operations)
+Call Duration: 12 minutes 34 seconds
+Outcome: SUCCESS
+
+Call Summary:
+-------------
+[09:45:12] Call initiated
+[09:45:18] Target confirmed email issue
+[09:45:25] Urgency established
+[09:45:38] Identity verification completed
+[09:45:50] Fake portal URL provided
+[09:46:05] Target questioned URL (handled)
+[09:46:25] Target accessed portal
+[09:46:32] Credential request made
+[09:47:15] Target provided credentials
+[09:47:40] Call concluded successfully
+
+Trust Establishment: SUCCESS
+- Target believed caller was IT support
+- Urgency created effectively
+- Objections handled professionally
+- Target followed instructions
+
+Portal Access: SUCCESS
+- Target accessed support-corp-help.tk
+- Portal loaded successfully
+- Login form displayed correctly
+- No security warnings triggered
+
+Credential Harvesting: SUCCESS
+- Target entered username: executive@corp.local
+- Target entered password: [CAPTURED]
+- Credentials logged successfully
+- No suspicion raised
+
+Key Success Factors:
+-------------------
+1. Email bomb created perfect pretext
+2. Professional demeanor maintained
+3. Urgency balanced with helpfulness
+4. Objections handled smoothly
+5. Target was frustrated and wanted quick fix
+
+Challenges Overcome:
+--------------------
+- Target questioned unusual URL
+  → Handled: "Temporary portal for urgent issues"
+- Target hesitated on password request
+  → Handled: "Standard verification process"
+- Call duration longer than expected
+  → Maintained patience and professionalism
+
+Next Steps:
+-----------
+1. Verify captured credentials
+2. Test credentials against corporate systems
+3. Document access levels
+4. Prepare for Phase 3 (Credential Testing)
+
+Status: PHASE 2 COMPLETE - Ready for Phase 3
+"""
+    with open(ARTIFACTS_DIR / "call_success_phase2.txt", 'w') as f:
+        f.write(content)
+    print("Created: call_success_phase2.txt")
+
+
+def create_portal_status():
+    """Create fake portal status for Red Team."""
+    content = """Fake Support Portal Status
+============================
+URL: support-corp-help.tk
+Status: OPERATIONAL
+SSL Certificate: Valid (Let's Encrypt)
+Design: Matches corporate IT portal
+
+Portal Configuration:
+---------------------
+Domain: support-corp-help.tk
+Registration Date: 3 days ago
+Hosting: AWS (us-east-1)
+SSL: Valid until 2024-04-15
+IP Address: 198.51.100.45
+
+Portal Design:
+--------------
+- Corporate logo and branding
+- Professional color scheme
+- Matches legitimate IT portal design
+- Responsive layout (mobile-friendly)
+- No obvious security warnings
+
+Login Form:
+-----------
+- Username field: Active
+- Password field: Active (masked)
+- Submit button: Functional
+- "Forgot Password" link: Present (non-functional)
+- "Help" link: Present (non-functional)
+
+Credential Capture:
+-------------------
+Method: POST to /api/login
+Encryption: HTTPS (TLS 1.3)
+Storage: Encrypted database
+Logging: All input logged
+Timestamp: Recorded for each entry
+
+Visitor Tracking:
+-----------------
+IP Address: Logged
+User Agent: Logged
+Referrer: Logged
+Timestamp: Logged
+Session ID: Generated
+
+Security Measures:
+------------------
+- No obvious malware signatures
+- SSL certificate appears legitimate
+- No browser security warnings
+- Appears in search results (SEO optimized)
+- Domain age: 3 days (not suspicious to casual users)
+
+Access Logs:
+-----------
+[09:46:25] Target accessed portal
+[09:46:32] Login form displayed
+[09:47:15] Credentials submitted
+[09:47:15] Username: executive@corp.local
+[09:47:15] Password: [REDACTED - CAPTURED]
+[09:47:16] Credentials verified in database
+[09:47:16] Success message displayed to target
+
+Status: CREDENTIALS CAPTURED - Ready for testing
+"""
+    with open(ARTIFACTS_DIR / "portal_status_phase2.txt", 'w') as f:
+        f.write(content)
+    print("Created: portal_status_phase2.txt")
+
+
+def create_auth_anomaly():
+    """Create authentication anomaly alert for Blue Team."""
+    content = """Authentication Anomaly Alert
+==================================
+Alert ID: AUTH-2024-0115-100015
+Timestamp: 2024-01-15 10:00:15 UTC
+Severity: CRITICAL
+Alert Type: Credential Compromise Suspected
+
+User Account: executive@corp.local
+Account Status: ACTIVE
+Last Password Change: 2024-01-15 09:47:16 UTC (2 hours ago)
+Change Method: "Support Portal" (UNUSUAL)
+
+Suspicious Activity:
+-------------------
+[10:00:15] Failed login attempt
+  Source IP: 203.0.113.45 (EXTERNAL, UNKNOWN)
+  Target: Email (OWA)
+  Result: FAILED (wrong password)
+  User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+
+[10:00:32] Failed login attempt
+  Source IP: 203.0.113.45
+  Target: VPN
+  Result: FAILED (wrong password)
+  User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+
+[10:01:05] Failed login attempt
+  Source IP: 203.0.113.45
+  Target: File Shares
+  Result: FAILED (authentication error)
+  User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+
+[10:01:28] SUCCESSFUL login
+  Source IP: 203.0.113.45
+  Target: Email (OWA)
+  Result: SUCCESS
+  User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+  Session ID: SESS-2024-0115-100128
+
+[10:01:45] SUCCESSFUL login
+  Source IP: 203.0.113.45
+  Target: VPN
+  Result: SUCCESS
+  User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+  Session ID: VPN-2024-0115-100145
+
+[10:02:12] SUCCESSFUL login
+  Source IP: 203.0.113.45
+  Target: File Shares
+  Result: SUCCESS
+  User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+  Session ID: FS-2024-0115-100212
+
+IP Address Analysis:
+--------------------
+IP: 203.0.113.45
+Location: Unknown (VPN/Proxy suspected)
+ISP: Not identified
+Reputation: Not in threat intelligence feeds
+Previous Activity: None (first time seen)
+
+Pattern Analysis:
+-----------------
+1. Multiple failed attempts before success
+   → Suggests credential testing
+2. Testing multiple systems
+   → OWA, VPN, File Shares
+   → Suggests reconnaissance
+3. Successful logins from external IP
+   → User's normal location: Corporate office
+   → Geographic anomaly detected
+4. Password changed 2 hours ago
+   → Via "Support Portal" (unusual method)
+   → Timing matches social engineering call
+
+Threat Assessment:
+------------------
+Confidence: 98% CREDENTIAL COMPROMISE
+Risk Level: CRITICAL
+Immediate Action: REQUIRED
+
+Recommended Actions:
+--------------------
+1. ✓ Force password reset immediately
+2. ✓ Revoke all active sessions
+3. ✓ Block IP address 203.0.113.45
+4. ✓ Alert user about compromise
+5. ✓ Investigate fake support portal
+6. ✓ Monitor for further unauthorized access
+
+Status: ACTIVE BREACH - CONTAINMENT REQUIRED
+"""
+    with open(ARTIFACTS_DIR / "auth_anomaly_phase3.txt", 'w') as f:
+        f.write(content)
+    print("Created: auth_anomaly_phase3.txt")
+
+
+def create_portal_analysis():
+    """Create fake portal analysis for Blue Team."""
+    content = """Fake Support Portal Analysis
+==================================
+Domain: support-corp-help.tk
+Analysis Date: 2024-01-15 10:05:00 UTC
+Analyst: Security Operations Center
+
+Domain Information:
+-------------------
+Domain: support-corp-help.tk
+Registration Date: 2024-01-12 (3 days ago)
+Registrar: Example Registrar
+Registrant: Privacy Protection Service
+Expiration: 2025-01-12
+Status: Active
+
+Hosting Information:
+-------------------
+IP Address: 198.51.100.45
+Hosting Provider: AWS (us-east-1)
+Server Type: Nginx/1.20.1
+SSL Certificate: Let's Encrypt (valid until 2024-04-15)
+Certificate Authority: Let's Encrypt
+
+Website Analysis:
+-----------------
+Design: Professional, matches corporate IT portal
+Content: Login form, corporate branding
+Functionality: Credential capture form
+Security: HTTPS enabled, valid SSL certificate
+Warnings: None (appears legitimate to casual users)
+
+Technical Analysis:
+-------------------
+- HTML structure: Professional
+- JavaScript: Minimal (form validation only)
+- Cookies: Session tracking
+- External Resources: None (self-contained)
+- Malware: None detected
+- Phishing Indicators: Credential capture form
+
+Credential Capture Method:
+---------------------------
+Form Action: POST to /api/login
+Data Sent: Username, Password
+Encryption: HTTPS (TLS 1.3)
+Storage: Backend database (encrypted)
+Logging: All input logged with timestamps
+
+Access Logs Analysis:
+---------------------
+[09:46:25] First access from executive's IP
+[09:46:32] Login form displayed
+[09:47:15] Credentials submitted
+[09:47:16] Success message displayed
+[10:00:15] Credentials tested against corporate systems
+
+Threat Intelligence:
+--------------------
+Domain Age: 3 days (suspicious)
+Registration: Privacy protection (hides identity)
+Hosting: Cloud provider (easily moved)
+SSL: Valid but from free CA
+Reputation: Not in threat feeds (too new)
+
+Comparison with Legitimate Portal:
+-----------------------------------
+Legitimate: support.corp.local
+Fake: support-corp-help.tk
+
+Differences:
+- Domain extension (.tk vs .local)
+- Domain age (years vs days)
+- Hosting (internal vs external)
+- Registration (corporate vs privacy)
+
+Similarities:
+- Design and branding
+- Login form layout
+- Professional appearance
+- SSL certificate
+
+Conclusion:
+-----------
+This is a FAKE SUPPORT PORTAL designed to harvest credentials.
+The domain was registered 3 days ago specifically for this attack.
+The design mimics the legitimate IT portal to appear trustworthy.
+
+Recommended Actions:
+--------------------
+1. ✓ Block domain support-corp-help.tk
+2. ✓ Report to threat intelligence feeds
+3. ✓ Document for security awareness
+4. ✓ Monitor for similar domains
+5. ✓ Investigate hosting provider
+
+Status: MALICIOUS PORTAL IDENTIFIED
+"""
+    with open(ARTIFACTS_DIR / "portal_analysis_phase3.txt", 'w') as f:
+        f.write(content)
+    print("Created: portal_analysis_phase3.txt")
+
+
+def create_credential_success_eb():
+    """Create credential harvesting success for Red Team."""
+    content = """Credential Harvesting Report
+==================================
+Target: executive@corp.local
+Status: SUCCESS
+
+Credentials Captured:
+---------------------
+Username: executive@corp.local
+Password: [REDACTED - VERIFIED]
+Capture Method: Fake support portal
+Capture Time: 2024-01-15 09:47:15 UTC
+Capture IP: Executive's corporate IP
+
+Credential Testing Results:
+---------------------------
+[10:00:15] Email (OWA): Testing...
+[10:00:15] Result: FAILED (wrong password)
+[10:00:32] VPN: Testing...
+[10:00:32] Result: FAILED (wrong password)
+[10:01:05] File Shares: Testing...
+[10:01:05] Result: FAILED (authentication error)
+
+[10:01:28] Email (OWA): Retesting...
+[10:01:28] Result: SUCCESS ✓
+[10:01:45] VPN: Retesting...
+[10:01:45] Result: SUCCESS ✓
+[10:02:12] File Shares: Retesting...
+[10:02:12] Result: SUCCESS ✓
+
+Systems Accessible:
+-------------------
+✓ Email (OWA): Full access
+  - Inbox: Accessible
+  - Sent items: Accessible
+  - Contacts: Accessible
+  - Calendar: Accessible
+
+✓ VPN: Connected
+  - Network access: Granted
+  - Internal resources: Accessible
+
+✓ File Shares: Read/Write access
+  - \\FS-01\\Executive: Full access
+  - \\FS-01\\Finance: Read access
+  - \\FS-01\\Shared: Read access
+
+✓ CRM System: Full access
+  - Customer database: Accessible
+  - Sales records: Accessible
+  - Reports: Accessible
+
+Account Privileges:
+------------------
+User Role: Executive
+Access Level: High
+Permissions: Extensive
+Sensitive Data Access: YES
+
+Persistence Mechanisms:
+-----------------------
+✓ Email forwarding rule created
+  - All emails forwarded to attacker@external.com
+  - Rule hidden from user view
+
+✓ Calendar access enabled
+  - Monitoring executive's schedule
+  - Access to meeting details
+
+✓ Contact list copied
+  - All contacts exported
+  - Useful for future attacks
+
+Status: ALL SYSTEMS OPERATIONAL - Ready for Phase 4
+"""
+    with open(ARTIFACTS_DIR / "credential_success_phase3.txt", 'w') as f:
+        f.write(content)
+    print("Created: credential_success_phase3.txt")
+
+
+def create_access_verification():
+    """Create access verification report for Red Team."""
+    content = """Access Verification Report
+==================================
+Target: executive@corp.local
+Verification Date: 2024-01-15 10:05:00 UTC
+Status: ALL SYSTEMS ACCESSIBLE
+
+System Access Summary:
+---------------------
+1. Email (OWA): ✓ FULL ACCESS
+   - Inbox: 1,247 emails accessible
+   - Sent items: 523 emails accessible
+   - Contacts: 187 contacts accessible
+   - Calendar: Full calendar access
+   - Attachments: Downloadable
+
+2. VPN: ✓ CONNECTED
+   - Network: Corporate network accessible
+   - Internal IP: 192.168.0.45
+   - Resources: All internal systems accessible
+   - Bandwidth: 100 Mbps
+
+3. File Shares: ✓ READ/WRITE ACCESS
+   - \\FS-01\\Executive: Full access (2.1 GB)
+   - \\FS-01\\Finance: Read access (5.4 GB)
+   - \\FS-01\\Shared: Read access (12.3 GB)
+   - Total accessible: 19.8 GB
+
+4. CRM System: ✓ FULL ACCESS
+   - Customer database: 45,000 records
+   - Sales records: 12,000 transactions
+   - Reports: All reports accessible
+   - Export capability: YES
+
+5. Financial Portal: ✓ READ ACCESS
+   - Financial reports: Q1-Q4 2023
+   - Budget forecasts: 2024
+   - Vendor contracts: Accessible
+   - Payment records: Accessible
+
+Data Identified:
+----------------
+High-Value Data:
+- Customer PII: 45,000 records
+- Financial records: Q4 2023 reports
+- Business intelligence: Strategic documents
+- Vendor contracts: Confidential agreements
+- Employee data: Department contacts
+
+Estimated Data Value: $17M+
+
+Persistence Status:
+------------------
+✓ Email forwarding: ACTIVE
+✓ Calendar monitoring: ACTIVE
+✓ Contact export: COMPLETE
+✓ Backup access: ATTEMPTED (pending)
+
+Next Steps:
+-----------
+1. Begin intelligence gathering
+2. Identify additional high-value targets
+3. Attempt privilege escalation
+4. Prepare for data exfiltration
+5. Maintain persistence
+
+Status: PHASE 3 COMPLETE - Ready for Phase 4
+"""
+    with open(ARTIFACTS_DIR / "access_verification_phase3.txt", 'w') as f:
+        f.write(content)
+    print("Created: access_verification_phase3.txt")
+
+
+# Continue with Phase 4 and Phase 5 artifacts...
+def create_unauthorized_access():
+    """Create unauthorized access alert for Blue Team."""
+    content = """Unauthorized Access Alert
+==================================
+Alert ID: UNAUTH-2024-0115-100128
+Timestamp: 2024-01-15 10:01:28 UTC
+Severity: CRITICAL
+Alert Type: Unauthorized Account Access
+
+User Account: executive@corp.local
+Access Source: 203.0.113.45 (EXTERNAL, UNKNOWN)
+User's Normal Location: Corporate office (192.168.0.10)
+Geographic Anomaly: DETECTED
+
+Access Details:
+--------------
+[10:01:28] Email (OWA) - SUCCESSFUL LOGIN
+  Source IP: 203.0.113.45
+  Location: Unknown (VPN/Proxy)
+  User Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
+  Session ID: SESS-2024-0115-100128
+
+[10:01:45] VPN - SUCCESSFUL CONNECTION
+  Source IP: 203.0.113.45
+  Internal IP Assigned: 192.168.0.45
+  User Agent: VPN Client 2.4.1
+  Session ID: VPN-2024-0115-100145
+
+[10:02:12] File Shares - SUCCESSFUL ACCESS
+  Source IP: 203.0.113.45 (via VPN)
+  Share: \\FS-01\\Executive
+  Access Type: Read/Write
+  Session ID: FS-2024-0115-100212
+
+Activity Patterns:
+------------------
+[10:02:30] Email access: Reading confidential emails
+[10:03:15] Email search: "password", "credentials", "admin"
+[10:04:22] File share access: \\FS-01\\Executive\\Finance
+[10:05:10] CRM system access: Customer database
+[10:06:45] Email access: Searching for "service account"
+[10:07:30] File share access: \\FS-01\\Finance\\Q4-2023
+
+Sensitive Data Accessed:
+------------------------
+- Confidential emails: 23 emails read
+- Financial reports: Q4 2023 accessed
+- Customer data: CRM database queried
+- Business documents: 12 files accessed
+- Credential references: 8 emails searched
+
+Privilege Escalation Attempts:
+-------------------------------
+[10:06:45] Email search: "administrator password"
+[10:07:15] Email search: "service account credentials"
+[10:08:00] File share access: \\FS-01\\Admin (DENIED)
+[10:08:30] Backup system access: Attempted (DENIED)
+
+Threat Assessment:
+------------------
+Confidence: 99% UNAUTHORIZED ACCESS
+Risk Level: CRITICAL
+Data at Risk: HIGH
+
+Immediate Actions:
+-------------------
+1. ✓ Revoke all active sessions
+2. ✓ Force password reset
+3. ✓ Isolate account from critical systems
+4. ✓ Monitor for further access attempts
+5. ✓ Document all accessed data
+6. ✓ Alert executive about breach
+
+Status: ACTIVE BREACH - CONTAINMENT IN PROGRESS
+"""
+    with open(ARTIFACTS_DIR / "unauthorized_access_phase4.txt", 'w') as f:
+        f.write(content)
+    print("Created: unauthorized_access_phase4.txt")
+
+
+def create_privilege_escalation_log():
+    """Create privilege escalation attempt log for Blue Team."""
+    content = """Privilege Escalation Attempt Log
+========================================
+Incident ID: PE-2024-0115-100645
+Date: 2024-01-15
+Time: 10:06:45 UTC
+User Account: executive@corp.local
+Source IP: 203.0.113.45
+
+Escalation Attempts:
+--------------------
+[10:06:45] Email Search: "administrator password"
+  Result: 0 results found
+  Status: FAILED
+
+[10:07:15] Email Search: "service account credentials"
+  Result: 0 results found
+  Status: FAILED
+
+[10:08:00] File Share Access: \\FS-01\\Admin
+  Result: ACCESS DENIED
+  Status: FAILED
+  Reason: Insufficient permissions
+
+[10:08:30] Backup System Access: Attempted
+  Result: ACCESS DENIED
+  Status: FAILED
+  Reason: Requires domain admin privileges
+
+[10:09:15] Domain Controller Access: Attempted
+  Result: ACCESS DENIED
+  Status: FAILED
+  Reason: Requires domain admin privileges
+
+[10:10:00] Service Account Enumeration: Attempted
+  Result: PARTIAL (read-only access to service list)
+  Status: LIMITED SUCCESS
+  Details: Can view service accounts but cannot access credentials
+
+Current Account Privileges:
+---------------------------
+User Role: Executive
+Domain Group: Executives
+Local Admin: NO
+Domain Admin: NO
+Service Account Access: NO
+Backup Access: NO
+
+Attempted Privilege Escalation Methods:
+---------------------------------------
+1. Credential search in emails: FAILED
+2. File share access to admin directories: FAILED
+3. Backup system access: FAILED
+4. Domain controller access: FAILED
+5. Service account enumeration: LIMITED
+
+Security Controls:
+------------------
+✓ Privilege escalation attempts logged
+✓ All failed attempts blocked
+✓ Account isolated from admin resources
+✓ Monitoring active for further attempts
+
+Recommendations:
+----------------
+1. Continue monitoring for escalation attempts
+2. Maintain account isolation
+3. Document all attempts for forensic analysis
+4. Prepare for potential lateral movement
+
+Status: ESCALATION ATTEMPTS BLOCKED - MONITORING ACTIVE
+"""
+    with open(ARTIFACTS_DIR / "privilege_escalation_phase4.txt", 'w') as f:
+        f.write(content)
+    print("Created: privilege_escalation_phase4.txt")
+
+
+def create_email_intel():
+    """Create email intelligence report for Red Team."""
+    content = """Email Intelligence Report
+==================================
+Target: executive@corp.local
+Analysis Date: 2024-01-15 10:15:00 UTC
+Status: INTELLIGENCE GATHERING COMPLETE
+
+Email Analysis:
+---------------
+Total Emails Accessed: 1,247
+Time Period: Last 6 months
+Analysis Focus: Credentials, business intelligence, sensitive data
+
+Sensitive Emails Found:
+-----------------------
+Financial Reports: 23 emails
+  - Q4 2023 revenue reports
+  - Budget forecasts for 2024
+  - Vendor contract negotiations
+  - Payment records
+
+Customer Data: 45 emails
+  - Customer PII (names, addresses, phone numbers)
+  - Purchase history
+  - Account details
+  - Estimated: 45,000 customer records
+
+Business Strategy: 12 emails
+  - Strategic plans for 2024
+  - Market analysis
+  - Competitive intelligence
+  - Merger/acquisition discussions
+
+Credential References: 8 emails
+  - Service account mentions (no passwords)
+  - API key references (expired)
+  - Database connection strings (encrypted)
+  - No admin credentials found
+
+High-Value Targets Identified:
+------------------------------
+1. CRM Database
+   - 45,000 customer records
+   - Full PII (names, addresses, emails, phone numbers)
+   - Purchase history
+   - Estimated value: $2.25M
+
+2. Financial Records
+   - Q4 2023 revenue: $12.5M
+   - Budget forecasts: 2024 projections
+   - Vendor contracts: Confidential agreements
+   - Estimated value: $5M+
+
+3. Business Intelligence
+   - Strategic plans: 2024 roadmap
+   - Market analysis: Competitive landscape
+   - M&A discussions: Potential acquisitions
+   - Estimated value: $10M+
+
+4. Employee Data
+   - Department contacts: 187 employees
+   - Organizational structure
+   - Salary information (partial)
+   - Estimated value: $500K
+
+Data Exfiltration Plan:
+-----------------------
+Priority 1: Customer PII (45,000 records)
+  - Format: CSV export
+  - Size: ~1.8 GB
+  - Value: $2.25M
+
+Priority 2: Financial Records (Q4 2023)
+  - Format: PDF reports
+  - Size: ~450 MB
+  - Value: $5M+
+
+Priority 3: Business Intelligence
+  - Format: Documents, presentations
+  - Size: ~250 MB
+  - Value: $10M+
+
+Total Estimated Value: $17M+
+
+Status: INTELLIGENCE GATHERING COMPLETE - Ready for exfiltration
+"""
+    with open(ARTIFACTS_DIR / "email_intel_phase4.txt", 'w') as f:
+        f.write(content)
+    print("Created: email_intel_phase4.txt")
+
+
+def create_system_map():
+    """Create system access map for Red Team."""
+    content = """System Access Map
+==========================
+Target: executive@corp.local
+Mapping Date: 2024-01-15 10:20:00 UTC
+Status: NETWORK MAPPING COMPLETE
+
+Systems Under Control:
+----------------------
+1. Email (OWA): ✓ FULL ACCESS
+   - Inbox: 1,247 emails
+   - Sent items: 523 emails
+   - Contacts: 187 contacts
+   - Calendar: Full access
+   - Forwarding: Active
+
+2. VPN: ✓ CONNECTED
+   - Internal IP: 192.168.0.45
+   - Network: Corporate network
+   - Bandwidth: 100 Mbps
+   - Resources: All internal systems
+
+3. File Shares: ✓ READ/WRITE ACCESS
+   - \\FS-01\\Executive: 2.1 GB (Full access)
+   - \\FS-01\\Finance: 5.4 GB (Read access)
+   - \\FS-01\\Shared: 12.3 GB (Read access)
+   - Total: 19.8 GB accessible
+
+4. CRM System: ✓ FULL ACCESS
+   - Customer database: 45,000 records
+   - Sales records: 12,000 transactions
+   - Reports: All accessible
+   - Export: Enabled
+
+5. Financial Portal: ✓ READ ACCESS
+   - Financial reports: Q1-Q4 2023
+   - Budget forecasts: 2024
+   - Vendor contracts: Accessible
+   - Payment records: Accessible
+
+Data Identified:
+----------------
+High-Value Data:
+- Customer PII: 45,000 records (1.8 GB)
+- Financial records: Q4 2023 (450 MB)
+- Business documents: 2,100 files (250 MB)
+- Vendor contracts: Confidential (150 MB)
+
+Total Data Volume: 2.65 GB
+Estimated Value: $17M+
+
+Privilege Escalation Status:
+---------------------------
+Domain Admin: NO (attempts failed)
+Local Admin: NO (not required)
+Service Accounts: NO (cannot access)
+Backup Systems: NO (access denied)
+
+Current Access Level: Executive-level
+Sufficient for data exfiltration: YES
+
+Persistence Mechanisms:
+-----------------------
+✓ Email forwarding: Active
+✓ Calendar monitoring: Active
+✓ Contact export: Complete
+✓ Session maintenance: Active
+
+Exfiltration Readiness:
+----------------------
+Data identified: ✓
+Access verified: ✓
+Exfiltration method: HTTPS (encrypted)
+Destination: 198.51.100.45
+Bandwidth: 100 Mbps
+Estimated time: 2-3 hours
+
+Status: READY FOR DATA EXFILTRATION
+"""
+    with open(ARTIFACTS_DIR / "system_map_phase4.txt", 'w') as f:
+        f.write(content)
+    print("Created: system_map_phase4.txt")
+
+
+def create_lateral_movement():
+    """Create lateral movement detection log for Blue Team."""
+    content = """Lateral Movement Detection
+==================================
+Incident ID: LM-2024-0115-103000
+Date: 2024-01-15
+Time: 10:30:00 UTC
+User Account: executive@corp.local
+Source IP: 203.0.113.45 (via VPN: 192.168.0.45)
+
+Lateral Movement Activity:
+---------------------------
+[10:30:15] CRM Database Access
+  System: CRM-01.corp.local
+  Access Type: Database query
+  Data Accessed: Customer records
+  Records Queried: 45,000
+  Status: SUCCESS
+
+[10:32:45] Financial System Access
+  System: FIN-01.corp.local
+  Access Type: Report generation
+  Data Accessed: Q4 2023 financial reports
+  Files Accessed: 12 reports
+  Status: SUCCESS
+
+[10:35:20] File Share Access
+  System: FS-01.corp.local
+  Share: \\FS-01\\Finance\\Q4-2023
+  Access Type: Read
+  Files Accessed: 45 files
+  Status: SUCCESS
+
+[10:38:10] Email System Access
+  System: EXCH-01.corp.local
+  Access Type: Email search and read
+  Emails Accessed: 1,247 emails
+  Sensitive Emails: 23 financial, 45 customer data
+  Status: SUCCESS
+
+[10:40:30] Backup System Access Attempt
+  System: BACKUP-01.corp.local
+  Access Type: Credential access attempt
+  Result: DENIED (insufficient privileges)
+  Status: FAILED
+
+Data Access Summary:
+-------------------
+Systems Accessed: 4
+Data Types Accessed:
+  - Customer PII: 45,000 records
+  - Financial records: Q4 2023 reports
+  - Business documents: 2,100 files
+  - Email communications: 1,247 emails
+
+Data Volume Accessed: 2.65 GB
+Data Classification:
+  - Customer PII: HIGH RISK
+  - Financial Data: CONFIDENTIAL
+  - Business Intelligence: PROPRIETARY
+
+Network Traffic Analysis:
+--------------------------
+Outbound Traffic Detected:
+  Destination: 198.51.100.45 (EXTERNAL)
+  Protocol: HTTPS (encrypted)
+  Volume: 2.5 GB over 2 hours
+  Pattern: Sustained data transfer
+  Status: DATA EXFILTRATION IN PROGRESS
+
+Threat Assessment:
+------------------
+Confidence: 99% LATERAL MOVEMENT + DATA EXFILTRATION
+Risk Level: CRITICAL
+Data at Risk: 2.5 GB (HIGH-VALUE)
+
+Immediate Actions:
+------------------
+1. ✓ Block IP address 203.0.113.45
+2. ✓ Revoke VPN access
+3. ✓ Isolate compromised account
+4. ✓ Stop data exfiltration
+5. ✓ Document all accessed data
+6. ✓ Prepare breach notification
+
+Status: ACTIVE BREACH - EXFILTRATION IN PROGRESS
+"""
+    with open(ARTIFACTS_DIR / "lateral_movement_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: lateral_movement_phase5.txt")
+
+
+def create_exfiltration_analysis():
+    """Create data exfiltration analysis for Blue Team."""
+    content = """Data Exfiltration Analysis
+==================================
+Incident ID: EXFIL-2024-0115-103000
+Date: 2024-01-15
+Time: 10:30:00 - 12:30:00 UTC
+Duration: 2 hours
+Status: EXFILTRATION DETECTED
+
+Exfiltration Summary:
+---------------------
+Total Volume: 2.5 GB
+Time Period: 2 hours
+Average Rate: 1.25 GB/hour
+Peak Rate: 2.1 GB/hour (11:15-11:45 UTC)
+Destination: 198.51.100.45 (EXTERNAL)
+
+Data Types Exfiltrated:
+------------------------
+1. Customer PII: 1.8 GB
+   - Records: 45,000 customer records
+   - Content: Names, addresses, emails, phone numbers
+   - Format: CSV export
+   - Classification: HIGH RISK (PII)
+
+2. Financial Records: 450 MB
+   - Content: Q4 2023 financial reports
+   - Files: 12 PDF reports
+   - Classification: CONFIDENTIAL
+
+3. Business Documents: 250 MB
+   - Content: Strategic plans, market analysis
+   - Files: 2,100 documents
+   - Classification: PROPRIETARY
+
+Total: 2.5 GB
+
+Network Traffic Analysis:
+-------------------------
+Source IP: 203.0.113.45 (via VPN: 192.168.0.45)
+Destination IP: 198.51.100.45
+Protocol: HTTPS (TLS 1.3)
+Port: 443
+Encryption: Yes (cannot inspect content)
+Pattern: Sustained, consistent transfer
+
+Transfer Timeline:
+------------------
+[10:30:00] Exfiltration started
+[10:30:15] Customer PII transfer begins (1.8 GB)
+[11:15:00] Customer PII transfer completes
+[11:15:15] Financial records transfer begins (450 MB)
+[11:45:00] Financial records transfer completes
+[11:45:15] Business documents transfer begins (250 MB)
+[12:30:00] Business documents transfer completes
+[12:30:00] Exfiltration ends
+
+Regulatory Impact:
+------------------
+GDPR (EU): VIOLATION
+  - 45,000 EU customer records potentially affected
+  - Breach notification required within 72 hours
+  - Potential fines: Up to 4% of annual revenue
+
+CCPA (California): VIOLATION
+  - California residents' data affected
+  - Breach notification required
+  - Potential fines: $2,500-$7,500 per violation
+
+HIPAA (if applicable): POTENTIAL VIOLATION
+  - Health information may be included
+  - Breach notification required
+  - Potential fines: $100-$50,000 per violation
+
+Estimated Financial Impact:
+----------------------------
+Data Value: $17M+
+Regulatory Fines: $500K - $2M (estimated)
+Legal Costs: $200K - $500K (estimated)
+Reputation Damage: Significant
+Total Estimated Impact: $18M+
+
+Containment Actions:
+--------------------
+[12:30:15] IP address 203.0.113.45 blocked
+[12:30:20] VPN access revoked
+[12:30:25] Account isolated from critical systems
+[12:30:30] Password reset forced
+[12:30:35] All active sessions revoked
+
+Status: EXFILTRATION COMPLETE - CONTAINMENT IN PROGRESS
+"""
+    with open(ARTIFACTS_DIR / "exfiltration_analysis_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: exfiltration_analysis_phase5.txt")
+
+
+def create_persistence_found():
+    """Create persistence mechanisms found report for Blue Team."""
+    content = """Persistence Mechanisms Found
+========================================
+Incident ID: PERSIST-2024-0115-123045
+Date: 2024-01-15
+Time: 12:30:45 UTC
+Analyst: Security Operations Center
+
+Persistence Mechanisms Discovered:
+-----------------------------------
+1. Email Forwarding Rule: FOUND
+   Rule Name: "Auto-Forward Important Emails"
+   Destination: attacker@external.com
+   Status: ACTIVE
+   Created: 2024-01-15 10:05:00 UTC
+   Visibility: Hidden from user view
+   Action Taken: REMOVED
+
+2. Calendar Access: FOUND
+   Access Type: Full calendar read access
+   Purpose: Monitor executive's schedule
+   Status: ACTIVE
+   Created: 2024-01-15 10:06:00 UTC
+   Action Taken: REVOKED
+
+3. Contact List Export: FOUND
+   Export Date: 2024-01-15 10:07:00 UTC
+   Records Exported: 187 contacts
+   Format: CSV
+   Destination: External (unknown)
+   Action Taken: Cannot reverse (already exported)
+
+4. Backup System Access Attempt: FOUND
+   Attempt Date: 2024-01-15 10:08:30 UTC
+   Result: FAILED (insufficient privileges)
+   Status: BLOCKED
+   Action Taken: Access permanently denied
+
+5. Session Maintenance: FOUND
+   Method: Keep-alive requests
+   Frequency: Every 5 minutes
+   Status: ACTIVE
+   Action Taken: All sessions revoked
+
+Removal Actions:
+--------------
+[12:30:45] Email forwarding rule removed
+[12:30:50] Calendar access revoked
+[12:30:55] All active sessions terminated
+[12:31:00] Password reset forced
+[12:31:05] Account isolated from critical systems
+
+Remaining Risks:
+---------------
+1. Contact list already exported (cannot reverse)
+2. Attacker may have created additional persistence (investigating)
+3. Backup credentials may have been accessed (investigating)
+4. Attacker may return using different methods (monitoring)
+
+Recommendations:
+----------------
+1. Continue monitoring for additional persistence
+2. Review all account settings for changes
+3. Monitor for return access attempts
+4. Implement additional security controls
+5. Conduct security awareness training
+
+Status: PERSISTENCE MECHANISMS REMOVED - MONITORING ACTIVE
+"""
+    with open(ARTIFACTS_DIR / "persistence_found_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: persistence_found_phase5.txt")
+
+
+def create_exfiltration_progress_eb():
+    """Create data exfiltration progress for Red Team."""
+    content = """Data Exfiltration Status
+============================
+Operation: DATA THEFT
+Target: executive@corp.local
+Status: IN PROGRESS
+
+Exfiltration Progress:
+----------------------
+[10:30:00] Exfiltration started
+[10:30:15] Customer PII transfer: 0% → 100% (1.8 GB)
+[11:15:00] Customer PII: COMPLETE ✓
+[11:15:15] Financial records transfer: 0% → 100% (450 MB)
+[11:45:00] Financial records: COMPLETE ✓
+[11:45:15] Business documents transfer: 0% → 100% (250 MB)
+[12:30:00] Business documents: COMPLETE ✓
+[12:30:00] Exfiltration: COMPLETE ✓
+
+Data Collected:
+---------------
+Customer Database: 45,000 records (1.8 GB)
+  - Names, addresses, phone numbers
+  - Email addresses
+  - Purchase history
+  - Estimated value: $2.25M
+
+Financial Records: Q4 2023 (450 MB)
+  - Revenue reports
+  - Budget forecasts
+  - Vendor contracts
+  - Estimated value: $5M+
+
+Business Documents: 2,100 files (250 MB)
+  - Strategic plans
+  - Market analysis
+  - Competitive intelligence
+  - Estimated value: $10M+
+
+Total: 2.5 GB
+Total Estimated Value: $17M+
+
+Upload Status:
+--------------
+Destination: 198.51.100.45
+Protocol: HTTPS (TLS 1.3)
+Encryption: AES-256
+Transferred: 2.5 GB / 2.5 GB (100%)
+Status: COMPLETE ✓
+
+Transfer Details:
+-----------------
+Start Time: 10:30:00 UTC
+End Time: 12:30:00 UTC
+Duration: 2 hours
+Average Rate: 1.25 GB/hour
+Peak Rate: 2.1 GB/hour
+
+Persistence Maintained:
+----------------------
+✓ Email forwarding: Active
+✓ Calendar monitoring: Active
+✓ Contact export: Complete
+✓ Session maintenance: Active
+
+Detection Risk:
+---------------
+Network monitoring: May detect large transfers
+Encryption: HTTPS (cannot inspect content)
+Timing: Off-hours (lower monitoring)
+Status: LOW RISK (so far)
+
+Next Steps:
+-----------
+1. Verify all data received
+2. Maintain persistence for future access
+3. Cover tracks (delete logs if possible)
+4. Prepare for potential detection
+
+Status: EXFILTRATION COMPLETE - PERSISTENCE MAINTAINED
+"""
+    with open(ARTIFACTS_DIR / "exfiltration_progress_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: exfiltration_progress_phase5.txt")
+
+
+def create_stolen_data_inventory_eb():
+    """Create stolen data inventory for Red Team."""
+    content = """Stolen Data Inventory
+==========================
+Operation: DATA THEFT
+Date: 2024-01-15
+Status: COMPLETE
+
+High-Value Data Stolen:
+-----------------------
+1. Customer PII: 45,000 records
+   Content:
+     - Full names
+     - Physical addresses
+     - Email addresses
+     - Phone numbers
+     - Purchase history
+     - Account details
+   
+   Format: CSV export
+   Size: 1.8 GB
+   Estimated Value: $2.25M
+   Market Value: $50-100 per record
+   Total Market Value: $2.25M - $4.5M
+
+2. Financial Records: Q4 2023
+   Content:
+     - Revenue reports: $12.5M Q4 revenue
+     - Budget forecasts: 2024 projections
+     - Vendor contracts: Confidential agreements
+     - Payment records: Transaction details
+   
+   Format: PDF reports
+   Size: 450 MB
+   Estimated Value: $5M+
+   Use Cases: Competitive intelligence, fraud
+
+3. Business Intelligence
+   Content:
+     - Strategic plans: 2024 roadmap
+     - Market analysis: Competitive landscape
+     - M&A discussions: Potential acquisitions
+     - Business documents: 2,100 files
+   
+   Format: Documents, presentations
+   Size: 250 MB
+   Estimated Value: $10M+
+   Use Cases: Competitive advantage, insider trading
+
+Total Stolen Data:
+------------------
+Volume: 2.5 GB
+Records: 45,000+ customer records
+Files: 2,100+ business documents
+Reports: 12 financial reports
+Estimated Total Value: $17M+
+
+Data Classification:
+--------------------
+Customer PII: HIGH RISK (GDPR, CCPA)
+Financial Data: CONFIDENTIAL
+Business Intelligence: PROPRIETARY
+Regulatory Impact: SIGNIFICANT
+
+Potential Uses:
+---------------
+1. Identity theft: Customer PII
+2. Fraud: Financial records
+3. Competitive advantage: Business intelligence
+4. Extortion: Threaten disclosure
+5. Resale: Dark web markets
+
+Status: ALL DATA SUCCESSFULLY EXFILTRATED
+"""
+    with open(ARTIFACTS_DIR / "stolen_data_inventory_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: stolen_data_inventory_phase5.txt")
+
+
+def create_attack_summary_eb():
+    """Create attack summary for Red Team."""
+    content = """Attack Summary - Mission Accomplished
+==========================================
+Operation: Email Bomb & Social Engineering
+Target: executive@corp.local
+Status: COMPLETE SUCCESS
+
+Timeline:
+---------
+[09:15:00] Phase 1: Email Bomb Deployment
+  - 8,247 emails sent
+  - 94.2% delivery success rate
+  - Target inbox overwhelmed
+  - Status: SUCCESS ✓
+
+[09:45:00] Phase 2: Social Engineering Call
+  - Support call initiated
+  - Trust established
+  - Fake portal accessed
+  - Status: SUCCESS ✓
+
+[10:00:00] Phase 3: Credential Harvesting
+  - Credentials captured
+  - Systems tested
+  - Access verified
+  - Status: SUCCESS ✓
+
+[10:15:00] Phase 4: Initial Access & Intelligence
+  - Email accessed
+  - Systems mapped
+  - Data identified
+  - Status: SUCCESS ✓
+
+[10:30:00] Phase 5: Data Exfiltration
+  - 2.5 GB data stolen
+  - Customer PII: 45,000 records
+  - Financial records: Q4 2023
+  - Business intelligence: 2,100 files
+  - Status: SUCCESS ✓
+
+[12:30:00] Mission Complete
+
+Results:
+--------
+✓ Email bomb successful (8,247 emails)
+✓ Social engineering successful (12-minute call)
+✓ Credentials harvested (executive@corp.local)
+✓ Full system access obtained
+✓ 2.5 GB data exfiltrated
+✓ Persistence mechanisms deployed
+✓ Estimated data value: $17M+
+
+Systems Compromised:
+--------------------
+✓ Email (OWA): Full access
+✓ VPN: Connected
+✓ File Shares: Read/Write access
+✓ CRM System: Full access
+✓ Financial Portal: Read access
+
+Data Stolen:
+------------
+- Customer PII: 45,000 records (1.8 GB)
+- Financial Records: Q4 2023 (450 MB)
+- Business Intelligence: 2,100 files (250 MB)
+- Total: 2.5 GB
+- Estimated Value: $17M+
+
+Persistence:
+-----------
+✓ Email forwarding: Active
+✓ Calendar monitoring: Active
+✓ Contact export: Complete
+✓ Session maintenance: Active
+
+Detection Status:
+-----------------
+Network monitoring: May have detected transfers
+Account isolation: Possible (monitoring)
+Password reset: Possible (prepared)
+Overall risk: LOW (mission complete)
+
+Status: ATTACK COMPLETE - DATA SECURED - PERSISTENCE MAINTAINED
+"""
+    with open(ARTIFACTS_DIR / "attack_summary_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: attack_summary_phase5.txt")
+
+
 if __name__ == "__main__":
     print("Generating realistic artifact files...")
     print(f"Artifacts directory: {ARTIFACTS_DIR}\n")
@@ -1739,6 +3600,36 @@ if __name__ == "__main__":
     create_encryption_status()
     create_negotiation_status()
     create_attack_summary()
+    
+    # Email Bomb scenario artifacts
+    print("\nCreating Email Bomb & Social Engineering Attack artifacts...")
+    # Phase 1
+    create_email_volume_alert()
+    create_email_header_analysis()
+    create_email_bomb_status()
+    create_call_script()
+    # Phase 2
+    create_support_call_log()
+    create_se_indicators()
+    create_call_success()
+    create_portal_status()
+    # Phase 3
+    create_auth_anomaly()
+    create_portal_analysis()
+    create_credential_success_eb()
+    create_access_verification()
+    # Phase 4
+    create_unauthorized_access()
+    create_privilege_escalation_log()
+    create_email_intel()
+    create_system_map()
+    # Phase 5
+    create_lateral_movement()
+    create_exfiltration_analysis()
+    create_persistence_found()
+    create_exfiltration_progress_eb()
+    create_stolen_data_inventory_eb()
+    create_attack_summary_eb()
     
     # Create image placeholders
     create_image_placeholder(
