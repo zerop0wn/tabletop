@@ -177,7 +177,9 @@ class PlayerVote(Base):
     phase_id = Column(Integer, ForeignKey("scenario_phases.id"), nullable=False)
     player_id = Column(Integer, ForeignKey("players.id"), nullable=False)
     selected_action = Column(String, nullable=False)  # Single action voted for
-    justification = Column(Text, nullable=True)
+    justification = Column(Text, nullable=True)  # Kept for backward compatibility
+    effectiveness_rating = Column(Integer, nullable=True)  # 1-10 rating
+    comments = Column(String(500), nullable=True)  # Max 500 characters
     voted_at = Column(DateTime(timezone=True), server_default=func.now())
 
     game = relationship("Game")
@@ -198,6 +200,37 @@ class ScoreEvent(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     game = relationship("Game")
+
+
+class PhaseGMNotes(Base):
+    __tablename__ = "phase_gm_notes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    game_id = Column(Integer, ForeignKey("games.id"), nullable=False)
+    phase_id = Column(Integer, ForeignKey("scenario_phases.id"), nullable=False)
+    gm_id = Column(Integer, ForeignKey("gm_users.id"), nullable=False)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), nullable=True, onupdate=func.now())
+
+    game = relationship("Game")
+    phase = relationship("ScenarioPhase")
+    gm = relationship("GMUser")
+
+
+class AfterActionReport(Base):
+    __tablename__ = "after_action_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    game_id = Column(Integer, ForeignKey("games.id"), nullable=False, unique=True)
+    generated_at = Column(DateTime(timezone=True), server_default=func.now())
+    overall_risk_rating = Column(String, nullable=False)  # "Critical", "High", "Medium", "Low", "Very Low"
+    overall_risk_score = Column(Integer, nullable=False)  # Average of all phase ratings (1-10)
+    report_data = Column(JSON, nullable=False)  # Full report data as JSON
+    gm_id = Column(Integer, ForeignKey("gm_users.id"), nullable=False)
+
+    game = relationship("Game")
+    gm = relationship("GMUser")
     team = relationship("Team")
     phase = relationship("ScenarioPhase")
 

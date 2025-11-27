@@ -6,6 +6,7 @@ import GMCreateGame from './pages/GMCreateGame'
 import PlayerJoin from './pages/PlayerJoin'
 import PlayerView from './pages/PlayerView'
 import AudienceView from './pages/AudienceView'
+import AfterActionReportView from './pages/AfterActionReportView'
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
         <Route path="/gm" element={<GMGamesList />} />
         <Route path="/gm/games/new" element={<GMCreateGame />} />
         <Route path="/gm/games/:id" element={<GMGameDashboard />} />
+        <Route path="/gm/games/:id/after-action-report" element={<AfterActionReportView />} />
         <Route path="/play/join" element={<PlayerJoin />} />
         <Route path="/play/game/:gameId/player/:playerId" element={<PlayerView />} />
         <Route path="/audience/:gameIdentifier" element={<AudienceView />} />

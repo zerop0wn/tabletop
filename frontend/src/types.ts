@@ -75,7 +75,9 @@ export interface PlayerVote {
   player_id: number
   player_name: string
   selected_action: string
-  justification?: string
+  effectiveness_rating?: number
+  comments?: string
+  justification?: string  // Kept for backward compatibility
   voted_at: string
 }
 

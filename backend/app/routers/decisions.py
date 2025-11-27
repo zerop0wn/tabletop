@@ -46,7 +46,9 @@ def submit_vote(
     if existing_vote:
         # Update existing vote
         existing_vote.selected_action = vote_data.selected_action
-        existing_vote.justification = vote_data.justification
+        existing_vote.effectiveness_rating = vote_data.effectiveness_rating
+        existing_vote.comments = vote_data.comments[:500] if vote_data.comments else None  # Enforce 500 char limit
+        existing_vote.justification = vote_data.justification  # Keep for backward compatibility
         db.commit()
         db.refresh(existing_vote)
     else:
@@ -57,7 +59,9 @@ def submit_vote(
             phase_id=phase_id,
             player_id=vote_data.player_id,
             selected_action=vote_data.selected_action,
-            justification=vote_data.justification
+            effectiveness_rating=vote_data.effectiveness_rating,
+            comments=vote_data.comments[:500] if vote_data.comments else None,  # Enforce 500 char limit
+            justification=vote_data.justification  # Keep for backward compatibility
         )
         db.add(vote)
         db.commit()
@@ -72,6 +76,8 @@ def submit_vote(
         player_id=existing_vote.player_id,
         player_name=player.display_name,
         selected_action=existing_vote.selected_action,
+        effectiveness_rating=existing_vote.effectiveness_rating,
+        comments=existing_vote.comments,
         justification=existing_vote.justification,
         voted_at=existing_vote.voted_at
     )
@@ -163,14 +169,16 @@ def get_voting_status(
         vote_responses = []
         for vote in votes:
             player = db.query(Player).filter(Player.id == vote.player_id).first()
-            vote_responses.append(PlayerVoteResponse(
-                id=vote.id,
-                player_id=vote.player_id,
-                player_name=player.display_name if player else "Unknown",
-                selected_action=vote.selected_action,
-                justification=vote.justification,
-                voted_at=vote.voted_at
-            ))
+                vote_responses.append(PlayerVoteResponse(
+                    id=vote.id,
+                    player_id=vote.player_id,
+                    player_name=player.display_name if player else "Unknown",
+                    selected_action=vote.selected_action,
+                    effectiveness_rating=vote.effectiveness_rating,
+                    comments=vote.comments,
+                    justification=vote.justification,
+                    voted_at=vote.voted_at
+                ))
         
         status_list.append(VotingStatusResponse(
             team_id=team.id,

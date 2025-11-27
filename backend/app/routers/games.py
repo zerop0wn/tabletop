@@ -2,11 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from collections import Counter
+from datetime import datetime
 import secrets
+from sqlalchemy import func
 from app.database import get_db
 from app.auth import get_current_gm
-from app.models import Game, Scenario, ScenarioPhase, Team, GameStatus, PhaseState, Player, PlayerVote, PhaseDecision, DecisionStatus, ScoreEvent
-from app.schemas import GameCreate, GameResponse
+from app.models import Game, Scenario, ScenarioPhase, Team, GameStatus, PhaseState, Player, PlayerVote, PhaseDecision, DecisionStatus, ScoreEvent, PhaseGMNotes, AfterActionReport
+from app.schemas import GameCreate, GameResponse, PhaseCommentsResponse, PhaseCommentResponse, GMNotesUpdate, AfterActionReportResponse, PhaseAnalysis
 from app.scoring import calculate_team_decision_score, calculate_weighted_score
 
 router = APIRouter()
@@ -314,8 +316,255 @@ def delete_game(game_id: int, db: Session = Depends(get_db), current_gm=Depends(
     # 3. Delete score events (references game, team, phase)
     db.query(ScoreEvent).filter(ScoreEvent.game_id == game_id).delete()
     
-    # 4. Delete the game (cascade will handle teams and players)
+    # 4. Delete phase GM notes
+    db.query(PhaseGMNotes).filter(PhaseGMNotes.game_id == game_id).delete()
+    
+    # 5. Delete after action reports
+    db.query(AfterActionReport).filter(AfterActionReport.game_id == game_id).delete()
+    
+    # 6. Delete the game (cascade will handle teams and players)
     db.delete(game)
     db.commit()
     return {"message": "Game deleted"}
+
+
+@router.get("/{game_id}/phases/{phase_id}/comments", response_model=PhaseCommentsResponse)
+def get_phase_comments(
+    game_id: int,
+    phase_id: int,
+    db: Session = Depends(get_db),
+    current_gm=Depends(get_current_gm)
+):
+    """Get all player comments for a phase (GM only, real-time)"""
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game or game.gm_id != current_gm.id:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    votes = db.query(PlayerVote).filter(
+        PlayerVote.game_id == game_id,
+        PlayerVote.phase_id == phase_id
+    ).all()
+    
+    comments = []
+    for vote in votes:
+        if vote.comments:  # Only include votes with comments
+            player = db.query(Player).filter(Player.id == vote.player_id).first()
+            team = db.query(Team).filter(Team.id == vote.team_id).first()
+            comments.append(PhaseCommentResponse(
+                player_id=vote.player_id,
+                player_name=player.display_name if player else "Unknown",
+                team_name=team.name if team else "Unknown",
+                team_role=team.role if team else "unknown",
+                effectiveness_rating=vote.effectiveness_rating,
+                comments=vote.comments,
+                voted_at=vote.voted_at
+            ))
+    
+    return PhaseCommentsResponse(comments=comments)
+
+
+@router.post("/{game_id}/phases/{phase_id}/gm-notes")
+def update_gm_phase_notes(
+    game_id: int,
+    phase_id: int,
+    notes_data: GMNotesUpdate,
+    db: Session = Depends(get_db),
+    current_gm=Depends(get_current_gm)
+):
+    """Add or update GM notes for a phase"""
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game or game.gm_id != current_gm.id:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    existing = db.query(PhaseGMNotes).filter(
+        PhaseGMNotes.game_id == game_id,
+        PhaseGMNotes.phase_id == phase_id,
+        PhaseGMNotes.gm_id == current_gm.id
+    ).first()
+    
+    if existing:
+        existing.notes = notes_data.notes
+        existing.updated_at = func.now()
+    else:
+        gm_notes = PhaseGMNotes(
+            game_id=game_id,
+            phase_id=phase_id,
+            gm_id=current_gm.id,
+            notes=notes_data.notes
+        )
+        db.add(gm_notes)
+    
+    db.commit()
+    return {"message": "GM notes updated"}
+
+
+@router.get("/{game_id}/phases/{phase_id}/gm-notes")
+def get_gm_phase_notes(
+    game_id: int,
+    phase_id: int,
+    db: Session = Depends(get_db),
+    current_gm=Depends(get_current_gm)
+):
+    """Get GM notes for a phase"""
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game or game.gm_id != current_gm.id:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    gm_notes = db.query(PhaseGMNotes).filter(
+        PhaseGMNotes.game_id == game_id,
+        PhaseGMNotes.phase_id == phase_id,
+        PhaseGMNotes.gm_id == current_gm.id
+    ).first()
+    
+    return {"notes": gm_notes.notes if gm_notes else ""}
+
+
+@router.get("/{game_id}/after-action-report", response_model=AfterActionReportResponse)
+def generate_after_action_report(
+    game_id: int,
+    db: Session = Depends(get_db),
+    current_gm=Depends(get_current_gm)
+):
+    """Generate after action report for a game"""
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game or game.gm_id != current_gm.id:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    # Get all phases for this scenario
+    phases = db.query(ScenarioPhase).filter(
+        ScenarioPhase.scenario_id == game.scenario_id
+    ).order_by(ScenarioPhase.order_index).all()
+    
+    # Get all votes for all phases
+    phase_analyses = []
+    all_ratings = []
+    
+    for phase in phases:
+        votes = db.query(PlayerVote).filter(
+            PlayerVote.game_id == game_id,
+            PlayerVote.phase_id == phase.id
+        ).all()
+        
+        if votes:
+            ratings = [v.effectiveness_rating for v in votes if v.effectiveness_rating is not None]
+            avg_rating = sum(ratings) / len(ratings) if ratings else None
+            
+            # Convert to risk rating (industry standard: NIST/FIRST)
+            if avg_rating:
+                if avg_rating <= 2:
+                    risk_rating = "Critical"
+                elif avg_rating <= 4:
+                    risk_rating = "High"
+                elif avg_rating <= 6:
+                    risk_rating = "Medium"
+                elif avg_rating <= 8:
+                    risk_rating = "Low"
+                else:
+                    risk_rating = "Very Low"
+            else:
+                risk_rating = "Not Rated"
+                avg_rating = 0
+            
+            if avg_rating:
+                all_ratings.append(avg_rating)
+            
+            # Get comments
+            comments = []
+            for v in votes:
+                if v.comments:
+                    player = db.query(Player).filter(Player.id == v.player_id).first()
+                    team = db.query(Team).filter(Team.id == v.team_id).first()
+                    comments.append({
+                        "player_name": player.display_name if player else "Unknown",
+                        "team_role": team.role if team else "unknown",
+                        "rating": v.effectiveness_rating,
+                        "comments": v.comments
+                    })
+            
+            # Get GM notes
+            gm_notes_obj = db.query(PhaseGMNotes).filter(
+                PhaseGMNotes.game_id == game_id,
+                PhaseGMNotes.phase_id == phase.id,
+                PhaseGMNotes.gm_id == current_gm.id
+            ).first()
+            
+            phase_analyses.append(PhaseAnalysis(
+                phase_id=phase.id,
+                phase_name=phase.name,
+                phase_order=phase.order_index,
+                average_rating=round(avg_rating, 2) if avg_rating else None,
+                risk_rating=risk_rating,
+                total_responses=len(votes),
+                comments=comments,
+                gm_notes=gm_notes_obj.notes if gm_notes_obj else None
+            ))
+        else:
+            # Phase with no votes
+            phase_analyses.append(PhaseAnalysis(
+                phase_id=phase.id,
+                phase_name=phase.name,
+                phase_order=phase.order_index,
+                average_rating=None,
+                risk_rating="Not Rated",
+                total_responses=0,
+                comments=[],
+                gm_notes=None
+            ))
+    
+    # Calculate overall risk
+    if all_ratings:
+        overall_avg = sum(all_ratings) / len(all_ratings)
+        if overall_avg <= 2:
+            overall_risk = "Critical"
+        elif overall_avg <= 4:
+            overall_risk = "High"
+        elif overall_avg <= 6:
+            overall_risk = "Medium"
+        elif overall_avg <= 8:
+            overall_risk = "Low"
+        else:
+            overall_risk = "Very Low"
+    else:
+        overall_avg = 0
+        overall_risk = "Not Rated"
+    
+    report_data = {
+        "game_id": game_id,
+        "scenario_name": game.scenario.name if game.scenario else "Unknown",
+        "generated_at": datetime.now().isoformat(),
+        "overall_risk_rating": overall_risk,
+        "overall_risk_score": round(overall_avg, 2),
+        "phase_analyses": [p.dict() for p in phase_analyses]
+    }
+    
+    # Save report
+    existing_report = db.query(AfterActionReport).filter(
+        AfterActionReport.game_id == game_id
+    ).first()
+    
+    if existing_report:
+        existing_report.report_data = report_data
+        existing_report.overall_risk_rating = overall_risk
+        existing_report.overall_risk_score = round(overall_avg, 2)
+        existing_report.generated_at = func.now()
+    else:
+        report = AfterActionReport(
+            game_id=game_id,
+            overall_risk_rating=overall_risk,
+            overall_risk_score=round(overall_avg, 2),
+            report_data=report_data,
+            gm_id=current_gm.id
+        )
+        db.add(report)
+    
+    db.commit()
+    
+    return AfterActionReportResponse(
+        game_id=game_id,
+        scenario_name=game.scenario.name if game.scenario else "Unknown",
+        generated_at=datetime.now().isoformat(),
+        overall_risk_rating=overall_risk,
+        overall_risk_score=round(overall_avg, 2),
+        phase_analyses=phase_analyses
+    )
 

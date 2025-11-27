@@ -11,6 +11,9 @@ export default function GMGameDashboard() {
   const [votingStatus, setVotingStatus] = useState<VotingStatus[]>([])
   const [loading, setLoading] = useState(true)
   const [scoring, setScoring] = useState<Record<number, { score: string; notes: string }>>({})
+  const [phaseComments, setPhaseComments] = useState<any[]>([])
+  const [gmNotes, setGmNotes] = useState<Record<number, string>>({})
+  const [gmNotesLoading, setGmNotesLoading] = useState<Record<number, boolean>>({})
 
   useEffect(() => {
     if (!id) return
@@ -25,10 +28,13 @@ export default function GMGameDashboard() {
     if (game?.current_phase_id) {
       fetchDecisions()
       fetchVotingStatus()
+      fetchPhaseComments()
+      fetchGMNotes()
       const interval = setInterval(() => {
         fetchDecisions()
         fetchVotingStatus()
-      }, 5000)
+        fetchPhaseComments()
+      }, 3000) // Poll every 3 seconds for real-time comments
       return () => clearInterval(interval)
     }
   }, [game?.current_phase_id])
@@ -51,6 +57,39 @@ export default function GMGameDashboard() {
       setDecisions(response.data)
     } catch (err) {
       console.error('Failed to fetch decisions:', err)
+    }
+  }
+
+  const fetchPhaseComments = async () => {
+    if (!game?.current_phase_id) return
+    try {
+      const response = await apiClient.get(`/games/${id}/phases/${game.current_phase_id}/comments`)
+      setPhaseComments(response.data.comments || [])
+    } catch (err) {
+      console.error('Failed to fetch comments:', err)
+    }
+  }
+
+  const fetchGMNotes = async () => {
+    if (!game?.current_phase_id) return
+    try {
+      const response = await apiClient.get(`/games/${id}/phases/${game.current_phase_id}/gm-notes`)
+      setGmNotes(prev => ({ ...prev, [game.current_phase_id!]: response.data.notes || '' }))
+    } catch (err) {
+      console.error('Failed to fetch GM notes:', err)
+    }
+  }
+
+  const handleGMNotesUpdate = async (phaseId: number, notes: string) => {
+    setGmNotesLoading(prev => ({ ...prev, [phaseId]: true }))
+    try {
+      await apiClient.post(`/games/${id}/phases/${phaseId}/gm-notes`, { notes })
+      setGmNotes(prev => ({ ...prev, [phaseId]: notes }))
+    } catch (err) {
+      console.error('Failed to update GM notes:', err)
+      alert('Failed to save notes')
+    } finally {
+      setGmNotesLoading(prev => ({ ...prev, [phaseId]: false }))
     }
   }
 
@@ -225,12 +264,20 @@ export default function GMGameDashboard() {
                 </>
               )}
               {game.status === 'in_progress' && (
-                <button
-                  onClick={() => handlePhaseAction('end')}
-                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                >
-                  End Game
-                </button>
+                <>
+                  <button
+                    onClick={() => handlePhaseAction('end')}
+                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                  >
+                    End Game
+                  </button>
+                  <button
+                    onClick={() => navigate(`/gm/games/${id}/after-action-report`)}
+                    className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                  >
+                    View After Action Report
+                  </button>
+                </>
               )}
             </div>
 
@@ -329,6 +376,61 @@ export default function GMGameDashboard() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Player Comments (Real-time) */}
+        {game.current_phase_id && game.phase_state === 'open_for_decisions' && phaseComments.length > 0 && (
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Player Comments (Real-time)</h2>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {phaseComments.map((comment, idx) => (
+                <div key={idx} className="border-l-4 border-blue-500 pl-4 py-2 bg-gray-50 rounded">
+                  <div className="flex justify-between items-start mb-1">
+                    <div>
+                      <span className="font-semibold">{comment.player_name}</span>
+                      <span className={`ml-2 px-2 py-1 rounded text-xs ${comment.team_role === 'red' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
+                        {comment.team_name} ({comment.team_role.toUpperCase()})
+                      </span>
+                    </div>
+                    {comment.effectiveness_rating && (
+                      <span className="text-sm font-bold text-blue-600">
+                        Rating: {comment.effectiveness_rating}/10
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-700 mt-1">{comment.comments}</p>
+                  <span className="text-xs text-gray-400">
+                    {new Date(comment.voted_at).toLocaleString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* GM Notes & Takeaways */}
+        {game.current_phase_id && (
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-bold mb-4">Phase Notes & Takeaways</h2>
+            <textarea
+              value={gmNotes[game.current_phase_id] || ''}
+              onChange={(e) => {
+                setGmNotes(prev => ({ ...prev, [game.current_phase_id!]: e.target.value }))
+              }}
+              onBlur={() => {
+                if (game.current_phase_id) {
+                  handleGMNotesUpdate(game.current_phase_id, gmNotes[game.current_phase_id] || '')
+                }
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              rows={6}
+              placeholder="Add your notes and takeaways for this phase..."
+              disabled={gmNotesLoading[game.current_phase_id]}
+            />
+            {gmNotesLoading[game.current_phase_id] && (
+              <p className="text-sm text-gray-500 mt-2">Saving...</p>
+            )}
           </div>
         )}
 

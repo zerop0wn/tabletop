@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 from app.models import GameStatus, PhaseState, DecisionStatus, ArtifactType
@@ -135,7 +135,9 @@ class PlayerStateResponse(BaseModel):
 class VoteSubmit(BaseModel):
     player_id: int
     selected_action: str  # Single action voted for
-    justification: Optional[str] = None
+    effectiveness_rating: int = Field(..., ge=1, le=10, description="Rating 1-10: How effective would your organization be at detecting and responding to this phase")
+    comments: Optional[str] = Field(None, max_length=500, description="Optional comments (max 500 characters)")
+    justification: Optional[str] = None  # Kept for backward compatibility
 
 
 class DecisionSubmit(BaseModel):
@@ -171,7 +173,9 @@ class PlayerVoteResponse(BaseModel):
     player_id: int
     player_name: str
     selected_action: str
-    justification: Optional[str] = None
+    effectiveness_rating: Optional[int] = None
+    comments: Optional[str] = None
+    justification: Optional[str] = None  # Kept for backward compatibility
     voted_at: datetime
 
     class Config:
@@ -239,6 +243,45 @@ class ScoreboardResponse(BaseModel):
     phase_state: PhaseState
     teams: List[TeamScore] = []
     recent_events: List[GlobalEvent] = []
+
+
+# New schemas for rating and comments system
+class PhaseCommentResponse(BaseModel):
+    player_id: int
+    player_name: str
+    team_name: str
+    team_role: str
+    effectiveness_rating: Optional[int] = None
+    comments: Optional[str] = None
+    voted_at: datetime
+
+
+class PhaseCommentsResponse(BaseModel):
+    comments: List[PhaseCommentResponse]
+
+
+class GMNotesUpdate(BaseModel):
+    notes: str
+
+
+class PhaseAnalysis(BaseModel):
+    phase_id: int
+    phase_name: str
+    phase_order: int
+    average_rating: Optional[float] = None
+    risk_rating: str
+    total_responses: int
+    comments: List[Dict[str, Any]]
+    gm_notes: Optional[str] = None
+
+
+class AfterActionReportResponse(BaseModel):
+    game_id: int
+    scenario_name: str
+    generated_at: str
+    overall_risk_rating: str
+    overall_risk_score: float
+    phase_analyses: List[PhaseAnalysis]
 
 
 # Update forward references

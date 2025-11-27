@@ -58,7 +58,8 @@ export default function PlayerView() {
   const { gameId, playerId } = useParams<{ gameId: string; playerId: string }>()
   const [state, setState] = useState<PlayerState | null>(null)
   const [selectedAction, setSelectedAction] = useState<string>('')
-  const [justification, setJustification] = useState('')
+  const [effectivenessRating, setEffectivenessRating] = useState<number>(5)
+  const [comments, setComments] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
@@ -75,18 +76,21 @@ export default function PlayerView() {
       const myVote = state.team_voting_status?.votes.find(v => v.player_id === parseInt(playerId || '0'))
       if (myVote) {
         setSelectedAction(myVote.selected_action)
-        setJustification(myVote.justification || '')
+        setEffectivenessRating(myVote.effectiveness_rating || 5)
+        setComments(myVote.comments || '')
       }
       setSubmitted(true)
     } else if (state?.decision) {
       // Legacy: if decision exists, show it
       setSelectedAction(state.decision.actions?.selected?.[0] || '')
-      setJustification(state.decision.free_text_justification || '')
+      setEffectivenessRating(5)
+      setComments('')
       setSubmitted(true)
     } else {
       setSubmitted(false)
       setSelectedAction('')
-      setJustification('')
+      setEffectivenessRating(5)
+      setComments('')
     }
   }, [state, playerId])
 
@@ -103,7 +107,7 @@ export default function PlayerView() {
 
   const handleSubmit = async () => {
     if (!gameId || !playerId || !state?.current_phase) return
-    if (!selectedAction) {
+    if (!selectedAction || effectivenessRating < 1 || effectivenessRating > 10) {
       alert('Please select an action to vote for')
       return
     }
@@ -113,7 +117,8 @@ export default function PlayerView() {
       await apiClient.post(`/games/${gameId}/phases/${state.current_phase.id}/votes`, {
         player_id: parseInt(playerId),
         selected_action: selectedAction,
-        justification: justification,
+        effectiveness_rating: effectivenessRating,
+        comments: comments || null,
       })
       setSubmitted(true)
       fetchState()
@@ -302,14 +307,43 @@ export default function PlayerView() {
             </div>
 
             <div className="mb-6">
-              <label className="block font-semibold mb-2">Justification (Optional):</label>
+              <label className="block font-semibold mb-2">
+                How effective do you believe your organization would be at detecting and responding to this phase?
+              </label>
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-600 w-24">1 (Least Likely)</span>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={effectivenessRating}
+                  onChange={(e) => setEffectivenessRating(parseInt(e.target.value))}
+                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                />
+                <span className="text-sm text-gray-600 w-24 text-right">10 (Highly Likely)</span>
+                <span className="text-2xl font-bold w-12 text-center text-blue-600">{effectivenessRating}</span>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className="block font-semibold mb-2">
+                Comments (Optional, max 500 characters)
+              </label>
               <textarea
-                value={justification}
-                onChange={(e) => setJustification(e.target.value)}
+                value={comments}
+                onChange={(e) => {
+                  if (e.target.value.length <= 500) {
+                    setComments(e.target.value)
+                  }
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 rows={4}
-                placeholder="Explain your vote and reasoning..."
+                maxLength={500}
+                placeholder="Add your comments here..."
               />
+              <div className="text-sm text-gray-500 mt-1">
+                {comments.length}/500 characters
+              </div>
             </div>
 
             <button
@@ -329,10 +363,14 @@ export default function PlayerView() {
               <h3 className="font-semibold mb-2">Selected Action:</h3>
               <p className="text-gray-700">{selectedAction}</p>
             </div>
-            {justification && (
+            <div className="mb-4">
+              <h3 className="font-semibold mb-2">Effectiveness Rating:</h3>
+              <p className="text-gray-700">{effectivenessRating}/10</p>
+            </div>
+            {comments && (
               <div>
-                <h3 className="font-semibold mb-2">Justification:</h3>
-                <p className="text-gray-700">{justification}</p>
+                <h3 className="font-semibold mb-2">Comments:</h3>
+                <p className="text-gray-700">{comments}</p>
               </div>
             )}
             {state.phase_state === 'decision_lock' && (

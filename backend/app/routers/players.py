@@ -129,6 +129,8 @@ def get_player_state(game_id: int, player_id: int, db: Session = Depends(get_db)
                     player_id=v.player_id,
                     player_name=p.display_name if p else "Unknown",
                     selected_action=v.selected_action,
+                    effectiveness_rating=v.effectiveness_rating,
+                    comments=v.comments,
                     justification=v.justification,
                     voted_at=v.voted_at
                 ))
