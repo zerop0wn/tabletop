@@ -231,6 +231,4 @@ class AfterActionReport(Base):
 
     game = relationship("Game")
     gm = relationship("GMUser")
-    team = relationship("Team")
-    phase = relationship("ScenarioPhase")
 
