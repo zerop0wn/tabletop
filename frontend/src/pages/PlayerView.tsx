@@ -58,7 +58,7 @@ export default function PlayerView() {
   const { gameId, playerId } = useParams<{ gameId: string; playerId: string }>()
   const [state, setState] = useState<PlayerState | null>(null)
   const [selectedAction, setSelectedAction] = useState<string>('')
-  const [effectivenessRating, setEffectivenessRating] = useState<number>(5)
+  const [effectivenessRating, setEffectivenessRating] = useState<number | null>(null)
   const [comments, setComments] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -96,7 +96,7 @@ export default function PlayerView() {
       } else if (state.decision) {
         // Legacy: if decision exists, show it
         setSelectedAction(state.decision.actions?.selected?.[0] || '')
-        setEffectivenessRating(5)
+        setEffectivenessRating(null)
         setComments('')
         setSubmitted(true)
       } else if (state.phase_state === 'open_for_decisions') {
@@ -104,7 +104,7 @@ export default function PlayerView() {
         if (phaseChanged) {
           setSubmitted(false)
           setSelectedAction('')
-          setEffectivenessRating(5)
+          setEffectivenessRating(null)
           setComments('')
         }
         // Don't reset if phase didn't change - preserve user's input
@@ -112,7 +112,7 @@ export default function PlayerView() {
         // Phase is not open for decisions
         setSubmitted(false)
         setSelectedAction('')
-        setEffectivenessRating(5)
+        setEffectivenessRating(null)
         setComments('')
       }
 
@@ -347,25 +347,42 @@ export default function PlayerView() {
             </div>
 
             <div className="mb-6">
-              <label className="block font-semibold mb-2">
+              <label className="block font-semibold mb-3">
                 How effective do you believe your organization would be at detecting and responding to this phase? <span className="text-red-500">*</span>
               </label>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600 w-24">1 (Least Likely)</span>
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={effectivenessRating}
-                  onChange={(e) => setEffectivenessRating(parseInt(e.target.value))}
-                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  required
-                />
-                <span className="text-sm text-gray-600 w-24 text-right">10 (Highly Likely)</span>
-                <span className="text-2xl font-bold w-12 text-center text-blue-600">{effectivenessRating}</span>
+              <div className="grid grid-cols-5 gap-2">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
+                  <label
+                    key={rating}
+                    className={`flex flex-col items-center justify-center p-3 border-2 rounded-lg cursor-pointer transition-all ${
+                      effectivenessRating === rating
+                        ? 'border-blue-600 bg-blue-50 text-blue-700'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="effectivenessRating"
+                      value={rating}
+                      checked={effectivenessRating === rating}
+                      onChange={() => setEffectivenessRating(rating)}
+                      className="sr-only"
+                      required
+                    />
+                    <span className="text-xl font-bold">{rating}</span>
+                    <span className="text-xs text-gray-600 mt-1">
+                      {rating === 1 && 'Least'}
+                      {rating === 10 && 'Most'}
+                    </span>
+                  </label>
+                ))}
               </div>
-              {(!effectivenessRating || effectivenessRating < 1 || effectivenessRating > 10) && (
-                <p className="text-sm text-red-500 mt-1">Please select a rating before submitting</p>
+              <div className="flex justify-between mt-2 text-xs text-gray-500">
+                <span>1 = Least Likely</span>
+                <span>10 = Highly Likely</span>
+              </div>
+              {effectivenessRating === null && (
+                <p className="text-sm text-red-500 mt-2">Please select a rating before submitting</p>
               )}
             </div>
 
@@ -409,7 +426,7 @@ export default function PlayerView() {
             </div>
             <div className="mb-4">
               <h3 className="font-semibold mb-2">Effectiveness Rating:</h3>
-              <p className="text-gray-700">{effectivenessRating}/10</p>
+              <p className="text-gray-700">{effectivenessRating !== null ? `${effectivenessRating}/10` : 'Not rated'}</p>
             </div>
             {comments && (
               <div>
