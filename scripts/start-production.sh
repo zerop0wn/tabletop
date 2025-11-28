@@ -37,12 +37,12 @@ echo ""
 
 # Build production images
 echo "Building production Docker images..."
-docker-compose -f docker-compose.prod.yml build
+docker-compose --env-file .env.production -f docker-compose.prod.yml build
 
 # Start services
 echo ""
 echo "Starting production services..."
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose --env-file .env.production -f docker-compose.prod.yml up -d
 
 # Wait for services to be ready
 echo ""
@@ -52,7 +52,7 @@ sleep 10
 # Check service status
 echo ""
 echo "Service Status:"
-docker-compose -f docker-compose.prod.yml ps
+docker-compose --env-file .env.production -f docker-compose.prod.yml ps
 
 echo ""
 echo "=========================================="
@@ -62,11 +62,11 @@ echo "Next steps:"
 echo "1. Wait a moment for services to fully start"
 echo "2. Visit https://cyberirtabletop.com"
 echo "3. Run database migrations:"
-echo "   docker-compose -f docker-compose.prod.yml exec backend alembic upgrade head"
+echo "   docker-compose --env-file .env.production -f docker-compose.prod.yml exec backend alembic upgrade head"
 echo "4. Seed initial data:"
-echo "   docker-compose -f docker-compose.prod.yml exec backend python seed_data.py"
+echo "   docker-compose --env-file .env.production -f docker-compose.prod.yml exec backend python seed_data.py"
 echo ""
 echo "View logs:"
-echo "  docker-compose -f docker-compose.prod.yml logs -f"
+echo "  docker-compose --env-file .env.production -f docker-compose.prod.yml logs -f"
 echo ""
 

@@ -22,12 +22,12 @@ export $(cat .env.production | grep -v '^#' | xargs)
 
 # Check service status
 echo "1. Current service status:"
-docker-compose -f docker-compose.prod.yml ps
+docker-compose --env-file .env.production -f docker-compose.prod.yml ps
 echo ""
 
 # Stop all services
 echo "2. Stopping all services..."
-docker-compose -f docker-compose.prod.yml down
+docker-compose --env-file .env.production -f docker-compose.prod.yml down
 echo ""
 
 # Pull latest nginx config (if needed)
@@ -37,7 +37,7 @@ echo ""
 
 # Rebuild and start services
 echo "4. Building and starting services..."
-docker-compose -f docker-compose.prod.yml up -d --build
+docker-compose --env-file .env.production -f docker-compose.prod.yml up -d --build
 echo ""
 
 # Wait for services to start
@@ -47,17 +47,17 @@ echo ""
 
 # Check service status again
 echo "6. Service status after restart:"
-docker-compose -f docker-compose.prod.yml ps
+docker-compose --env-file .env.production -f docker-compose.prod.yml ps
 echo ""
 
 # Check backend logs
 echo "7. Backend logs (last 20 lines):"
-docker-compose -f docker-compose.prod.yml logs backend --tail=20
+docker-compose --env-file .env.production -f docker-compose.prod.yml logs backend --tail=20
 echo ""
 
 # Test backend health
 echo "8. Testing backend health endpoint..."
-BACKEND_CONTAINER=$(docker-compose -f docker-compose.prod.yml ps -q backend)
+BACKEND_CONTAINER=$(docker-compose --env-file .env.production -f docker-compose.prod.yml ps -q backend)
 if [ -n "$BACKEND_CONTAINER" ]; then
     if docker exec "$BACKEND_CONTAINER" wget -q -O- http://localhost:8000/health 2>/dev/null; then
         echo "✓ Backend is healthy"
@@ -72,7 +72,7 @@ echo ""
 
 # Test nginx to backend connectivity
 echo "9. Testing nginx -> backend connectivity..."
-FRONTEND_CONTAINER=$(docker-compose -f docker-compose.prod.yml ps -q frontend)
+FRONTEND_CONTAINER=$(docker-compose --env-file .env.production -f docker-compose.prod.yml ps -q frontend)
 if [ -n "$FRONTEND_CONTAINER" ]; then
     if docker exec "$FRONTEND_CONTAINER" wget -q --spider --timeout=5 http://backend:8000/health 2>&1; then
         echo "✓ Nginx can reach backend"
@@ -89,7 +89,7 @@ echo ""
 echo "10. Reloading nginx configuration..."
 if docker exec "$FRONTEND_CONTAINER" nginx -t 2>&1; then
     docker exec "$FRONTEND_CONTAINER" nginx -s reload 2>&1 || echo "⚠️  Nginx reload failed, restarting..."
-    docker-compose -f docker-compose.prod.yml restart frontend
+    docker-compose --env-file .env.production -f docker-compose.prod.yml restart frontend
     echo "✓ Nginx reloaded"
 else
     echo "❌ Nginx configuration has errors"
@@ -103,8 +103,8 @@ echo "Test the API:"
 echo "  curl https://cyberirtabletop.com/api/health"
 echo ""
 echo "If still getting 502, check:"
-echo "  1. Backend logs: docker-compose -f docker-compose.prod.yml logs backend"
-echo "  2. Frontend logs: docker-compose -f docker-compose.prod.yml logs frontend"
+echo "  1. Backend logs: docker-compose --env-file .env.production -f docker-compose.prod.yml logs backend"
+echo "  2. Frontend logs: docker-compose --env-file .env.production -f docker-compose.prod.yml logs frontend"
 echo "  3. Run full diagnostic: ./scripts/troubleshoot-502.sh"
 echo ""
 
