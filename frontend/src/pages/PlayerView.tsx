@@ -89,7 +89,7 @@ export default function PlayerView() {
         const myVote = state.team_voting_status?.votes.find(v => v.player_id === parseInt(playerId || '0'))
         if (myVote) {
           setSelectedAction(myVote.selected_action)
-          setEffectivenessRating(myVote.effectiveness_rating || 5)
+          setEffectivenessRating(myVote.effectiveness_rating || null)
           setComments(myVote.comments || '')
         }
         setSubmitted(true)
@@ -124,7 +124,7 @@ export default function PlayerView() {
       const myVote = state.team_voting_status?.votes.find(v => v.player_id === parseInt(playerId || '0'))
       if (myVote) {
         setSelectedAction(myVote.selected_action)
-        setEffectivenessRating(myVote.effectiveness_rating || 5)
+        setEffectivenessRating(myVote.effectiveness_rating || null)
         setComments(myVote.comments || '')
       }
     }
