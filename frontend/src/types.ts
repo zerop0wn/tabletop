@@ -162,6 +162,7 @@ export interface TeamScore {
   team_name: string
   team_role: string
   total_score: number
+  team_members: string[]
   recent_events: RecentEvent[]
   score_history: ScoreHistoryEntry[]
   recent_decision?: RecentDecision

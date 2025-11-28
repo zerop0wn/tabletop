@@ -230,6 +230,7 @@ class TeamScore(BaseModel):
     team_name: str
     team_role: str
     total_score: int
+    team_members: List[str] = []  # List of player display names
     recent_events: List[RecentEvent] = []
     score_history: List[ScoreHistoryEntry] = []
     recent_decision: Optional[RecentDecision] = None
