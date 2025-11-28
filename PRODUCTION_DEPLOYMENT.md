@@ -35,7 +35,7 @@ git clone https://github.com/zerop0wn/tabletop.git
 cd tabletop
 
 # Create production environment file
-cp .env.production.example .env.production
+cp env.production.template .env.production
 nano .env.production  # Edit with your values
 ```
 
