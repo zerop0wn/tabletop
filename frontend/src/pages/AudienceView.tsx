@@ -18,12 +18,24 @@ export default function AudienceView() {
   const [animatedScores, setAnimatedScores] = useState<Record<number, AnimatedScore>>({})
   const [seenEventIds, setSeenEventIds] = useState<Set<string>>(new Set())
   const previousScoresRef = useRef<Record<number, number>>({})
+  const phaseTransitionSoundRef = useRef<HTMLAudioElement | null>(null)
 
   useEffect(() => {
     if (!gameIdentifier) return
+    
+    // Initialize audio element for phase transition sound
+    phaseTransitionSoundRef.current = new Audio('/sounds/phase-transition.wav')
+    phaseTransitionSoundRef.current.volume = 0.5 // Set volume to 50%
+    
     fetchScoreboard()
     const interval = setInterval(fetchScoreboard, 3000) // Poll every 3 seconds for more real-time feel
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+      if (phaseTransitionSoundRef.current) {
+        phaseTransitionSoundRef.current.pause()
+        phaseTransitionSoundRef.current = null
+      }
+    }
   }, [gameIdentifier])
 
   useEffect(() => {
@@ -33,6 +45,14 @@ export default function AudienceView() {
     if (previousPhase && previousPhase !== scoreboard.current_phase_name) {
       setPhaseTransition(true)
       setTimeout(() => setPhaseTransition(false), 2000)
+      
+      // Play phase transition sound
+      if (phaseTransitionSoundRef.current) {
+        phaseTransitionSoundRef.current.currentTime = 0 // Reset to start
+        phaseTransitionSoundRef.current.play().catch(err => {
+          console.warn('Failed to play phase transition sound:', err)
+        })
+      }
     }
     setPreviousPhase(scoreboard.current_phase_name)
 
