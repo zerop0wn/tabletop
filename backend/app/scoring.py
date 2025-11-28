@@ -173,10 +173,94 @@ EMAIL_BOMB_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     },
 }
 
+# SharePoint RCE Zero-Day Exploitation scenario scoring
+SHAREPOINT_RCE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
+    # Phase 1: Vulnerability Disclosure & Initial Reconnaissance (order_index=0)
+    (0, "red"): {
+        "Establish persistence": 4,      # Too early, no access yet
+        "Cover tracks": 7,               # Good for stealthy recon
+        "Move laterally": 2,             # Way too early
+        "Escalate privileges": 3,        # Too early
+        "Exfiltrate data": 1,            # Way too early
+    },
+    (0, "blue"): {
+        "Monitor threat intelligence": 10, # Primary objective
+        "Assess vulnerability": 9,       # Critical assessment
+        "Review logs": 8,                # Important detection
+        "Prepare mitigation": 7,         # Good preparation
+        "Update monitoring": 6,          # Good but secondary
+    },
+    
+    # Phase 2: Exploitation Attempt & Initial Access (order_index=1)
+    (1, "red"): {
+        "Establish persistence": 10,     # Primary objective
+        "Cover tracks": 8,               # Important to evade detection
+        "Move laterally": 6,            # Good but early
+        "Escalate privileges": 7,        # Good timing
+        "Exfiltrate data": 2,            # Too early
+    },
+    (1, "blue"): {
+        "Isolate host": 10,              # Primary - isolate compromised server
+        "Collect forensic evidence": 9,   # Critical for analysis
+        "Block IP address": 8,            # Block C2 communications
+        "Deploy countermeasures": 7,     # Good defense
+        "Escalate to management": 5,     # Important but not immediate
+    },
+    
+    # Phase 3: Privilege Escalation & Persistence (order_index=2)
+    (2, "red"): {
+        "Escalate privileges": 10,      # Primary objective
+        "Establish persistence": 10,     # Primary objective
+        "Cover tracks": 7,               # Important
+        "Move laterally": 6,            # Good preparation
+        "Exfiltrate data": 3,            # Too early
+    },
+    (2, "blue"): {
+        "Remove persistence": 10,        # Primary - remove all persistence
+        "Revoke credentials": 9,         # Critical security
+        "Prevent lateral movement": 8,    # Important containment
+        "Document changes": 7,           # Good for forensics
+        "Isolate host": 6,               # Good but may be late
+    },
+    
+    # Phase 4: Data Access & Exfiltration (order_index=3)
+    (3, "red"): {
+        "Exfiltrate data": 10,          # Primary objective
+        "Cover tracks": 8,               # Hide exfiltration
+        "Establish persistence": 7,       # Maintain access
+        "Move laterally": 5,            # Already done
+        "Escalate privileges": 4,       # Already done
+    },
+    (3, "blue"): {
+        "Block exfiltration": 10,        # Primary - stop data theft
+        "Assess data breach": 9,         # Critical assessment
+        "Prepare notifications": 8,      # Regulatory compliance
+        "Isolate host": 7,               # Contain breach
+        "Collect forensic evidence": 6,   # Important but secondary
+    },
+    
+    # Phase 5: Remediation & Post-Incident (order_index=4)
+    (4, "red"): {
+        "Cover tracks": 10,              # Hide remaining access
+        "Establish persistence": 9,       # Maintain backdoors
+        "Move laterally": 7,            # If not already done
+        "Exfiltrate data": 5,            # Already done
+        "Escalate privileges": 4,       # Already done
+    },
+    (4, "blue"): {
+        "Deploy patches": 10,           # Primary - patch vulnerability
+        "Complete remediation": 9,       # Critical cleanup
+        "Conduct forensics": 8,          # Full investigation
+        "Assess compliance": 7,          # Regulatory requirements
+        "Create AAR": 6,                 # Important but secondary
+    },
+}
+
 # Map scenario names to their scoring matrices
 SCORING_MATRICES: Dict[str, Dict[Tuple[int, str], Dict[str, int]]] = {
     "Ransomware Incident Response": RANSOMWARE_SCORING,
     "Email Bomb & Social Engineering Attack": EMAIL_BOMB_SCORING,
+    "SharePoint RCE Zero-Day Exploitation": SHAREPOINT_RCE_SCORING,
 }
 
 

@@ -758,6 +758,360 @@ def seed_data():
     else:
         print("Email Bomb scenario already exists")
 
+    # Create SharePoint RCE Zero-Day Exploitation scenario
+    scenario3 = db.query(Scenario).filter(Scenario.name == "SharePoint RCE Zero-Day Exploitation").first()
+    if not scenario3:
+        scenario3 = Scenario(
+            name="SharePoint RCE Zero-Day Exploitation",
+            description="A new critical Remote Code Execution (RCE) vulnerability (CVE-2024-XXXXX) has been publicly disclosed affecting SharePoint Server 2019 and SharePoint Online. The vulnerability allows unauthenticated remote code execution through specially crafted HTTP requests. Your organization runs an external-facing SharePoint site for customer document collaboration. The security team must detect, contain, and remediate the threat while the Red Team attempts to exploit the vulnerability before patches are applied.",
+            miro_board_url="https://miro.com/app/board/example3"
+        )
+        db.add(scenario3)
+        db.flush()
+
+        # Phase 1: Vulnerability Disclosure & Initial Reconnaissance
+        phase1_sp = ScenarioPhase(
+            scenario_id=scenario3.id,
+            order_index=0,
+            name="Phase 1: Vulnerability Disclosure & Initial Reconnaissance",
+            briefing_text="At 14:30 UTC, Microsoft published Security Advisory ADV240001 disclosing a critical RCE vulnerability (CVE-2024-XXXXX) affecting SharePoint Server 2019 and SharePoint Online. The vulnerability has a CVSS score of 9.8 (Critical) and is being actively exploited in the wild. Your organization's external SharePoint site (sharepoint.corp.com) is running SharePoint Server 2019 and is accessible from the internet. The security team has been notified, but no patch is available yet. Initial scans show your SharePoint server is vulnerable. The Red Team has begun reconnaissance to identify the exact version and configuration.",
+            red_objective="Identify the exact SharePoint version and build number. Map the external attack surface including exposed endpoints, authentication mechanisms, and potential entry points. Test for the vulnerability without triggering security alerts. Gather information about the server configuration, installed features, and user accounts.",
+            blue_objective="Monitor for exploitation attempts and reconnaissance activity. Identify any indicators of compromise (IOCs) from the vulnerability disclosure. Review SharePoint server logs for suspicious requests. Assess patch availability and prepare emergency mitigation procedures. Determine if the server is vulnerable and assess business impact.",
+            default_duration_seconds=900,
+            miro_frame_url="https://miro.com/app/board/example3/frame1"
+        )
+        db.add(phase1_sp)
+        db.flush()
+
+        # Phase 2: Exploitation Attempt & Initial Access
+        phase2_sp = ScenarioPhase(
+            scenario_id=scenario3.id,
+            order_index=1,
+            name="Phase 2: Exploitation Attempt & Initial Access",
+            briefing_text="The Red Team has successfully exploited the RCE vulnerability and gained initial access to the SharePoint server. Security logs show suspicious HTTP POST requests to /_layouts/15/upload.aspx with unusual payload patterns. The WAF (Web Application Firewall) initially blocked some requests but allowed others through. The attacker has executed PowerShell commands on the server and established a reverse shell connection. Endpoint detection on the SharePoint server (SP-SRV-01) has flagged unusual process activity including w3wp.exe spawning cmd.exe and powershell.exe processes.",
+            red_objective="Successfully exploit the RCE vulnerability to gain code execution on the SharePoint server. Establish a persistent reverse shell connection. Evade WAF and security tool detection. Begin enumeration of the server environment, installed software, network configuration, and domain membership.",
+            blue_objective="Detect the exploitation attempt through log analysis and security tool alerts. Identify the attack vector and confirm RCE execution. Isolate the compromised SharePoint server from the network. Preserve forensic evidence including memory dumps and log files. Block the attacker's C2 communications.",
+            default_duration_seconds=900,
+            miro_frame_url="https://miro.com/app/board/example3/frame2"
+        )
+        db.add(phase2_sp)
+        db.flush()
+
+        # Phase 3: Privilege Escalation & Persistence
+        phase3_sp = ScenarioPhase(
+            scenario_id=scenario3.id,
+            order_index=2,
+            name="Phase 3: Privilege Escalation & Persistence",
+            briefing_text="The attacker has successfully escalated privileges on the SharePoint server. Security logs show the attacker has accessed the SharePoint farm administrator account and modified service accounts. The attacker has created scheduled tasks, installed web shells in multiple locations (/_layouts/15/, /_catalogs/, /Style Library/), and added backdoor user accounts to the SharePoint farm administrators group. The attacker has also established persistence through WMI event subscriptions and registry modifications. Network monitoring shows the attacker is attempting to move laterally to other systems in the domain.",
+            red_objective="Escalate to farm administrator privileges on the SharePoint server. Establish multiple persistence mechanisms (web shells, scheduled tasks, service modifications). Create backdoor accounts and maintain access even if discovered. Begin lateral movement reconnaissance to identify domain controllers, file servers, and other high-value targets.",
+            blue_objective="Detect privilege escalation and persistence mechanisms. Identify all web shells, scheduled tasks, and backdoor accounts. Remove persistence mechanisms and revoke compromised credentials. Prevent lateral movement by isolating the SharePoint server and blocking outbound connections. Document all attacker modifications for forensic analysis.",
+            default_duration_seconds=900,
+            miro_frame_url="https://miro.com/app/board/example3/frame3"
+        )
+        db.add(phase3_sp)
+        db.flush()
+
+        # Phase 4: Data Access & Exfiltration
+        phase4_sp = ScenarioPhase(
+            scenario_id=scenario3.id,
+            order_index=3,
+            name="Phase 4: Data Access & Exfiltration",
+            briefing_text="The attacker has gained access to SharePoint site collections and document libraries. Security monitoring shows the attacker has accessed sensitive customer documents, employee data, and confidential project files. Network traffic analysis reveals large data transfers from the SharePoint server to external IP addresses (185.220.101.45, 45.146.164.110) using encrypted connections. Approximately 120 GB of data has been exfiltrated including customer contracts, employee PII, financial documents, and intellectual property. The attacker is using SharePoint's native APIs and PowerShell scripts to systematically download documents from multiple site collections.",
+            red_objective="Access and catalog sensitive data stored in SharePoint site collections. Identify high-value targets including customer data, financial records, and intellectual property. Systematically exfiltrate data using multiple methods (SharePoint APIs, PowerShell, direct file access). Maintain access while exfiltrating data. Avoid detection by security monitoring tools.",
+            blue_objective="Detect unauthorized data access and exfiltration attempts. Identify which site collections and documents have been accessed. Block data exfiltration by isolating the server and blocking outbound connections. Assess the scope of data breach including what data was accessed and exfiltrated. Prepare data breach notification procedures if required by regulations.",
+            default_duration_seconds=900,
+            miro_frame_url="https://miro.com/app/board/example3/frame4"
+        )
+        db.add(phase4_sp)
+        db.flush()
+
+        # Phase 5: Remediation & Post-Incident
+        phase5_sp = ScenarioPhase(
+            scenario_id=scenario3.id,
+            order_index=4,
+            name="Phase 5: Remediation & Post-Incident",
+            briefing_text="Microsoft has released an emergency security patch (KB5012345) for the SharePoint RCE vulnerability. The security team has identified all compromised systems and attacker modifications. The SharePoint server has been isolated, web shells removed, backdoor accounts deleted, and persistence mechanisms eliminated. The server has been patched and rebuilt from a clean backup. However, the attacker had access for 18 hours and exfiltrated 120 GB of sensitive data. The incident response team must now assess the full impact, determine if data breach notifications are required, and implement additional security controls to prevent future exploitation.",
+            red_objective="Assess the success of the attack campaign including data exfiltrated, systems compromised, and persistence maintained. Document attack techniques and evasion methods that worked. Identify any remaining backdoors or access methods that weren't discovered. Prepare final attack summary report.",
+            blue_objective="Complete remediation by patching all vulnerable systems and removing all attacker access. Conduct a full forensic investigation to determine the complete scope of the breach. Assess regulatory and legal obligations including data breach notifications (GDPR, CCPA, etc.). Implement additional security controls (WAF rules, network segmentation, monitoring). Create an after-action report with lessons learned and recommendations.",
+            default_duration_seconds=900,
+            miro_frame_url="https://miro.com/app/board/example3/frame5"
+        )
+        db.add(phase5_sp)
+        db.flush()
+
+        # Phase 1 Artifacts
+        # Blue Team Artifacts
+        artifact1_blue_sp = Artifact(
+            name="Microsoft Security Advisory ADV240001",
+            type=ArtifactType.EMAIL,
+            description="Microsoft Security Advisory ADV240001 - Critical RCE Vulnerability in SharePoint\n\nCVE-2024-XXXXX\nCVSS Score: 9.8 (Critical)\nAffected Products: SharePoint Server 2019, SharePoint Online\nVulnerability Type: Remote Code Execution (RCE)\nAttack Vector: Network (unauthenticated)\n\nSummary:\nA critical remote code execution vulnerability exists in Microsoft SharePoint Server. An attacker could exploit this vulnerability by sending a specially crafted HTTP request to an affected SharePoint server. Successful exploitation could allow the attacker to execute arbitrary code in the context of the SharePoint application pool.\n\nMitigation:\nMicrosoft is working on a security update. In the meantime, consider:\n- Restricting network access to SharePoint servers\n- Implementing WAF rules to block suspicious requests\n- Monitoring for exploitation attempts\n\nStatus: Patch not yet available. Active exploitation detected in the wild.",
+            file_url="/api/artifacts/files/sharepoint_advisory_phase1.txt",
+            notes_for_gm="Microsoft security advisory email about the vulnerability."
+        )
+        db.add(artifact1_blue_sp)
+        db.flush()
+
+        artifact2_blue_sp = Artifact(
+            name="SharePoint Version Detection Log",
+            type=ArtifactType.LOG_SNIPPET,
+            description="SharePoint Server Version Detection:\n\nServer: sharepoint.corp.com\nProduct: Microsoft SharePoint Server 2019\nVersion: 16.0.10396.20000\nBuild: 16.0.10396.20000\nPatch Level: November 2023 CU\n\nVulnerability Status: VULNERABLE\nCVE-2024-XXXXX: Affected\n\nExposed Endpoints:\n- /_layouts/15/upload.aspx (EXPOSED)\n- /_vti_bin/ (EXPOSED)\n- /_layouts/15/start.aspx (EXPOSED)\n- /_api/ (EXPOSED)\n\nAuthentication: Forms-based authentication enabled\nExternal Access: YES (internet-facing)\nWAF Protection: Enabled (Cloudflare)\n\nRecommendation: IMMEDIATE PATCHING REQUIRED",
+            file_url="/api/artifacts/files/sharepoint_version_phase1.txt",
+            notes_for_gm="Log showing SharePoint version and vulnerability status."
+        )
+        db.add(artifact2_blue_sp)
+        db.flush()
+
+        # Red Team Artifacts
+        artifact1_red_sp = Artifact(
+            name="Reconnaissance Report",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="SharePoint Reconnaissance Report:\n\nTarget: sharepoint.corp.com\nStatus: VULNERABLE\n\nVersion Information:\n- SharePoint Server 2019\n- Build: 16.0.10396.20000\n- Patch Level: November 2023 CU\n- CVE-2024-XXXXX: CONFIRMED VULNERABLE\n\nExposed Endpoints Identified:\n✓ /_layouts/15/upload.aspx\n✓ /_vti_bin/\n✓ /_api/\n✓ /_layouts/15/start.aspx\n\nAuthentication:\n- Forms-based authentication\n- No MFA requirement detected\n- Guest access enabled\n\nWAF Status:\n- Cloudflare WAF detected\n- Some rules may be bypassable\n- Testing evasion techniques\n\nVulnerability Testing:\n- RCE exploit payload prepared\n- Testing against /_layouts/15/upload.aspx\n- Ready for exploitation attempt",
+            file_url="/api/artifacts/files/recon_report_phase1.txt",
+            notes_for_gm="Red Team sees their reconnaissance results."
+        )
+        db.add(artifact1_red_sp)
+        db.flush()
+
+        artifact2_red_sp = Artifact(
+            name="Vulnerability Verification Status",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Vulnerability Verification:\n\nCVE-2024-XXXXX Status: CONFIRMED\nTarget: sharepoint.corp.com\nExploit Path: /_layouts/15/upload.aspx\n\nTest Results:\n✓ Version confirmed vulnerable\n✓ Endpoint accessible\n✓ WAF rules identified\n✓ Payload encoding tested\n✓ Ready for exploitation\n\nNext Steps:\n- Execute RCE payload\n- Establish reverse shell\n- Begin post-exploitation",
+            file_url="/api/artifacts/files/vuln_verification_phase1.txt",
+            notes_for_gm="Red Team sees their vulnerability verification."
+        )
+        db.add(artifact2_red_sp)
+        db.flush()
+
+        # Phase 2 Artifacts
+        # Blue Team Artifacts
+        artifact3_blue_sp = Artifact(
+            name="WAF Alert - Suspicious POST Request",
+            type=ArtifactType.LOG_SNIPPET,
+            description="WAF Alert Log:\n\nTime: 2024-01-15 15:42:18 UTC\nSource IP: 185.220.101.45\nTarget: sharepoint.corp.com\nRequest: POST /_layouts/15/upload.aspx\n\nAlert Details:\n- Suspicious payload pattern detected\n- Base64 encoded data in request body\n- Unusual HTTP headers\n- Request size: 8,432 bytes\n\nWAF Action: BLOCKED (initial attempts)\nWAF Action: ALLOWED (subsequent attempts after evasion)\n\nStatus: EXPLOITATION ATTEMPT DETECTED\nSeverity: CRITICAL\n\nRecommendation: Immediate server isolation required",
+            file_url="/api/artifacts/files/waf_alert_phase2.txt",
+            notes_for_gm="WAF logs showing exploitation attempts."
+        )
+        db.add(artifact3_blue_sp)
+        db.flush()
+
+        artifact4_blue_sp = Artifact(
+            name="SharePoint IIS Logs - RCE Execution",
+            type=ArtifactType.LOG_SNIPPET,
+            description="IIS Log Excerpt - SharePoint Server:\n\n2024-01-15 15:42:25 185.220.101.45 POST /_layouts/15/upload.aspx 200 8432\n2024-01-15 15:42:26 185.220.101.45 POST /_layouts/15/upload.aspx 200 1250\n2024-01-15 15:42:28 185.220.101.45 GET /_vti_bin/ 200 512\n\nProcess Activity Detected:\n- w3wp.exe (PID 4821) spawned cmd.exe (PID 4923)\n- cmd.exe executed: powershell.exe -enc [encoded command]\n- powershell.exe (PID 4924) established outbound connection\n- Destination: 185.220.101.45:4444 (reverse shell)\n\nStatus: RCE EXPLOITATION CONFIRMED\nImpact: Code execution achieved on SP-SRV-01",
+            file_url="/api/artifacts/files/iis_logs_phase2.txt",
+            notes_for_gm="IIS logs showing RCE execution and process spawning."
+        )
+        db.add(artifact4_blue_sp)
+        db.flush()
+
+        # Red Team Artifacts
+        artifact3_red_sp = Artifact(
+            name="Exploitation Success Report",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="RCE Exploitation Status: SUCCESS\n\nTarget: sharepoint.corp.com\nVulnerability: CVE-2024-XXXXX\nExploit Path: /_layouts/15/upload.aspx\n\nExploitation Timeline:\n15:42:18 - Initial payload sent\n15:42:20 - WAF evasion successful\n15:42:25 - RCE achieved\n15:42:26 - Reverse shell established\n\nAccess Confirmed:\n✓ Code execution on SP-SRV-01\n✓ Reverse shell active (PID 4924)\n✓ Running as: IIS AppPool\\SharePoint\n✓ Network connectivity confirmed\n\nPost-Exploitation:\n- Server enumeration in progress\n- Domain membership: CORP.local\n- Privileges: Medium (IIS AppPool)\n- Next: Privilege escalation",
+            file_url="/api/artifacts/files/exploit_success_phase2.txt",
+            notes_for_gm="Red Team sees their successful exploitation."
+        )
+        db.add(artifact3_red_sp)
+        db.flush()
+
+        artifact4_red_sp = Artifact(
+            name="Server Environment Enumeration",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Server Environment Enumeration:\n\nHostname: SP-SRV-01\nOS: Windows Server 2019\nDomain: CORP.local\nCurrent User: IIS AppPool\\SharePoint\nPrivileges: Medium (not admin)\n\nInstalled Software:\n- SharePoint Server 2019\n- SQL Server 2019 (for SharePoint DB)\n- .NET Framework 4.8\n\nNetwork Configuration:\n- IP: 10.0.5.12\n- Domain Controller: DC-01 (10.0.5.1)\n- File Servers: FS-01 (10.0.5.20), FS-02 (10.0.5.21)\n\nSharePoint Farm:\n- Farm Admin: CORP\\svc_sharepoint\n- Service Accounts: Multiple identified\n- Site Collections: 45 identified\n\nNext Steps:\n- Escalate to farm admin\n- Deploy persistence\n- Access site collections",
+            file_url="/api/artifacts/files/server_enum_phase2.txt",
+            notes_for_gm="Red Team sees their server enumeration results."
+        )
+        db.add(artifact4_red_sp)
+        db.flush()
+
+        # Phase 3 Artifacts
+        # Blue Team Artifacts
+        artifact5_blue_sp = Artifact(
+            name="Privilege Escalation Event Logs",
+            type=ArtifactType.LOG_SNIPPET,
+            description="Windows Security Event Log - Privilege Escalation:\n\nEvent ID 4624: Successful logon\nAccount: CORP\\svc_sharepoint\nSource: SP-SRV-01\nLogon Type: 3 (Network)\n\nEvent ID 4672: Special privileges assigned\nAccount: CORP\\svc_sharepoint\nPrivileges: SeDebugPrivilege, SeImpersonatePrivilege\n\nEvent ID 5136: Directory service object modified\nObject: CN=SharePoint Farm Admins,OU=Groups,DC=CORP,DC=local\nModification: Member added (CORP\\backdoor_user)\n\nSharePoint ULS Logs:\n- Farm administrator account accessed\n- Service account passwords modified\n- Scheduled tasks created: 3 tasks\n- Web shells deployed: 5 locations identified\n\nStatus: PRIVILEGE ESCALATION CONFIRMED",
+            file_url="/api/artifacts/files/privilege_escalation_phase3.txt",
+            notes_for_gm="Event logs showing privilege escalation."
+        )
+        db.add(artifact5_blue_sp)
+        db.flush()
+
+        artifact6_blue_sp = Artifact(
+            name="Persistence Mechanism Detection Report",
+            type=ArtifactType.INTEL_REPORT,
+            description="Persistence Mechanism Detection Report:\n\nWeb Shells Identified:\n1. /_layouts/15/shell1.aspx\n2. /_catalogs/masterpage/shell2.aspx\n3. /Style Library/shell3.aspx\n4. /_layouts/15/update.aspx\n5. /_catalogs/wp/shell4.aspx\n\nScheduled Tasks:\n- Task1: 'SharePointUpdate' (runs every 5 min)\n- Task2: 'SystemMaintenance' (runs hourly)\n- Task3: 'HealthCheck' (runs on startup)\n\nBackdoor Accounts:\n- CORP\\backdoor_user (added to Farm Admins)\n- CORP\\svc_temp (service account modified)\n\nWMI Event Subscriptions:\n- 2 subscriptions created for persistence\n\nRegistry Modifications:\n- HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\n- HKLM\\SYSTEM\\CurrentControlSet\\Services\n\nRecommendation: Immediate removal of all persistence mechanisms required.",
+            file_url="/api/artifacts/files/persistence_detection_phase3.pdf",
+            notes_for_gm="Report showing all persistence mechanisms."
+        )
+        db.add(artifact6_blue_sp)
+        db.flush()
+
+        # Red Team Artifacts
+        artifact5_red_sp = Artifact(
+            name="Privilege Escalation Status",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Privilege Escalation: SUCCESS\n\nMethod: Service account credential access\nTarget Account: CORP\\svc_sharepoint\nPrivileges Obtained: Farm Administrator\n\nActions Completed:\n✓ Farm admin account accessed\n✓ Service account passwords modified\n✓ Backdoor account created: CORP\\backdoor_user\n✓ Added to SharePoint Farm Admins group\n✓ Full farm access confirmed\n\nPersistence Deployed:\n✓ Web shells: 5 locations\n✓ Scheduled tasks: 3 tasks\n✓ WMI subscriptions: 2\n✓ Registry modifications: 2\n\nLateral Movement Recon:\n- Domain Controller: DC-01 (identified)\n- File Servers: FS-01, FS-02 (identified)\n- SQL Server: SP-SQL-01 (identified)\n\nStatus: Ready for data access phase",
+            file_url="/api/artifacts/files/privilege_status_phase3.txt",
+            notes_for_gm="Red Team sees their privilege escalation success."
+        )
+        db.add(artifact5_red_sp)
+        db.flush()
+
+        artifact6_red_sp = Artifact(
+            name="Persistence Deployment Report",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Persistence Deployment Status: COMPLETE\n\nWeb Shells Deployed:\n✓ /_layouts/15/shell1.aspx\n✓ /_catalogs/masterpage/shell2.aspx\n✓ /Style Library/shell3.aspx\n✓ /_layouts/15/update.aspx\n✓ /_catalogs/wp/shell4.aspx\n\nScheduled Tasks:\n✓ SharePointUpdate (5 min interval)\n✓ SystemMaintenance (hourly)\n✓ HealthCheck (on startup)\n\nBackdoor Accounts:\n✓ CORP\\backdoor_user (Farm Admin)\n✓ CORP\\svc_temp (service account)\n\nWMI Subscriptions: 2 active\nRegistry Persistence: 2 locations\n\nAll persistence mechanisms active. Access maintained even if primary shell discovered.",
+            file_url="/api/artifacts/files/persistence_deployment_phase3.txt",
+            notes_for_gm="Red Team sees their persistence deployment."
+        )
+        db.add(artifact6_red_sp)
+        db.flush()
+
+        # Phase 4 Artifacts
+        # Blue Team Artifacts
+        artifact7_blue_sp = Artifact(
+            name="SharePoint Access Audit Logs",
+            type=ArtifactType.LOG_SNIPPET,
+            description="SharePoint Access Audit Logs:\n\nUnauthorized Access Detected:\n\nSite Collections Accessed:\n- /sites/CustomerPortal (45,000 documents)\n- /sites/HR (12,000 documents)\n- /sites/Finance (8,500 documents)\n- /sites/RD (3,200 documents)\n\nAccess Pattern:\n- User: CORP\\backdoor_user\n- Method: SharePoint REST API\n- Timeframe: 15:50 - 18:30 UTC\n- Documents Accessed: 68,700 documents\n- Documents Downloaded: ~2,100 documents\n\nSensitive Data Categories:\n- Customer PII: 15,000 records\n- Employee Data: 2,400 records\n- Financial Records: 850 files\n- Intellectual Property: 320 files\n\nStatus: UNAUTHORIZED DATA ACCESS CONFIRMED",
+            file_url="/api/artifacts/files/sharepoint_access_phase4.txt",
+            notes_for_gm="SharePoint audit logs showing unauthorized access."
+        )
+        db.add(artifact7_blue_sp)
+        db.flush()
+
+        artifact8_blue_sp = Artifact(
+            name="Data Exfiltration Traffic Analysis",
+            type=ArtifactType.LOG_SNIPPET,
+            description="Network Traffic Analysis - Data Exfiltration:\n\nSource: SP-SRV-01 (10.0.5.12)\nDestination IPs:\n- 185.220.101.45 (port 443)\n- 45.146.164.110 (port 443)\n\nTraffic Pattern:\n- Protocol: HTTPS (encrypted)\n- Duration: 2 hours 40 minutes\n- Total Data Transferred: ~120 GB\n- Transfer Rate: ~45 GB/hour\n- Connection Type: Persistent connections\n\nData Transfer Methods:\n- SharePoint REST API calls\n- PowerShell download scripts\n- Direct file access via web shells\n\nFile Types Exfiltrated:\n- .docx, .xlsx, .pdf, .pptx\n- Database files (.mdb, .accdb)\n- Archive files (.zip, .rar)\n\nStatus: ACTIVE EXFILTRATION DETECTED\nRecommendation: Immediate network isolation required",
+            file_url="/api/artifacts/files/exfiltration_traffic_phase4.txt",
+            notes_for_gm="Network logs showing data exfiltration."
+        )
+        db.add(artifact8_blue_sp)
+        db.flush()
+
+        # Red Team Artifacts
+        artifact7_red_sp = Artifact(
+            name="Data Access Inventory",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="SharePoint Data Access Inventory:\n\nSite Collections Accessed: 4\nTotal Documents: 68,700\nDocuments Downloaded: 2,100\n\nHigh-Value Data Identified:\n\n1. Customer Portal (/sites/CustomerPortal)\n   - Customer contracts: 450 files\n   - Customer PII: 15,000 records\n   - Project documents: 2,800 files\n\n2. HR Site (/sites/HR)\n   - Employee records: 2,400 records\n   - Salary information: 850 files\n   - Performance reviews: 1,200 files\n\n3. Finance Site (/sites/Finance)\n   - Financial statements: 350 files\n   - Budget documents: 500 files\n\n4. R&D Site (/sites/RD)\n   - Intellectual property: 320 files\n   - Research data: 2,880 files\n\nExfiltration Status: IN PROGRESS (120 GB / 120 GB)",
+            file_url="/api/artifacts/files/data_inventory_phase4.txt",
+            notes_for_gm="Red Team sees their data access inventory."
+        )
+        db.add(artifact7_red_sp)
+        db.flush()
+
+        artifact8_red_sp = Artifact(
+            name="Data Exfiltration Progress",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="Data Exfiltration Status: COMPLETE\n\nTotal Data Exfiltrated: 120 GB\nDuration: 2 hours 40 minutes\nTransfer Rate: ~45 GB/hour\n\nData Categories:\n✓ Customer PII: 15,000 records (25 GB)\n✓ Employee Data: 2,400 records (8 GB)\n✓ Financial Records: 850 files (35 GB)\n✓ Intellectual Property: 320 files (42 GB)\n✓ Contracts & Legal: 450 files (10 GB)\n\nExfiltration Methods:\n- SharePoint REST API: 60 GB\n- PowerShell scripts: 45 GB\n- Web shell downloads: 15 GB\n\nDestination:\n- 185.220.101.45: 70 GB\n- 45.146.164.110: 50 GB\n\nStatus: All high-value data successfully exfiltrated. Ready for remediation phase.",
+            file_url="/api/artifacts/files/exfiltration_progress_phase4.txt",
+            notes_for_gm="Red Team sees their exfiltration progress."
+        )
+        db.add(artifact8_red_sp)
+        db.flush()
+
+        # Phase 5 Artifacts
+        # Blue Team Artifacts
+        artifact9_blue_sp = Artifact(
+            name="Patch Deployment Status",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="SharePoint Security Patch Deployment:\n\nPatch: KB5012345 (Emergency Security Update)\nCVE: CVE-2024-XXXXX\nStatus: DEPLOYED\n\nRemediation Actions Completed:\n✓ SharePoint server isolated from network\n✓ All web shells removed (5 locations)\n✓ Scheduled tasks deleted (3 tasks)\n✓ Backdoor accounts removed (2 accounts)\n✓ WMI subscriptions removed (2 subscriptions)\n✓ Registry modifications reverted\n✓ Service account passwords reset\n✓ SharePoint server rebuilt from clean backup\n✓ Patch KB5012345 installed\n✓ Server restored to production\n\nTimeline:\n- Attack Duration: 18 hours\n- Remediation Time: 6 hours\n- Total Downtime: 24 hours\n\nStatus: REMEDIATION COMPLETE",
+            file_url="/api/artifacts/files/patch_deployment_phase5.txt",
+            notes_for_gm="Patch deployment and remediation status."
+        )
+        db.add(artifact9_blue_sp)
+        db.flush()
+
+        artifact10_blue_sp = Artifact(
+            name="Data Breach Impact Assessment",
+            type=ArtifactType.INTEL_REPORT,
+            description="Data Breach Impact Assessment:\n\nBreach Summary:\n- Duration: 18 hours\n- Data Exfiltrated: 120 GB\n- Records Affected: 17,400+ individuals\n\nData Categories Breached:\n1. Customer PII: 15,000 records\n   - Names, addresses, email addresses\n   - Payment information (partial)\n   - Contract details\n\n2. Employee Data: 2,400 records\n   - Social Security Numbers\n   - Salary information\n   - Performance reviews\n\n3. Financial Records: 850 files\n   - Q1-Q4 2023 financials\n   - Budget forecasts\n   - Vendor contracts\n\n4. Intellectual Property: 320 files\n   - Proprietary algorithms\n   - Research data\n   - Product designs\n\nRegulatory Impact:\n- GDPR: Notification required (EU customers)\n- CCPA: Notification required (CA residents)\n- Potential HIPAA implications\n\nEstimated Cost: $2.5M - $5M (regulatory fines, notification, legal)",
+            file_url="/api/artifacts/files/breach_impact_phase5.pdf",
+            notes_for_gm="Data breach impact assessment report."
+        )
+        db.add(artifact10_blue_sp)
+        db.flush()
+
+        artifact11_blue_sp = Artifact(
+            name="After-Action Report - Lessons Learned",
+            type=ArtifactType.INTEL_REPORT,
+            description="After-Action Report - SharePoint RCE Incident:\n\nKey Findings:\n1. Vulnerability disclosure to exploitation: 4 hours\n2. Detection time: 2 hours after exploitation\n3. Total breach duration: 18 hours\n4. Data exfiltrated: 120 GB\n\nRoot Causes:\n- External-facing SharePoint server\n- No patch available at time of disclosure\n- WAF rules insufficient to block all exploit attempts\n- Delayed detection and response\n\nRecommendations:\n1. Implement network segmentation for SharePoint\n2. Enhance WAF rules for SharePoint-specific attacks\n3. Deploy additional monitoring for SharePoint servers\n4. Establish faster patch deployment procedures\n5. Implement data loss prevention (DLP) controls\n6. Regular security assessments of external-facing systems\n\nStatus: Report submitted to management and security team",
+            file_url="/api/artifacts/files/aar_phase5.pdf",
+            notes_for_gm="After-action report with lessons learned."
+        )
+        db.add(artifact11_blue_sp)
+        db.flush()
+
+        # Red Team Artifacts
+        artifact9_red_sp = Artifact(
+            name="Attack Success Summary",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="SharePoint RCE Attack Summary:\n\nTimeline:\n- Vulnerability Disclosure: 14:30 UTC\n- Reconnaissance: 14:35 - 15:40 UTC\n- Exploitation: 15:42 UTC\n- Privilege Escalation: 16:15 UTC\n- Data Exfiltration: 15:50 - 18:30 UTC\n- Remediation Detected: 08:30 UTC (next day)\n\nAttack Success Metrics:\n✓ RCE exploitation: SUCCESS\n✓ Privilege escalation: SUCCESS\n✓ Persistence deployed: 5 web shells, 3 tasks\n✓ Data accessed: 68,700 documents\n✓ Data exfiltrated: 120 GB\n✓ Access maintained: 18 hours\n\nTechniques Used:\n- CVE-2024-XXXXX RCE exploit\n- WAF evasion\n- Service account credential access\n- Web shell deployment\n- SharePoint API abuse\n\nStatus: Mission accomplished. All objectives achieved.",
+            file_url="/api/artifacts/files/attack_summary_phase5.txt",
+            notes_for_gm="Red Team sees their attack summary."
+        )
+        db.add(artifact9_red_sp)
+        db.flush()
+
+        artifact10_red_sp = Artifact(
+            name="Lessons Learned Report",
+            type=ArtifactType.INTEL_REPORT,
+            description="Attack Lessons Learned:\n\nSuccessful Techniques:\n✓ RCE exploit worked flawlessly\n✓ WAF evasion successful (payload encoding)\n✓ Service account credential access effective\n✓ Web shell persistence maintained access\n✓ SharePoint API abuse for data access\n\nDetection Evasion:\n- WAF initially blocked but evasion worked\n- Security tools detected but too late\n- Persistence mechanisms not immediately discovered\n\nAreas for Improvement:\n- Faster lateral movement\n- Additional persistence methods\n- Better data cataloging before exfiltration\n\nOverall Assessment:\nAttack was highly successful. Target organization had:\n- External-facing vulnerable system\n- Insufficient WAF protection\n- Delayed detection and response\n- No data loss prevention\n\nRecommendation: Continue targeting external-facing SharePoint deployments.",
+            file_url="/api/artifacts/files/lessons_learned_phase5.txt",
+            notes_for_gm="Red Team sees their lessons learned."
+        )
+        db.add(artifact10_red_sp)
+        db.flush()
+
+        artifact11_red_sp = Artifact(
+            name="Final Attack Report",
+            type=ArtifactType.INTEL_REPORT,
+            description="Final Attack Report - SharePoint RCE Exploitation:\n\nMission: Exploit SharePoint RCE vulnerability and exfiltrate sensitive data\nStatus: SUCCESS\n\nResults:\n- Systems Compromised: 1 (SP-SRV-01)\n- Privilege Level: Farm Administrator\n- Data Exfiltrated: 120 GB\n- Access Duration: 18 hours\n- Persistence: 5 web shells, 3 scheduled tasks\n\nData Value:\n- Customer PII: 15,000 records\n- Employee Data: 2,400 records\n- Financial Records: 850 files\n- Intellectual Property: 320 files\n\nEstimated Data Value: $10M+\n\nAttack Timeline:\n- Day 1, 14:30 UTC: Vulnerability disclosed\n- Day 1, 15:42 UTC: Exploitation successful\n- Day 1, 18:30 UTC: Data exfiltration complete\n- Day 2, 08:30 UTC: Remediation detected\n\nConclusion: Attack successfully completed all objectives. Target organization's security controls were insufficient to prevent or quickly detect the attack.",
+            file_url="/api/artifacts/files/final_report_phase5.txt",
+            notes_for_gm="Red Team sees their final attack report."
+        )
+        db.add(artifact11_red_sp)
+        db.flush()
+
+        # Associate artifacts with phases and team roles
+        # Phase 1: Vulnerability Disclosure & Initial Reconnaissance
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1_sp.id, artifact_id=artifact1_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1_sp.id, artifact_id=artifact2_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1_sp.id, artifact_id=artifact1_red_sp.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1_sp.id, artifact_id=artifact2_red_sp.id, team_role="red"))
+
+        # Phase 2: Exploitation Attempt & Initial Access
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase2_sp.id, artifact_id=artifact3_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase2_sp.id, artifact_id=artifact4_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase2_sp.id, artifact_id=artifact3_red_sp.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase2_sp.id, artifact_id=artifact4_red_sp.id, team_role="red"))
+
+        # Phase 3: Privilege Escalation & Persistence
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3_sp.id, artifact_id=artifact5_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3_sp.id, artifact_id=artifact6_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3_sp.id, artifact_id=artifact5_red_sp.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3_sp.id, artifact_id=artifact6_red_sp.id, team_role="red"))
+
+        # Phase 4: Data Access & Exfiltration
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4_sp.id, artifact_id=artifact7_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4_sp.id, artifact_id=artifact8_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4_sp.id, artifact_id=artifact7_red_sp.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4_sp.id, artifact_id=artifact8_red_sp.id, team_role="red"))
+
+        # Phase 5: Remediation & Post-Incident
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_sp.id, artifact_id=artifact9_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_sp.id, artifact_id=artifact10_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_sp.id, artifact_id=artifact11_blue_sp.id, team_role="blue"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_sp.id, artifact_id=artifact9_red_sp.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_sp.id, artifact_id=artifact10_red_sp.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5_sp.id, artifact_id=artifact11_red_sp.id, team_role="red"))
+
+        db.commit()
+        print("Created SharePoint RCE scenario with 5 phases and 22 artifacts (11 per team)")
+    else:
+        print("SharePoint RCE scenario already exists")
+
 
 if __name__ == "__main__":
     try:
