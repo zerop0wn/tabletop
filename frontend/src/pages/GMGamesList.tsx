@@ -92,33 +92,35 @@ export default function GMGamesList() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Game Manager Console</h1>
-          <div className="flex gap-2">
+        {/* Header - Mobile responsive */}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold">Game Manager Console</h1>
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => navigate('/gm/games/new')}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              className="flex-1 sm:flex-none px-4 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm sm:text-base font-medium"
             >
               New Game
             </button>
             <button
               onClick={() => setShowPasswordModal(true)}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+              className="flex-1 sm:flex-none px-4 py-2.5 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm sm:text-base font-medium"
             >
               Change Password
             </button>
             <button
               onClick={() => navigate('/gm/login')}
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+              className="flex-1 sm:flex-none px-4 py-2.5 bg-gray-600 text-white rounded-md hover:bg-gray-700 text-sm sm:text-base font-medium"
             >
               Logout
             </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        {/* Desktop Table View */}
+        <div className="hidden md:block bg-white rounded-lg shadow-md overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -152,7 +154,7 @@ export default function GMGamesList() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => navigate(`/gm/games/${game.id}`)}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="px-3 py-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded text-sm font-medium"
                       >
                         Open
                       </button>
@@ -167,7 +169,7 @@ export default function GMGamesList() {
                             }
                           }
                         }}
-                        className="text-red-600 hover:text-red-800"
+                        className="px-3 py-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded text-sm font-medium"
                       >
                         Delete
                       </button>
@@ -177,6 +179,66 @@ export default function GMGamesList() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="md:hidden space-y-4">
+          {games.map((game) => (
+            <div key={game.id} className="bg-white rounded-lg shadow-md p-4">
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-medium text-gray-500">ID:</span>
+                    <span className="text-sm font-semibold">{game.id}</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {game.scenario?.name || 'Unknown'}
+                  </h3>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(game.status)}`}>
+                      {game.status}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-2 mb-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-500">Phase:</span>
+                  <span className="font-medium">{game.current_phase?.name || 'N/A'}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-500">Created:</span>
+                  <span className="font-medium">{new Date(game.created_at).toLocaleDateString()}</span>
+                </div>
+              </div>
+
+              {/* Action Buttons - Always visible on mobile */}
+              <div className="flex gap-2 pt-3 border-t border-gray-200">
+                <button
+                  onClick={() => navigate(`/gm/games/${game.id}`)}
+                  className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-sm"
+                >
+                  Open Game
+                </button>
+                <button
+                  onClick={async () => {
+                    if (confirm(`Are you sure you want to delete game ${game.id}? This action cannot be undone.`)) {
+                      try {
+                        await apiClient.delete(`/games/${game.id}`)
+                        fetchGames()
+                      } catch (err: any) {
+                        alert(err.response?.data?.detail || 'Failed to delete game')
+                      }
+                    }
+                  }}
+                  className="flex-1 px-4 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 font-medium text-sm"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
