@@ -5011,6 +5011,36 @@ if __name__ == "__main__":
     create_stolen_data_inventory_eb()
     create_attack_summary_eb()
     
+    # SharePoint RCE scenario artifacts
+    print("\nCreating SharePoint RCE Zero-Day Exploitation artifacts...")
+    # Phase 1
+    create_sharepoint_advisory()
+    create_sharepoint_version()
+    create_recon_report()
+    create_vuln_verification()
+    # Phase 2
+    create_waf_alert()
+    create_iis_logs()
+    create_exploit_success()
+    create_server_enum()
+    # Phase 3
+    create_privilege_escalation_log()
+    create_persistence_detection()
+    create_privilege_status()
+    create_persistence_deployment()
+    # Phase 4
+    create_sharepoint_access_log()
+    create_exfiltration_traffic_sp()
+    create_data_inventory()
+    create_exfiltration_progress_sp()
+    # Phase 5
+    create_patch_deployment()
+    create_breach_impact()
+    create_aar_sharepoint()
+    create_attack_summary_sp()
+    create_lessons_learned_sp()
+    create_final_report()
+    
     # Create image placeholders
     create_image_placeholder(
         "phishing_email_phase1.png",
