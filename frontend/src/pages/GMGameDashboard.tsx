@@ -104,8 +104,8 @@ export default function GMGameDashboard() {
   }
 
   const handlePhaseAction = async (action: string) => {
-    // Check voting status before locking decisions or moving to next phase
-    if ((action === 'phase/lock_decisions' || action === 'phase/resolve' || action === 'phase/complete_and_next') && game?.current_phase_id) {
+    // Check voting status before locking decisions
+    if (action === 'phase/lock_decisions' && game?.current_phase_id) {
       const notAllVoted = votingStatus.some(status => !status.all_voted && status.total_players > 0)
       if (notAllVoted) {
         const message = action === 'phase/complete_and_next' 
@@ -249,34 +249,9 @@ export default function GMGameDashboard() {
                   )}
                   <button
                     onClick={() => handlePhaseAction('phase/lock_decisions')}
-                    className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700"
-                  >
-                    Lock Decisions
-                  </button>
-                </>
-              )}
-              {game.phase_state === 'decision_lock' && (
-                <button
-                  onClick={() => handlePhaseAction('phase/resolve')}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
-                >
-                  Resolve Phase
-                </button>
-              )}
-              {game.phase_state === 'resolution' && (
-                <>
-                  {votingStatus.some(status => !status.all_voted && status.total_players > 0) && (
-                    <div className="w-full mb-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-                      <p className="text-sm text-yellow-800">
-                        ⚠️ Warning: Not all players voted in this phase. Proceeding may affect scoring.
-                      </p>
-                    </div>
-                  )}
-                  <button
-                    onClick={() => handlePhaseAction('phase/complete_and_next')}
                     className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
                   >
-                    Complete & Next Phase
+                    Lock Decisions & Move to Next Phase
                   </button>
                 </>
               )}

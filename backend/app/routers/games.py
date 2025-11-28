@@ -240,9 +240,23 @@ def lock_decisions(game_id: int, db: Session = Depends(get_db), current_gm=Depen
         )
         db.add(score_event)
 
-    game.phase_state = PhaseState.DECISION_LOCK
+    # After auto-scoring, automatically move to next phase
+    # Find next phase
+    next_phase = db.query(ScenarioPhase).filter(
+        ScenarioPhase.scenario_id == game.scenario_id,
+        ScenarioPhase.order_index > current_phase.order_index
+    ).order_by(ScenarioPhase.order_index).first()
+
+    if next_phase:
+        game.current_phase_id = next_phase.id
+        game.phase_state = PhaseState.BRIEFING
+    else:
+        # No more phases, end game
+        game.status = GameStatus.FINISHED
+        game.phase_state = PhaseState.COMPLETE
+
     db.commit()
-    return {"message": "Decisions locked and auto-scored"}
+    return {"message": "Decisions locked, auto-scored, and moved to next phase", "next_phase_id": next_phase.id if next_phase else None}
 
 
 @router.post("/{game_id}/phase/resolve")
