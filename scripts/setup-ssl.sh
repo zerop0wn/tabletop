@@ -55,7 +55,13 @@ systemctl stop httpd 2>/dev/null || true
 systemctl stop apache2 2>/dev/null || true
 
 # Stop any Docker containers that might be using port 80
+echo "Stopping Docker containers that might be using port 80..."
+docker-compose -f docker-compose.dev.yml down 2>/dev/null || true
+docker-compose -f docker-compose.yml down 2>/dev/null || true
 docker ps --format "{{.Names}}" | grep -E "(frontend|nginx|web)" | xargs -r docker stop 2>/dev/null || true
+
+# Wait a moment for ports to be released
+sleep 2
 
 # Check firewall status
 if command -v firewall-cmd &> /dev/null; then
