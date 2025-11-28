@@ -3,15 +3,15 @@ Seed script to populate database with initial data.
 Run this after migrations: python seed_data.py
 """
 from sqlalchemy.orm import Session
-from app.database import SessionLocal, engine, Base
+from app.database import SessionLocal
 from app.models import (
     GMUser, Scenario, ScenarioPhase, Artifact, ArtifactType,
     scenario_phase_artifacts
 )
 from app.auth import get_password_hash
 
-# Create tables
-Base.metadata.create_all(bind=engine)
+# Note: Tables should already exist from migrations
+# Do NOT call Base.metadata.create_all() here as it will fail if tables exist
 
 db: Session = SessionLocal()
 
