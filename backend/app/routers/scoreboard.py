@@ -79,13 +79,16 @@ def get_scoreboard(game_identifier: str, db: Session = Depends(get_db)):
                     "submitted_at": decision.submitted_at.isoformat() if decision.submitted_at else None
                 }
 
+        # Get all players for this team
+        players = db.query(Player).filter(
+            Player.game_id == game.id,
+            Player.team_id == team.id
+        ).all()
+        team_member_names = [player.display_name for player in players]
+
         # Get voting status for current phase
         voting_status = None
         if game.current_phase_id and game.phase_state.value == "open_for_decisions":
-            players = db.query(Player).filter(
-                Player.game_id == game.id,
-                Player.team_id == team.id
-            ).all()
             votes = db.query(PlayerVote).filter(
                 PlayerVote.game_id == game.id,
                 PlayerVote.phase_id == game.current_phase_id,
@@ -103,6 +106,7 @@ def get_scoreboard(game_identifier: str, db: Session = Depends(get_db)):
             team_name=team.name,
             team_role=team.role,
             total_score=int(total_score) if total_score else 0,
+            team_members=team_member_names,
             recent_events=[{
                 "delta": event.delta,
                 "reason": event.reason,

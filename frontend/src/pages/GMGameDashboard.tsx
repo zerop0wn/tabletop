@@ -150,9 +150,26 @@ export default function GMGameDashboard() {
     }
   }
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-    alert('Copied to clipboard!')
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      alert('Copied to clipboard!')
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea')
+      textArea.value = text
+      textArea.style.position = 'fixed'
+      textArea.style.left = '-999999px'
+      document.body.appendChild(textArea)
+      textArea.select()
+      try {
+        document.execCommand('copy')
+        alert('Copied to clipboard!')
+      } catch (fallbackErr) {
+        alert('Failed to copy. Please copy manually: ' + text)
+      }
+      document.body.removeChild(textArea)
+    }
   }
 
   if (loading || !game) {
