@@ -14,6 +14,7 @@ export default function AudienceView() {
   const [scoreboard, setScoreboard] = useState<Scoreboard | null>(null)
   const [loading, setLoading] = useState(true)
   const [previousPhase, setPreviousPhase] = useState<string | undefined>(undefined)
+  const [previousPhaseState, setPreviousPhaseState] = useState<string | undefined>(undefined)
   const [phaseTransition, setPhaseTransition] = useState(false)
   const [animatedScores, setAnimatedScores] = useState<Record<number, AnimatedScore>>({})
   const [seenEventIds, setSeenEventIds] = useState<Set<string>>(new Set())
@@ -23,7 +24,7 @@ export default function AudienceView() {
   useEffect(() => {
     if (!gameIdentifier) return
     
-    // Initialize audio element for phase transition sound
+    // Initialize audio element for decision opening sound
     phaseTransitionSoundRef.current = new Audio('/sounds/phase-transition.wav')
     phaseTransitionSoundRef.current.volume = 0.5 // Set volume to 50%
     
@@ -41,20 +42,28 @@ export default function AudienceView() {
   useEffect(() => {
     if (!scoreboard) return
 
-    // Detect phase transitions
+    // Detect phase transitions (for visual animation)
     if (previousPhase && previousPhase !== scoreboard.current_phase_name) {
       setPhaseTransition(true)
       setTimeout(() => setPhaseTransition(false), 2000)
-      
-      // Play phase transition sound
+    }
+    setPreviousPhase(scoreboard.current_phase_name)
+
+    // Detect when GM opens game for decisions - play sound
+    if (
+      previousPhaseState !== undefined &&
+      previousPhaseState !== 'open_for_decisions' &&
+      scoreboard.phase_state === 'open_for_decisions'
+    ) {
+      // Play sound when phase state changes to open_for_decisions
       if (phaseTransitionSoundRef.current) {
         phaseTransitionSoundRef.current.currentTime = 0 // Reset to start
         phaseTransitionSoundRef.current.play().catch(err => {
-          console.warn('Failed to play phase transition sound:', err)
+          console.warn('Failed to play decision opening sound:', err)
         })
       }
     }
-    setPreviousPhase(scoreboard.current_phase_name)
+    setPreviousPhaseState(scoreboard.phase_state)
 
     // Animate score changes
     scoreboard.teams.forEach(team => {
