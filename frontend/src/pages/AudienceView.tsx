@@ -194,22 +194,6 @@ export default function AudienceView() {
                     }`}>
                       {team.team_name} Team
                     </h2>
-                    {/* Team Members */}
-                    {team.team_members && team.team_members.length > 0 && (
-                      <div className="mt-3">
-                        <div className="text-xs text-gray-400 mb-1">Team Members</div>
-                        <div className="flex flex-wrap justify-center gap-2">
-                          {team.team_members.map((member, idx) => (
-                            <span
-                              key={idx}
-                              className="px-2 py-1 bg-gray-700/50 rounded-md text-sm text-gray-300"
-                            >
-                              {member}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </div>
 
                   {/* Score Display with Animation */}
@@ -237,6 +221,23 @@ export default function AudienceView() {
                     )}
                     <div className="text-sm text-gray-400 mt-2">points</div>
                   </div>
+
+                  {/* Team Members */}
+                  {team.team_members && team.team_members.length > 0 && (
+                    <div className="mb-4">
+                      <div className="text-xs text-gray-400 mb-2 text-center">Team Members</div>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {team.team_members.map((member, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-1 bg-gray-700/50 rounded-md text-sm text-gray-300"
+                          >
+                            {member}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Progress Bar */}
                   <div className="w-full bg-gray-700/50 rounded-full h-4 mb-4 overflow-hidden">
