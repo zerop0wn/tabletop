@@ -373,7 +373,7 @@ export default function GMGameDashboard() {
               {votingStatus.map((status) => (
                 <div key={status.team_id} className="border border-gray-200 rounded-md p-4">
                   <div className="flex justify-between items-center mb-2">
-                    <h3 className="font-semibold">{status.team_name}</h3>
+                    <h3 className="font-semibold">{status.team_role === 'red' ? 'Red Team' : 'Blue Team'}</h3>
                     <span className={`px-2 py-1 rounded text-sm ${status.all_voted ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                       {status.votes_submitted}/{status.total_players} voted
                     </span>
@@ -407,7 +407,7 @@ export default function GMGameDashboard() {
                     <div>
                       <span className="font-semibold">{comment.player_name}</span>
                       <span className={`ml-2 px-2 py-1 rounded text-xs ${comment.team_role === 'red' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'}`}>
-                        {comment.team_name} ({comment.team_role.toUpperCase()})
+                        {comment.team_role === 'red' ? 'Red Team' : 'Blue Team'}
                       </span>
                     </div>
                     {comment.effectiveness_rating && (

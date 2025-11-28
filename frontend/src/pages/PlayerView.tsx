@@ -187,9 +187,9 @@ export default function PlayerView() {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">Team Decision Pad</h1>
-          {state.team_name && state.team_role && (
+          {state.team_role && (
             <div className={`px-4 py-2 rounded-lg ${teamBadgeColor} text-white font-semibold`}>
-              {state.team_name} Team ({state.team_role.toUpperCase()})
+              {state.team_role === 'red' ? 'Red Team' : 'Blue Team'}
             </div>
           )}
         </div>
@@ -207,7 +207,7 @@ export default function PlayerView() {
             )}
             {state.team_objective && (
               <div className={`mb-4 p-4 ${teamBgColor} border-2 rounded-md`}>
-                <h3 className={`font-semibold mb-2 ${teamTextColor}`}>Your Objective ({state.team_name || state.team_role?.toUpperCase()} Team):</h3>
+                <h3 className={`font-semibold mb-2 ${teamTextColor}`}>Your Objective ({state.team_role === 'red' ? 'Red Team' : 'Blue Team'}):</h3>
                 <p className="text-gray-700">{state.team_objective}</p>
               </div>
             )}

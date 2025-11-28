@@ -212,7 +212,7 @@ export default function AudienceView() {
                     <h2 className={`text-2xl font-bold mb-2 ${
                       team.team_role === 'red' ? 'text-red-300' : 'text-blue-300'
                     }`}>
-                      {team.team_name} Team
+                      {team.team_role === 'red' ? 'Red Team' : 'Blue Team'}
                     </h2>
                   </div>
 
