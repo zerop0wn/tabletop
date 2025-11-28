@@ -57,7 +57,7 @@ fi
 echo "Resetting admin password..."
 echo ""
 
-# Run Python script inside backend container to reset password
+# Run Python script inside backend container to reset or create admin user
 docker exec "$BACKEND_CONTAINER" python -c "
 import sys
 import os
@@ -71,20 +71,29 @@ try:
     # Find admin user
     admin_user = db.query(GMUser).filter(GMUser.username == 'admin').first()
     if not admin_user:
-        print('❌ Admin user not found in database')
-        print('You may need to run seed_data.py first')
-        sys.exit(1)
+        print('⚠️  Admin user not found. Creating new admin user...')
+        # Create admin user
+        admin_user = GMUser(
+            username='admin',
+            password_hash=get_password_hash('$new_password')
+        )
+        db.add(admin_user)
+        db.commit()
+        print('✓ Admin user created successfully')
+    else:
+        # Update password
+        admin_user.password_hash = get_password_hash('$new_password')
+        db.commit()
+        print('✓ Admin password reset successfully')
     
-    # Update password
-    admin_user.password_hash = get_password_hash('$new_password')
-    db.commit()
-    print('✓ Admin password reset successfully')
     print('')
     print('You can now login with:')
     print('  Username: admin')
     print('  Password: (the password you just set)')
 except Exception as e:
-    print(f'❌ Error resetting password: {e}')
+    print(f'❌ Error: {e}')
+    import traceback
+    traceback.print_exc()
     db.rollback()
     sys.exit(1)
 finally:
