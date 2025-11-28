@@ -18,15 +18,19 @@ fi
 # Install Certbot if not already installed
 if ! command -v certbot &> /dev/null; then
     echo "Installing Certbot..."
-    if [ -f /etc/redhat-release ]; then
-        # RHEL/CentOS/Amazon Linux
-        yum install -y certbot
-    elif [ -f /etc/debian_version ]; then
+    if command -v dnf &> /dev/null; then
+        # Amazon Linux 2023, Fedora, RHEL 9+
+        sudo dnf install -y certbot
+    elif command -v yum &> /dev/null; then
+        # Amazon Linux 2, CentOS 7, RHEL 7/8
+        sudo yum install -y certbot
+    elif command -v apt-get &> /dev/null; then
         # Debian/Ubuntu
-        apt-get update
-        apt-get install -y certbot
+        sudo apt-get update
+        sudo apt-get install -y certbot
     else
         echo "Unsupported OS. Please install Certbot manually."
+        echo "For Amazon Linux 2023, try: sudo dnf install -y certbot"
         exit 1
     fi
 fi
