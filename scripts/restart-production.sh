@@ -44,12 +44,16 @@ echo ""
 echo "4. Checking backend health..."
 BACKEND_CONTAINER=$(docker-compose --env-file .env.production -f docker-compose.prod.yml ps -q backend)
 if [ -n "$BACKEND_CONTAINER" ]; then
-    if docker exec "$BACKEND_CONTAINER" wget -q -O- http://localhost:8000/health 2>/dev/null; then
+    # Try curl first, then python if curl not available
+    if docker exec "$BACKEND_CONTAINER" sh -c "command -v curl >/dev/null && curl -s http://localhost:8000/health || python -c \"import urllib.request; print(urllib.request.urlopen('http://localhost:8000/health').read().decode())\"" 2>/dev/null | grep -q "healthy"; then
         echo "✓ Backend is healthy"
     else
         echo "❌ Backend health check failed"
         echo "Backend logs:"
         docker-compose --env-file .env.production -f docker-compose.prod.yml logs backend --tail=30
+        echo ""
+        echo "⚠️  If you see database password errors, run:"
+        echo "   ./scripts/fix-database-password.sh"
         exit 1
     fi
 else
