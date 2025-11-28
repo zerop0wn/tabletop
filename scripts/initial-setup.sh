@@ -19,7 +19,7 @@ fi
 # Check if .env.production exists
 if [ ! -f .env.production ]; then
     echo "Creating .env.production from template..."
-    cp .env.production.example .env.production
+    cp env.production.template .env.production
     echo ""
     echo "⚠️  IMPORTANT: Edit .env.production and set:"
     echo "   - POSTGRES_PASSWORD (use: openssl rand -base64 32)"
