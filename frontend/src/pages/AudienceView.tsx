@@ -310,7 +310,7 @@ export default function AudienceView() {
                     <div className="mt-4 p-3 bg-gray-800/50 rounded-lg">
                       <div className="text-xs text-gray-400 mb-1">Last Action</div>
                       <div className="font-semibold text-sm">{team.recent_decision.action}</div>
-                      {team.recent_decision.score_awarded !== null && (
+                      {team.recent_decision.score_awarded !== null && team.recent_decision.score_awarded !== undefined && (
                         <div className={`text-xs mt-1 ${
                           team.recent_decision.score_awarded >= 7
                             ? 'text-green-400'

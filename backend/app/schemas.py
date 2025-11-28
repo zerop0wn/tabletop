@@ -185,6 +185,7 @@ class PlayerVoteResponse(BaseModel):
 class VotingStatusResponse(BaseModel):
     team_id: int
     team_name: str
+    team_role: str
     total_players: int
     votes_submitted: int
     votes: List[PlayerVoteResponse] = []

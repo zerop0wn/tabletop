@@ -84,6 +84,7 @@ export interface PlayerVote {
 export interface VotingStatus {
   team_id: number
   team_name: string
+  team_role: string
   total_players: number
   votes_submitted: number
   votes: PlayerVote[]

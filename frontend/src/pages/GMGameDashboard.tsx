@@ -108,9 +108,7 @@ export default function GMGameDashboard() {
     if (action === 'phase/lock_decisions' && game?.current_phase_id) {
       const notAllVoted = votingStatus.some(status => !status.all_voted && status.total_players > 0)
       if (notAllVoted) {
-        const message = action === 'phase/complete_and_next' 
-          ? 'Not all players have voted. Are you sure you want to proceed to the next phase?'
-          : 'Not all players have voted. Are you sure you want to proceed?'
+        const message = 'Not all players have voted. Are you sure you want to proceed?'
         if (!confirm(message)) {
           return
         }

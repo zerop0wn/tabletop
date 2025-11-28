@@ -185,7 +185,7 @@ export default function AfterActionReportView() {
           {/* Phase-by-Phase Analysis */}
           <div className="space-y-6">
             <h2 className="text-2xl font-bold mb-4">Phase-by-Phase Analysis</h2>
-            {report.phase_analyses.map((phase, idx) => (
+            {report.phase_analyses.map((phase) => (
               <div key={phase.phase_id} className="border border-gray-200 rounded-lg p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>

@@ -183,6 +183,7 @@ def get_voting_status(
         status_list.append(VotingStatusResponse(
             team_id=team.id,
             team_name=team.name,
+            team_role=team.role,
             total_players=len(players),
             votes_submitted=len(votes),
             votes=vote_responses,
