@@ -15,17 +15,30 @@ if [ ! -f "docker-compose.dev.yml" ] && [ ! -f "docker-compose.prod.yml" ]; then
     exit 1
 fi
 
-# Determine which docker-compose file to use
+# Determine which docker-compose file to use and get backend container
 if [ -f "docker-compose.prod.yml" ]; then
     COMPOSE_FILE="docker-compose.prod.yml"
     ENV_FILE="--env-file .env.production"
+    BACKEND_CONTAINER=$(docker-compose $ENV_FILE -f "$COMPOSE_FILE" ps -q backend)
 else
     COMPOSE_FILE="docker-compose.dev.yml"
     ENV_FILE=""
+    BACKEND_CONTAINER=$(docker-compose -f "$COMPOSE_FILE" ps -q backend)
 fi
 
+# Check if backend container is running
+if [ -z "$BACKEND_CONTAINER" ]; then
+    echo "❌ Backend container is not running!"
+    exit 1
+fi
+
+echo "✓ Backend container is running"
+echo ""
+
+# Step 1: Copy artifact generation script and generate artifacts
 echo "Step 1: Generating artifact files..."
-docker-compose -f "$COMPOSE_FILE" $ENV_FILE exec -T backend python /app/generate_intermediate_ransomware_artifacts.py
+docker cp backend/generate_intermediate_ransomware_artifacts.py "$BACKEND_CONTAINER:/app/generate_intermediate_ransomware_artifacts.py"
+docker exec "$BACKEND_CONTAINER" python /app/generate_intermediate_ransomware_artifacts.py
 
 if [ $? -ne 0 ]; then
     echo "❌ Error generating artifacts"
@@ -33,8 +46,13 @@ if [ $? -ne 0 ]; then
 fi
 
 echo ""
+echo "✓ Artifact files generated"
+echo ""
+
+# Step 2: Copy scenario creation script and create scenario
 echo "Step 2: Creating scenario in database..."
-docker-compose -f "$COMPOSE_FILE" $ENV_FILE exec -T backend python /app/create_intermediate_ransomware_scenario.py
+docker cp backend/create_intermediate_ransomware_scenario.py "$BACKEND_CONTAINER:/app/create_intermediate_ransomware_scenario.py"
+docker exec "$BACKEND_CONTAINER" python /app/create_intermediate_ransomware_scenario.py
 
 if [ $? -ne 0 ]; then
     echo "❌ Error creating scenario"
