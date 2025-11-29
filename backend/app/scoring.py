@@ -256,11 +256,47 @@ SHAREPOINT_RCE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     },
 }
 
+# Tutorial Scenario Scoring (Simple scoring for learning)
+TUTORIAL_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
+    # Phase 1: Initial Detection (order_index=0)
+    (0, "red"): {
+        "Establish persistence": 8,  # Good for establishing access
+        "Cover tracks": 7,           # Good for avoiding detection
+        "Escalate privileges": 4,    # Too early, risky
+        "Move laterally": 3,         # Too early
+        "Exfiltrate data": 1,        # Way too early
+    },
+    (0, "blue"): {
+        "Isolate host": 9,           # Excellent for containment
+        "Collect forensic evidence": 8,  # Critical for analysis
+        "Block IP address": 6,       # Good but may be too late
+        "Deploy countermeasures": 5, # Good but takes time
+        "Escalate to management": 4,  # Important but not immediate
+    },
+    
+    # Phase 2: Response & Containment (order_index=1)
+    (1, "red"): {
+        "Establish persistence": 8,  # Maintain access
+        "Cover tracks": 9,           # Critical to avoid detection
+        "Escalate privileges": 6,    # Good timing
+        "Move laterally": 5,         # Starting to explore
+        "Exfiltrate data": 2,        # Too early
+    },
+    (1, "blue"): {
+        "Isolate host": 10,          # Primary - contain the threat
+        "Block IP address": 9,       # Block C2 communication
+        "Collect forensic evidence": 8, # Important for analysis
+        "Deploy countermeasures": 7, # Good defense
+        "Escalate to management": 6,  # Coordination needed
+    },
+}
+
 # Map scenario names to their scoring matrices
 SCORING_MATRICES: Dict[str, Dict[Tuple[int, str], Dict[str, int]]] = {
     "Ransomware Incident Response": RANSOMWARE_SCORING,
     "Email Bomb & Social Engineering Attack": EMAIL_BOMB_SCORING,
     "SharePoint RCE Zero-Day Exploitation": SHAREPOINT_RCE_SCORING,
+    "Tutorial: Basic Security Incident": TUTORIAL_SCORING,
 }
 
 
