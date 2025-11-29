@@ -421,10 +421,109 @@ TUTORIAL_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     },
 }
 
+# Intermediate Ransomware Scenario: "Ransomware Attack: Corporate Network Compromise"
+INTERMEDIATE_RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
+    # Phase 1: Initial Access - HR vs Operations
+    # Artifacts show Operations has weaker security (outdated EDR) vs HR (strong EDR)
+    # Red Team should prioritize Operations for persistence (lower detection risk)
+    # Blue Team should prioritize Operations for containment (higher risk)
+    (0, "red"): {
+        "Focus on Operations Department (WS-OPS-089)": 10,  # CORRECT - Artifacts show Operations has weaker EDR
+        "Focus on HR Department (WS-HR-042)": 4,            # WRONG - HR has strong EDR, attack was blocked
+        "Split efforts between both departments": 6,        # MEDIUM - Spreads risk
+        "Cover tracks": 7,                                  # Secondary objective - Good for avoiding detection
+        "Escalate privileges": 3,                           # Too early, risky
+    },
+    (0, "blue"): {
+        "Isolate Operations Department host (WS-OPS-089)": 10,  # CORRECT - Artifacts show Operations is higher risk
+        "Isolate HR Department host (WS-HR-042)": 6,            # WRONG - HR already blocked, lower risk
+        "Isolate both hosts": 8,                                # MEDIUM - Conservative but may be overkill
+        "Collect forensic evidence": 8,                          # Critical for analysis
+        "Deploy countermeasures": 5,                            # Good but takes time
+    },
+    
+    # Phase 2: Establishing Persistence
+    # Artifacts show Registry Run Keys have best balance of reliability and low detection
+    # Red Team should choose Registry Run Keys
+    # Blue Team should prioritize Registry Run Keys removal
+    (1, "red"): {
+        "Deploy Registry Run Key": 10,              # CORRECT - Best balance of reliability and low detection
+        "Deploy Scheduled Task": 7,                  # MEDIUM - Higher detection risk
+        "Deploy WMI Event Subscription": 2,         # WRONG - Blocked immediately, very high detection
+        "Move laterally": 5,                        # Secondary objective
+        "Cover tracks": 6,                          # Secondary objective
+    },
+    (1, "blue"): {
+        "Audit and clean registry": 10,             # CORRECT - Artifacts show Registry was deployed
+        "Remove scheduled tasks": 7,                # MEDIUM - May also be deployed
+        "Block WMI subscriptions": 4,               # WRONG - WMI was already blocked
+        "Collect forensic evidence": 8,              # Critical for analysis
+        "Deploy countermeasures": 6,                # Good but takes time
+    },
+    
+    # Phase 3: Privilege Escalation
+    # Artifacts show APP-DEV-02 has unpatched LPE vulnerability vs FS-PROD-01 (fully patched)
+    # Red Team should choose APP-DEV-02
+    # Blue Team should prioritize APP-DEV-02
+    (2, "red"): {
+        "Escalate on APP-DEV-02": 10,               # CORRECT - Artifacts show unpatched LPE vulnerability
+        "Escalate on FS-PROD-01": 3,                # WRONG - FS-PROD-01 is fully patched
+        "Attempt both": 5,                          # MEDIUM - Spreads risk
+        "Move laterally": 6,                       # Secondary objective
+        "Cover tracks": 5,                         # Secondary objective
+    },
+    (2, "blue"): {
+        "Isolate APP-DEV-02": 10,                  # CORRECT - Artifacts show APP-DEV-02 has unpatched vulnerability
+        "Isolate FS-PROD-01": 4,                    # WRONG - FS-PROD-01 is fully patched, lower risk
+        "Isolate both": 6,                         # MEDIUM - Conservative but may be overkill
+        "Patch vulnerabilities": 9,                 # Critical - Patch APP-DEV-02
+        "Collect forensic evidence": 7,            # Important for analysis
+    },
+    
+    # Phase 4: Lateral Movement & Data Discovery
+    # Artifacts show DB-HR-PROD is accessible vs DB-CUST-PROD (isolated)
+    # Red Team should choose DB-HR-PROD
+    # Blue Team should prioritize DB-HR-PROD
+    (3, "red"): {
+        "Target DB-HR-PROD": 10,                   # CORRECT - Artifacts show DB-HR-PROD is accessible
+        "Target DB-CUST-PROD": 2,                  # WRONG - DB-CUST-PROD is isolated, not accessible
+        "Target both": 4,                          # MEDIUM - One target not accessible
+        "Cover tracks": 6,                         # Secondary objective
+        "Establish persistence": 7,               # Secondary objective
+    },
+    (3, "blue"): {
+        "Isolate DB-HR-PROD": 10,                  # CORRECT - Artifacts show DB-HR-PROD shows signs of compromise
+        "Isolate DB-CUST-PROD": 4,                 # WRONG - DB-CUST-PROD shows no access attempts
+        "Isolate both": 6,                        # MEDIUM - Conservative but may be overkill
+        "Block database access": 8,                # Critical - Block unauthorized access
+        "Collect forensic evidence": 7,            # Important for analysis
+    },
+    
+    # Phase 5: Data Exfiltration & Ransomware Deployment
+    # Artifacts show DNS tunneling has lower detection risk vs HTTPS (well-monitored)
+    # Red Team should choose DNS tunneling
+    # Blue Team should prioritize DNS tunneling blocking
+    (4, "red"): {
+        "Use DNS tunneling": 10,                   # CORRECT - Artifacts show DNS tunneling has lower detection risk
+        "Use HTTPS tunnel": 6,                    # MEDIUM - Faster but higher detection risk
+        "Split across both": 7,                    # MEDIUM - Spreads risk
+        "Cover tracks": 6,                        # Secondary objective
+        "Establish persistence": 5,              # Secondary objective
+    },
+    (4, "blue"): {
+        "Block DNS tunneling": 10,                # CORRECT - Artifacts show DNS tunneling has detection gaps
+        "Block HTTPS exfiltration": 6,             # MEDIUM - HTTPS is well-monitored
+        "Deploy DLP countermeasures": 8,          # Critical - Enhance DLP coverage
+        "Collect forensic evidence": 7,           # Important for analysis
+        "Escalate to management": 5,             # Important but not immediate
+    },
+}
+
 # Map scenario names to their scoring matrices
 SCORING_MATRICES: Dict[str, Dict[Tuple[int, str], Dict[str, int]]] = {
     "Ransomware Incident Response": RANSOMWARE_SCORING,
     "Ransomware Attack: Advanced Persistent Threat": NEW_RANSOMWARE_SCORING,
+    "Ransomware Attack: Corporate Network Compromise": INTERMEDIATE_RANSOMWARE_SCORING,
     "Email Bomb & Social Engineering Attack": EMAIL_BOMB_SCORING,
     "SharePoint RCE Zero-Day Exploitation": SHAREPOINT_RCE_SCORING,
     "Tutorial: Basic Security Incident": TUTORIAL_SCORING,
