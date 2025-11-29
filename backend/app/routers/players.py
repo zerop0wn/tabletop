@@ -151,6 +151,11 @@ def get_player_state(game_id: int, player_id: int, db: Session = Depends(get_db)
         team_role_key = player.team.role
         if team_role_key in current_phase.available_actions:
             available_actions = current_phase.available_actions[team_role_key]
+        # Debug logging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Phase {current_phase.id} has available_actions: {current_phase.available_actions}")
+        logger.info(f"Team role: {team_role_key}, Actions for team: {available_actions}")
     
     return PlayerStateResponse(
         current_phase=current_phase,

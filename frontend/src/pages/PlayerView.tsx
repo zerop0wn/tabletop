@@ -136,6 +136,12 @@ export default function PlayerView() {
         `/games/${gameId}/player/${playerId}/state`
       )
       setState(response.data)
+      // Debug: Log available actions to see what we're receiving
+      if (response.data.available_actions) {
+        console.log('Phase-specific actions received:', response.data.available_actions)
+      } else {
+        console.log('No phase-specific actions - using generic actions')
+      }
     } catch (err) {
       console.error('Failed to fetch state:', err)
     }
