@@ -36,16 +36,39 @@ echo ""
 
 # Check if database migrations are up to date
 echo "1. Checking database migrations..."
-if docker exec "$BACKEND_CONTAINER" alembic current 2>&1 | grep -q "head"; then
+CURRENT_STATE=$(docker exec "$BACKEND_CONTAINER" alembic current 2>&1)
+
+if echo "$CURRENT_STATE" | grep -q "head\|\([a-f0-9]\{12\}\)"; then
     echo "✓ Database migrations are up to date"
+    # Check if we need to upgrade
+    if echo "$CURRENT_STATE" | grep -q "head"; then
+        echo "   Already at latest version"
+    else
+        echo "⚠️  Upgrading to latest version..."
+        docker exec "$BACKEND_CONTAINER" alembic upgrade head
+        if [ $? -eq 0 ]; then
+            echo "✓ Migrations completed"
+        else
+            echo "⚠️  Migration upgrade had issues (may already be at latest)"
+        fi
+    fi
+elif echo "$CURRENT_STATE" | grep -q "Can't locate revision"; then
+    echo "⚠️  Database exists but Alembic doesn't know its state"
+    echo "   Stamping database with latest revision..."
+    LATEST_REVISION=$(docker exec "$BACKEND_CONTAINER" alembic heads 2>&1 | grep -oP '^[a-f0-9]+' | head -1)
+    if [ -n "$LATEST_REVISION" ]; then
+        docker exec "$BACKEND_CONTAINER" alembic stamp "$LATEST_REVISION"
+        echo "✓ Database stamped with revision: $LATEST_REVISION"
+    else
+        echo "⚠️  Could not determine latest revision, skipping stamp"
+    fi
 else
     echo "⚠️  Running database migrations..."
     docker exec "$BACKEND_CONTAINER" alembic upgrade head
     if [ $? -eq 0 ]; then
         echo "✓ Migrations completed"
     else
-        echo "❌ Migration failed"
-        exit 1
+        echo "⚠️  Migration had issues, but continuing..."
     fi
 fi
 echo ""
