@@ -254,21 +254,22 @@ export default function GMGameDashboard() {
                   </button>
                 </>
               )}
+              {/* Game completion & reporting actions */}
               {game.status === 'in_progress' && (
-                <>
-                  <button
-                    onClick={() => handlePhaseAction('end')}
-                    className="w-full sm:w-auto px-4 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 font-medium text-sm sm:text-base"
-                  >
-                    End Game
-                  </button>
-                  <button
-                    onClick={() => navigate(`/gm/games/${id}/after-action-report`)}
-                    className="w-full sm:w-auto px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium text-sm sm:text-base"
-                  >
-                    View After Action Report
-                  </button>
-                </>
+                <button
+                  onClick={() => handlePhaseAction('end')}
+                  className="w-full sm:w-auto px-4 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 font-medium text-sm sm:text-base"
+                >
+                  End Game
+                </button>
+              )}
+              {(game.status === 'in_progress' || game.status === 'finished') && (
+                <button
+                  onClick={() => navigate(`/gm/games/${id}/after-action-report`)}
+                  className="w-full sm:w-auto px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium text-sm sm:text-base"
+                >
+                  View After Action Report
+                </button>
               )}
             </div>
 

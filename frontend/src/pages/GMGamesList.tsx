@@ -158,6 +158,14 @@ export default function GMGamesList() {
                       >
                         Open
                       </button>
+                      {(game.status === 'in_progress' || game.status === 'finished') && (
+                        <button
+                          onClick={() => navigate(`/gm/games/${game.id}/after-action-report`)}
+                          className="px-3 py-1.5 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded text-sm font-medium"
+                        >
+                          AAR
+                        </button>
+                      )}
                       <button
                         onClick={async () => {
                           if (confirm(`Are you sure you want to delete game ${game.id}? This action cannot be undone.`)) {
@@ -221,6 +229,14 @@ export default function GMGamesList() {
                 >
                   Open Game
                 </button>
+                {(game.status === 'in_progress' || game.status === 'finished') && (
+                  <button
+                    onClick={() => navigate(`/gm/games/${game.id}/after-action-report`)}
+                    className="flex-1 px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium text-sm"
+                  >
+                    AAR
+                  </button>
+                )}
                 <button
                   onClick={async () => {
                     if (confirm(`Are you sure you want to delete game ${game.id}? This action cannot be undone.`)) {
