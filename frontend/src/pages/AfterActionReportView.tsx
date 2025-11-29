@@ -120,19 +120,67 @@ export default function AfterActionReportView() {
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
             <div>
-              <h1 className="text-3xl font-bold mb-2">After Action Report</h1>
-              <p className="text-gray-600">
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2">After Action Report</h1>
+              <p className="text-sm sm:text-base text-gray-600">
                 {report.scenario_name} - Generated {new Date(report.generated_at).toLocaleString()}
               </p>
             </div>
-            <button
-              onClick={() => navigate(`/gm/games/${id}`)}
-              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-            >
-              Back to Game
-            </button>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await apiClient.get(`/games/${id}/after-action-report/export/word`, {
+                      responseType: 'blob'
+                    })
+                    const url = window.URL.createObjectURL(new Blob([response.data]))
+                    const link = document.createElement('a')
+                    link.href = url
+                    link.setAttribute('download', `AAR_${report.scenario_name.replace(/[^a-z0-9]/gi, '_')}_${id}_${new Date().toISOString().split('T')[0]}.docx`)
+                    document.body.appendChild(link)
+                    link.click()
+                    link.remove()
+                    window.URL.revokeObjectURL(url)
+                  } catch (err) {
+                    console.error('Failed to export Word document:', err)
+                    alert('Failed to export Word document')
+                  }
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium text-sm sm:text-base"
+              >
+                Export Word
+              </button>
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await apiClient.get(`/games/${id}/after-action-report/export/pdf`, {
+                      responseType: 'blob'
+                    })
+                    const url = window.URL.createObjectURL(new Blob([response.data]))
+                    const link = document.createElement('a')
+                    link.href = url
+                    link.setAttribute('download', `AAR_${report.scenario_name.replace(/[^a-z0-9]/gi, '_')}_${id}_${new Date().toISOString().split('T')[0]}.pdf`)
+                    document.body.appendChild(link)
+                    link.click()
+                    link.remove()
+                    window.URL.revokeObjectURL(url)
+                  } catch (err) {
+                    console.error('Failed to export PDF document:', err)
+                    alert('Failed to export PDF document')
+                  }
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 font-medium text-sm sm:text-base"
+              >
+                Export PDF
+              </button>
+              <button
+                onClick={() => navigate(`/gm/games/${id}`)}
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 font-medium text-sm sm:text-base"
+              >
+                Back to Game
+              </button>
+            </div>
           </div>
 
           {/* Overall Risk Summary */}

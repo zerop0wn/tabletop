@@ -582,3 +582,93 @@ def generate_after_action_report(
         phase_analyses=phase_analyses
     )
 
+
+@router.get("/{game_id}/after-action-report/export/word")
+def export_word_report(
+    game_id: int,
+    db: Session = Depends(get_db),
+    current_gm=Depends(get_current_gm)
+):
+    """Export After Action Report as Word document (.docx)"""
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game or game.gm_id != current_gm.id:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    # Get or generate report
+    existing_report = db.query(AfterActionReport).filter(
+        AfterActionReport.game_id == game_id
+    ).first()
+    
+    if not existing_report:
+        # Generate report first
+        from app.routers.games import generate_after_action_report
+        aar_response = generate_after_action_report(game_id, db, current_gm)
+        report_data = {
+            "game_id": game_id,
+            "scenario_name": aar_response.scenario_name,
+            "generated_at": aar_response.generated_at,
+            "overall_risk_rating": aar_response.overall_risk_rating,
+            "overall_risk_score": aar_response.overall_risk_score,
+            "phase_analyses": [p.dict() for p in aar_response.phase_analyses]
+        }
+    else:
+        report_data = existing_report.report_data
+    
+    # Generate Word document
+    word_doc = generate_word_report(report_data)
+    
+    # Generate filename
+    scenario_name_safe = "".join(c for c in report_data.get('scenario_name', 'Report') if c.isalnum() or c in (' ', '-', '_')).strip()
+    filename = f"AAR_{scenario_name_safe}_{game_id}_{datetime.now().strftime('%Y%m%d')}.docx"
+    
+    return StreamingResponse(
+        word_doc,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
+
+
+@router.get("/{game_id}/after-action-report/export/pdf")
+def export_pdf_report(
+    game_id: int,
+    db: Session = Depends(get_db),
+    current_gm=Depends(get_current_gm)
+):
+    """Export After Action Report as PDF document"""
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game or game.gm_id != current_gm.id:
+        raise HTTPException(status_code=404, detail="Game not found")
+    
+    # Get or generate report
+    existing_report = db.query(AfterActionReport).filter(
+        AfterActionReport.game_id == game_id
+    ).first()
+    
+    if not existing_report:
+        # Generate report first
+        from app.routers.games import generate_after_action_report
+        aar_response = generate_after_action_report(game_id, db, current_gm)
+        report_data = {
+            "game_id": game_id,
+            "scenario_name": aar_response.scenario_name,
+            "generated_at": aar_response.generated_at,
+            "overall_risk_rating": aar_response.overall_risk_rating,
+            "overall_risk_score": aar_response.overall_risk_score,
+            "phase_analyses": [p.dict() for p in aar_response.phase_analyses]
+        }
+    else:
+        report_data = existing_report.report_data
+    
+    # Generate PDF document
+    pdf_doc = generate_pdf_report(report_data)
+    
+    # Generate filename
+    scenario_name_safe = "".join(c for c in report_data.get('scenario_name', 'Report') if c.isalnum() or c in (' ', '-', '_')).strip()
+    filename = f"AAR_{scenario_name_safe}_{game_id}_{datetime.now().strftime('%Y%m%d')}.pdf"
+    
+    return StreamingResponse(
+        pdf_doc,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
+
