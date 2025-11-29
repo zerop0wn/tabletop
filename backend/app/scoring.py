@@ -7,18 +7,21 @@ from typing import Dict, List, Tuple, Optional
 # Scoring configuration: (scenario_name, phase_order_index, team_role) -> Dict of (action_name, points)
 # Points: 10 = optimal, 7 = good, 4 = acceptable, 1 = poor, 0 = counterproductive
 
-# Ransomware Incident Response scenario scoring
+# Ransomware Incident Response scenario scoring - REDESIGNED with artifact-driven decisions
 RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
-    # Phase 1: Initial Compromise (order_index=0)
+    # Phase 1: Initial Compromise (order_index=0) - REDESIGNED
+    # Artifacts show Marketing has weaker security (outdated EDR) vs Finance (strong EDR)
+    # Red Team should prioritize Marketing for persistence (lower detection risk)
+    # Blue Team should prioritize Marketing for containment (higher risk)
     (0, "red"): {
-        "Establish persistence": 10,  # Primary objective
-        "Cover tracks": 7,           # Secondary objective
+        "Establish persistence": 10,  # Primary objective - Artifacts guide to Marketing target
+        "Cover tracks": 7,           # Secondary objective - Good for avoiding detection
         "Escalate privileges": 4,    # Too early, risky
         "Move laterally": 3,         # Too early
         "Exfiltrate data": 1,        # Way too early
     },
     (0, "blue"): {
-        "Isolate host": 10,          # Primary objective
+        "Isolate host": 10,          # Primary objective - Artifacts show Marketing is higher risk
         "Collect forensic evidence": 8,  # Critical for analysis
         "Block IP address": 6,       # Good but may be too late
         "Deploy countermeasures": 5, # Good but takes time
@@ -41,32 +44,38 @@ RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
         "Escalate to management": 5,   # Coordination needed
     },
     
-    # Phase 3: Privilege Escalation & Lateral Movement (order_index=2)
+    # Phase 3: Privilege Escalation & Lateral Movement (order_index=2) - REDESIGNED
+    # Artifacts show WS-MKT-02 has unpatched LPE vulnerability vs WS-FIN-01 is fully patched
+    # Red Team should prioritize WS-MKT-02 for escalation (high success probability)
+    # Blue Team should prioritize WS-MKT-02 for containment (high risk)
     (2, "red"): {
-        "Escalate privileges": 10,    # Primary objective
-        "Move laterally": 10,         # Primary objective
-        "Cover tracks": 7,            # Important to avoid detection
-        "Establish persistence": 6,    # Good but already done
-        "Exfiltrate data": 4,         # Starting to prepare
+        "Escalate privileges": 10,    # Primary objective - Artifacts guide to WS-MKT-02
+        "Move laterally": 7,          # Secondary - Good after escalation
+        "Cover tracks": 6,            # Important to avoid detection
+        "Establish persistence": 5,    # Good but already done
+        "Exfiltrate data": 3,         # Too early
     },
     (2, "blue"): {
-        "Isolate host": 10,            # Isolate critical systems
-        "Deploy countermeasures": 9,   # Network segmentation
+        "Isolate host": 10,            # Primary - Artifacts show WS-MKT-02 is high risk
+        "Deploy countermeasures": 9,   # Network segmentation, patching
         "Escalate to management": 8,    # Coordinate response
         "Collect forensic evidence": 6, # Document movement
         "Block IP address": 5,         # May be too late
     },
     
-    # Phase 4: Data Exfiltration (order_index=3)
+    # Phase 4: Data Exfiltration (order_index=3) - REDESIGNED
+    # Artifacts show FS-02 has weaker DLP coverage vs FS-01 has strong DLP (already alerted)
+    # Red Team should prioritize FS-02 for exfiltration (lower detection risk)
+    # Blue Team should prioritize FS-01 for containment (already has HIGH-SEVERITY alerts)
     (3, "red"): {
-        "Exfiltrate data": 10,        # Primary objective
+        "Exfiltrate data": 10,        # Primary objective - Artifacts guide to FS-02
         "Cover tracks": 8,            # Hide exfiltration
         "Establish persistence": 7,    # Maintain access
         "Move laterally": 5,          # Already done
         "Escalate privileges": 4,     # Already done
     },
     (3, "blue"): {
-        "Block IP address": 10,       # Stop exfiltration
+        "Block IP address": 10,       # Primary - Stop exfiltration, artifacts show FS-01 priority
         "Collect forensic evidence": 9, # Document theft
         "Escalate to management": 8,    # Breach notification
         "Deploy countermeasures": 6,   # May be too late

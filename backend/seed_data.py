@@ -50,14 +50,14 @@ def seed_data():
         db.add(scenario)
         db.flush()
 
-        # Phase 1: Initial Compromise
+        # Phase 1: Initial Compromise - REDESIGNED with artifact-driven decision
         phase1 = ScenarioPhase(
             scenario_id=scenario.id,
             order_index=0,
             name="Phase 1: Initial Compromise",
-            briefing_text="At 08:15 AM, a user in the Finance department reported receiving a suspicious email. The email appeared to be from a legitimate vendor but contained a link to an external domain. The user clicked the link and downloaded what appeared to be an invoice PDF. Within minutes, the endpoint detection system flagged unusual process activity on the user's workstation (WS-FIN-042). Initial analysis shows a PowerShell script executed with encoded commands. The security team needs to determine the scope of the initial compromise and prevent further spread.",
-            red_objective="Successfully establish initial access on the compromised workstation without triggering alerts. Begin reconnaissance to identify network topology, user accounts, and system configurations. Avoid detection by security tools.",
-            blue_objective="Identify the initial entry point and contain the threat. Determine what malware was downloaded and executed. Isolate the compromised workstation to prevent lateral movement. Collect forensic evidence for analysis.",
+            briefing_text="At 08:15 AM, your phishing campaign has successfully delivered emails to two departments:\n- Finance Department: 12 emails opened, 3 links clicked\n- Marketing Department: 8 emails opened, 2 links clicked\n\nBoth departments have users who clicked the malicious links. You now have initial access attempts on workstations in both departments. However, you have limited resources and want to focus your efforts on the target that offers the **best chance of establishing a persistent foothold without immediate detection**.\n\nYou've collected initial reconnaissance data on both targets. Your decision: **Which department should you prioritize for establishing persistence?**\n\n- Option A: Focus on Finance Department (WS-FIN-042)\n- Option B: Focus on Marketing Department (WS-MKT-015)\n- Option C: Split efforts between both departments\n\n**Remember:** Review the artifacts carefully. They contain critical information about security posture, EDR coverage, and user privileges that will determine your success.",
+            red_objective="Analyze the reconnaissance data from both departments to identify which target offers the best opportunity for establishing persistent access with minimal detection risk. Focus your initial persistence efforts on the most vulnerable target.",
+            blue_objective="Review security telemetry from both departments to identify which department shows the most concerning indicators of compromise. Prioritize containment and investigation efforts on the department with the highest risk of successful attacker persistence.",
             default_duration_seconds=900,
             miro_frame_url="https://miro.com/app/board/example/frame1"
         )
@@ -78,28 +78,28 @@ def seed_data():
         db.add(phase2)
         db.flush()
 
-        # Phase 3: Privilege Escalation & Lateral Movement
+        # Phase 3: Privilege Escalation & Lateral Movement - REDESIGNED with two-host decision
         phase3 = ScenarioPhase(
             scenario_id=scenario.id,
             order_index=2,
             name="Phase 3: Privilege Escalation & Lateral Movement",
-            briefing_text="The situation has escalated. The attacker has successfully obtained domain administrator credentials through credential harvesting and pass-the-hash techniques. Security logs show successful authentication to the domain controller (DC-01) and multiple file servers (FS-01, FS-02). The attacker has moved laterally to systems containing sensitive data including customer PII, financial records, and intellectual property. Backup systems (BACKUP-01) have also been accessed. The attacker is now in a position to access critical systems and data.",
-            red_objective="Successfully escalate to domain administrator privileges. Move laterally to critical systems including domain controllers, file servers, and backup systems. Maintain access to multiple systems to ensure redundancy. Identify and catalog sensitive data for exfiltration. Avoid detection while moving through the network.",
-            blue_objective="Detect privilege escalation attempts and successful lateral movement. Isolate critical systems (domain controllers, file servers, backups) from the compromised network segment. Revoke compromised credentials and force password resets. Prevent access to backup systems to preserve recovery options. Document the attacker's movement for forensic analysis.",
+            briefing_text="You have successfully established user-level access on two workstations:\n- WS-FIN-01 (Finance Department)\n- WS-MKT-02 (Marketing Department)\n\nYour goal is to escalate to local administrator / SYSTEM privileges on at least one host to enable ransomware deployment and lateral movement. However, you have limited time and want to focus your escalation attempt where there is a **high probability of success**.\n\nYou've collected system information and vulnerability intelligence on both hosts. Your decision: **Which host should you prioritize for privilege escalation?**\n\n- Option A: Attempt privilege escalation on WS-FIN-01 using generic token-stealing and UAC bypass techniques\n- Option B: Attempt privilege escalation on WS-MKT-02 using the specific local privilege escalation exploit identified in vulnerability scans\n- Option C: Split efforts and run automated priv-esc tooling on both hosts in parallel\n\n**Remember:** Review the artifacts carefully. They contain system information, patch levels, EDR status, and vulnerability scan results that will determine your success.",
+            red_objective="Analyze system information and vulnerability data from both hosts to identify which target offers the best opportunity for successful privilege escalation. Focus your escalation attempt on the host with the highest probability of success based on the evidence.",
+            blue_objective="Review security telemetry and vulnerability scan data to identify which host is at greater risk of imminent privilege escalation. Prioritize containment and investigation efforts on the host with the highest risk based on the evidence.",
             default_duration_seconds=900,
             miro_frame_url="https://miro.com/app/board/example/frame3"
         )
         db.add(phase3)
         db.flush()
 
-        # Phase 4: Data Exfiltration
+        # Phase 4: Data Exfiltration - REDESIGNED with two-file-server decision
         phase4 = ScenarioPhase(
             scenario_id=scenario.id,
             order_index=3,
             name="Phase 4: Data Exfiltration",
-            briefing_text="Network monitoring has detected large-scale data transfers from internal file servers to external IP addresses. Analysis shows approximately 450 GB of data has been exfiltrated over the past 6 hours, including customer databases, financial records, employee PII, and proprietary research data. The data is being transferred to cloud storage services (Mega.nz, Dropbox) using encrypted connections. The attacker appears to be preparing for the final phase of the attack. Meanwhile, security teams have been working to contain the threat, but the attacker maintains access through multiple persistence mechanisms.",
-            red_objective="Complete exfiltration of sensitive data including customer databases, financial records, and intellectual property. Maintain access to critical systems. Prepare for ransomware deployment by identifying encryption targets. Ensure data exfiltration completes before detection. Preserve access for post-encryption activities.",
-            blue_objective="Detect and stop ongoing data exfiltration. Block external data transfers and identify what data has been stolen. Preserve forensic evidence of the exfiltration. Notify legal and compliance teams about potential data breach. Assess regulatory requirements (GDPR, CCPA) for breach notification. Prepare incident response communications.",
+            briefing_text="You have successfully obtained domain administrator credentials and have access to multiple file servers:\n- FS-01 (Finance File Server): Contains financial records, customer PII, and proprietary research data\n- FS-02 (HR/Operations File Server): Contains employee records, HR data, and operational documents\n\nBoth servers contain valuable data, but you have limited time before defenders detect your presence. You need to prioritize which data source to exfiltrate first to maximize the value of stolen data while minimizing detection risk.\n\nYou've mapped network paths, analyzed data classification, and reviewed access logs. Your decision: **Which file server should you prioritize for data exfiltration?**\n\n- Option A: Prioritize exfiltration from FS-01 (Finance) - High-value financial and customer data\n- Option B: Prioritize exfiltration from FS-02 (HR/Operations) - Employee records and operational data\n- Option C: Exfiltrate from both servers simultaneously using parallel streams\n\n**Remember:** Review the artifacts carefully. They contain network topology, data classification, DLP policies, and monitoring coverage that will determine your success and detection risk.",
+            red_objective="Analyze network topology, data classification, and monitoring coverage to identify which file server offers the best opportunity for successful data exfiltration with minimal detection. Prioritize exfiltration from the source that provides maximum value with lowest detection risk.",
+            blue_objective="Review network monitoring, data loss prevention (DLP) alerts, and access logs to identify which file server is at greatest risk of data exfiltration. Prioritize containment and monitoring efforts on the server with the highest risk based on the evidence.",
             default_duration_seconds=900,
             miro_frame_url="https://miro.com/app/board/example/frame4"
         )
@@ -120,47 +120,207 @@ def seed_data():
         db.add(phase5)
         db.flush()
 
-        # Create artifacts - Phase 1
-        # Blue Team Artifacts
+        # Create artifacts - Phase 1: Initial Compromise (REDESIGNED)
+        # Blue Team Artifacts - Microsoft Defender/E5 Security Stack
         artifact1_blue = Artifact(
-            name="Phishing Email Screenshot",
-            type=ArtifactType.EMAIL,
-            description="Screenshot of the phishing email received by Finance user. Email appears to be from 'vendor-support@legitmate-vendor.com' (note the typo: 'legitmate' instead of 'legitimate'). Subject: 'URGENT: Invoice Payment Required - Action Needed'. Contains link to external domain 'secure-invoice-download[.]tk'.",
-            file_url="/api/artifacts/files/phishing_email_phase1.png",
-            notes_for_gm="Classic phishing email with typosquatting domain. Shows urgency tactics. Upload screenshot of realistic phishing email."
+            name="Microsoft Defender for Endpoint - Finance Department Alert",
+            type=ArtifactType.LOG_SNIPPET,
+            description="""Microsoft Defender for Endpoint Alert
+Alert ID: DA-2024-001234
+Severity: Medium
+Time: 08:17:23 UTC
+Device: WS-FIN-042
+User: finance.user@corp.local
+Department: Finance
+
+Alert Details:
+- Alert Title: Suspicious PowerShell execution detected
+- Process: powershell.exe -EncodedCommand [base64]
+- Parent Process: mshta.exe
+- File Hash: 7a8f3b2c1d4e5f6a7b8c9d0e1f2a3b4c
+- Action Taken: BLOCKED by Defender for Endpoint
+- EDR Agent Status: Active, Latest Version (10.0.26100.1)
+- Defender Antivirus: Enabled, Real-time Protection: ON
+- Cloud Protection: Enabled
+- Last Scan: 08:00:00 UTC (Clean)
+
+Additional Context:
+- Device is fully onboarded to Microsoft Defender for Endpoint
+- Advanced Threat Protection (ATP) enabled
+- Automated Investigation: Triggered
+- Device Risk Score: Medium (65/100)
+- User has Standard User privileges (non-admin)
+
+Recommendation: Device isolated automatically. Investigation in progress.""",
+            file_url="/api/artifacts/files/defender_finance_alert_phase1.txt",
+            notes_for_gm="Microsoft Defender for Endpoint alert showing Finance department has strong EDR coverage and blocked the attack."
         )
         db.add(artifact1_blue)
         db.flush()
 
         artifact2_blue = Artifact(
-            name="EDR Alert: Suspicious PowerShell Execution",
+            name="Microsoft Defender for Endpoint - Marketing Department Alert",
             type=ArtifactType.LOG_SNIPPET,
-            description="Endpoint Detection and Response alert from WS-FIN-042 showing PowerShell execution with encoded commands. Process: powershell.exe -EncodedCommand [base64 string]. Parent process: mshta.exe. Timestamp: 08:17:23. File hash: 7a8f3b2c1d4e5f6a7b8c9d0e1f2a3b4c",
-            file_url="/api/artifacts/files/edr_alert_phase1.txt",
-            notes_for_gm="EDR log showing encoded PowerShell execution. Should show suspicious process tree."
+            description="""Microsoft Defender for Endpoint Alert
+Alert ID: DA-2024-001235
+Severity: Low
+Time: 08:18:45 UTC
+Device: WS-MKT-015
+User: marketing.user@corp.local
+Department: Marketing
+
+Alert Details:
+- Alert Title: Suspicious script execution detected
+- Process: wscript.exe
+- Parent Process: outlook.exe
+- File Hash: 8b9c4d5e6f7a8b9c0d1e2f3a4b5c6d7e
+- Action Taken: DETECTED (not blocked)
+- EDR Agent Status: Outdated (Version 10.0.19045.1 - Last updated: 45 days ago)
+- Defender Antivirus: Enabled, Real-time Protection: ON
+- Cloud Protection: Enabled (but agent outdated)
+- Last Scan: 07:30:00 UTC (Clean)
+
+Additional Context:
+- Device is onboarded to Microsoft Defender for Endpoint but agent is outdated
+- Advanced Threat Protection (ATP): Enabled but may have coverage gaps
+- Automated Investigation: Not triggered (agent outdated)
+- Device Risk Score: High (85/100) - Due to outdated agent and detection
+- User has Local Administrator privileges (admin account present on device)
+
+WARNING: Outdated EDR agent may have reduced detection capabilities. Device requires immediate attention.""",
+            file_url="/api/artifacts/files/defender_marketing_alert_phase1.txt",
+            notes_for_gm="Microsoft Defender alert showing Marketing department has outdated EDR agent and weaker security posture."
         )
         db.add(artifact2_blue)
         db.flush()
 
-        # Red Team Artifacts
+        artifact3_blue = Artifact(
+            name="Microsoft Sentinel - Phishing Campaign Analysis",
+            type=ArtifactType.INTEL_REPORT,
+            description="""Microsoft Sentinel Incident Report
+Incident ID: INC-2024-00156
+Title: Phishing Campaign - Multiple Departments Affected
+Severity: Medium
+Status: Active Investigation
+
+Summary:
+Phishing emails delivered to two departments:
+- Finance: 12 emails opened, 3 links clicked
+- Marketing: 8 emails opened, 2 links clicked
+
+Email Security (Microsoft Defender for Office 365):
+- Finance emails: 8/12 blocked by Safe Links, 4/12 delivered
+- Marketing emails: 2/8 blocked, 6/8 delivered
+- Overall: 10/20 emails blocked (50% success rate)
+
+Endpoint Response:
+- Finance (WS-FIN-042): Alert generated, action BLOCKED by Defender for Endpoint
+- Marketing (WS-MKT-015): Alert generated, action DETECTED (not blocked)
+
+Risk Assessment:
+- Finance Department: Medium Risk - Strong EDR coverage, blocked attack
+- Marketing Department: High Risk - Outdated EDR agent, detection only (not blocked)
+
+Recommendation: Prioritize investigation and containment of Marketing department endpoint due to higher risk score and outdated security controls.""",
+            file_url="/api/artifacts/files/sentinel_phishing_analysis_phase1.txt",
+            notes_for_gm="Microsoft Sentinel analysis showing Marketing department is higher risk."
+        )
+        db.add(artifact3_blue)
+        db.flush()
+
+        # Red Team Artifacts - Phase 1
         artifact1_red = Artifact(
-            name="Initial Access Confirmation",
-            type=ArtifactType.TOOL_OUTPUT,
-            description="Payload successfully executed on target workstation WS-FIN-042. User: finance.user@corp.local. Initial beacon established to C2 server 185.220.101.45. System information collected: Windows 10 Enterprise, Domain: CORP.LOCAL, User privileges: Standard User. Persistence mechanisms deployed: Scheduled task 'UpdateCheck', Registry run key. Ready for privilege escalation.",
-            file_url="/api/artifacts/files/initial_access_phase1.txt",
-            notes_for_gm="Red Team sees successful compromise confirmation and system info."
+            name="Finance Department Reconnaissance Report",
+            type=ArtifactType.INTEL_REPORT,
+            description="""Target: Finance Department (WS-FIN-042)
+User: finance.user@corp.local
+
+Initial Access Status:
+✓ Email delivered: YES
+✓ Link clicked: YES
+✓ Payload executed: YES
+✓ C2 beacon established: YES
+
+System Information:
+- OS: Windows 10 Enterprise (Build 19045)
+- Domain: CORP.LOCAL
+- User Privileges: Standard User (non-admin)
+- EDR Agent: Microsoft Defender for Endpoint - ACTIVE, Latest Version
+- Defender Status: Real-time protection ON, Cloud protection ON
+- Last Security Update: 2 days ago
+
+Security Posture Assessment:
+- EDR Coverage: STRONG (latest agent, active monitoring)
+- Detection Risk: HIGH (attack was BLOCKED by Defender)
+- Persistence Difficulty: HIGH (requires admin for most mechanisms)
+- User Privileges: LOW (standard user, limited access)
+
+Assessment: High-value target but STRONG security controls. Attack was blocked. Establishing persistence will be difficult and high-risk.""",
+            file_url="/api/artifacts/files/finance_recon_phase1.txt",
+            notes_for_gm="Red Team sees Finance has strong security but was blocked."
         )
         db.add(artifact1_red)
         db.flush()
 
         artifact2_red = Artifact(
-            name="C2 Connection Status",
-            type=ArtifactType.TOOL_OUTPUT,
-            description="C2 Communication Status: ACTIVE\nServer: 185.220.101.45:443\nBeacon Interval: 300 seconds\nLast Check-in: 08:17:25 UTC\nConnection: Stable\nEncryption: TLS 1.3\nCommands Received: Download payload, Enumerate system, Create persistence\nStatus: Operational - No detection alerts triggered",
-            file_url="/api/artifacts/files/c2_status_phase1.txt",
-            notes_for_gm="Red Team sees their C2 connection status and successful commands."
+            name="Marketing Department Reconnaissance Report",
+            type=ArtifactType.INTEL_REPORT,
+            description="""Target: Marketing Department (WS-MKT-015)
+User: marketing.user@corp.local
+
+Initial Access Status:
+✓ Email delivered: YES
+✓ Link clicked: YES
+✓ Payload executed: YES
+✓ C2 beacon established: YES
+
+System Information:
+- OS: Windows 10 Enterprise (Build 18363)
+- Domain: CORP.LOCAL
+- User Privileges: Standard User (but local admin account present)
+- EDR Agent: Microsoft Defender for Endpoint - OUTDATED (Version 19045.1, 45 days old)
+- Defender Status: Real-time protection ON, but agent outdated
+- Last Security Update: 45 days ago
+
+Security Posture Assessment:
+- EDR Coverage: WEAK (outdated agent, may have detection gaps)
+- Detection Risk: MEDIUM (attack was DETECTED but not blocked)
+- Persistence Difficulty: MEDIUM (local admin account available)
+- User Privileges: MEDIUM (standard user but admin account on device)
+
+Assessment: Medium-value target with WEAKER security controls. Attack was detected but not blocked. Outdated EDR agent provides opportunity for persistence with lower detection risk.""",
+            file_url="/api/artifacts/files/marketing_recon_phase1.txt",
+            notes_for_gm="Red Team sees Marketing has weaker security and better opportunity."
         )
         db.add(artifact2_red)
+        db.flush()
+
+        artifact3_red = Artifact(
+            name="C2 Connection Status - Both Targets",
+            type=ArtifactType.TOOL_OUTPUT,
+            description="""C2 Communication Status Report
+
+Target 1: WS-FIN-042 (Finance)
+- Connection: ESTABLISHED then TERMINATED
+- Server: 185.220.101.45:443
+- Status: BLOCKED by Defender for Endpoint
+- Last Check-in: 08:17:25 UTC (then blocked)
+- Detection: HIGH - Defender blocked connection
+- Persistence: FAILED - Scheduled task creation blocked
+
+Target 2: WS-MKT-015 (Marketing)
+- Connection: ACTIVE
+- Server: 185.220.101.45:443
+- Status: OPERATIONAL
+- Last Check-in: 08:18:50 UTC (ongoing)
+- Detection: MEDIUM - Detected but not blocked
+- Persistence: PARTIAL - Some mechanisms successful
+
+Recommendation: Focus persistence efforts on WS-MKT-015 (Marketing). Finance target has strong EDR and blocked our attack. Marketing target has outdated agent and better opportunity for successful persistence.""",
+            file_url="/api/artifacts/files/c2_status_both_phase1.txt",
+            notes_for_gm="Red Team sees Marketing target is better for persistence."
+        )
+        db.add(artifact3_red)
         db.flush()
 
         # Phase 2 Artifacts
@@ -206,90 +366,487 @@ def seed_data():
         db.add(artifact4_red)
         db.flush()
 
-        # Phase 3 Artifacts
-        # Blue Team Artifacts
+        # Phase 3 Artifacts - Privilege Escalation (REDESIGNED with two-host decision)
+        # Blue Team Artifacts - Microsoft Defender/E5 Security Stack
         artifact5_blue = Artifact(
-            name="Privilege Escalation Evidence",
+            name="Microsoft Defender for Endpoint - WS-FIN-01 System Information",
             type=ArtifactType.LOG_SNIPPET,
-            description="Windows Security Event Log showing successful privilege escalation. Event ID 4624: Successful logon with domain admin credentials (DOMAIN\\svc_backup) from WS-FIN-042 to DC-01. Event ID 4672: Special privileges assigned. Followed by Event ID 5145: Network share accessed (\\DC-01\\SYSVOL). Credentials appear to have been harvested from memory dump.",
-            file_url="/api/artifacts/files/privilege_escalation_phase3.txt",
-            notes_for_gm="Windows event logs showing privilege escalation and lateral movement."
+            description="""Microsoft Defender for Endpoint - Device Information
+Device: WS-FIN-01
+Department: Finance
+Onboarding Status: Fully Onboarded
+
+System Details:
+- OS: Windows 10 Enterprise
+- OS Version: 10.0.19045 Build 19045
+- Install Date: 2022-06-15
+- Hotfixes Installed:
+  * KB5023696 (Security Update)
+  * KB5026361 (Security Update)
+  * KB5030219 (Security Update)
+  * KB5034123 (Security Update - Latest)
+
+Security Configuration:
+- EDR Agent: Microsoft Defender for Endpoint v10.0.26100.1 (Latest)
+- Defender Antivirus: Enabled, Real-time Protection: ON
+- Cloud Protection: Enabled
+- Last Scan: 08:00:00 UTC (Clean, no threats)
+- LAPS (Local Administrator Password Solution): ENABLED
+- Local Admin Account: Managed by PAM (Privileged Access Management)
+
+User Accounts:
+- fin_user: Standard User (non-admin)
+- svc_fin_reports: Service Account, Local Admin (PAM-managed password)
+
+Vulnerability Assessment:
+- Critical Findings: 0
+- High Findings: 0
+- Medium Findings: 0
+- Local Privilege Escalation Vulnerabilities: NONE DETECTED
+
+Risk Score: Low (25/100)
+Recommendation: System is fully patched and hardened. Low risk of privilege escalation.""",
+            file_url="/api/artifacts/files/defender_ws-fin-01_phase3.txt",
+            notes_for_gm="Defender shows WS-FIN-01 is fully patched and hardened."
         )
         db.add(artifact5_blue)
         db.flush()
 
         artifact6_blue = Artifact(
-            name="Lateral Movement Indicators",
+            name="Microsoft Defender for Endpoint - WS-MKT-02 System Information",
             type=ArtifactType.LOG_SNIPPET,
-            description="SIEM correlation showing lateral movement pattern. Multiple successful authentications from WS-FIN-042 to FS-01, FS-02, BACKUP-01 using pass-the-hash technique. SMB file access logs show enumeration of shared folders and access to sensitive directories including '\\FS-01\\Finance', '\\FS-02\\HR\\PII', '\\FS-01\\R&D\\Proprietary'.",
-            file_url="/api/artifacts/files/lateral_movement_phase3.txt",
-            notes_for_gm="Logs showing lateral movement and file access patterns."
+            description="""Microsoft Defender for Endpoint - Device Information
+Device: WS-MKT-02
+Department: Marketing
+Onboarding Status: Partially Onboarded (Agent Outdated)
+
+System Details:
+- OS: Windows 10 Enterprise
+- OS Version: 10.0.18363 Build 18363
+- Install Date: 2019-09-03
+- Hotfixes Installed:
+  * KB4528760 (Security Update - OLD)
+  * KB4532693 (Security Update - OLD)
+  * KB5001337: NOT INSTALLED (Critical LPE patch missing)
+
+Security Configuration:
+- EDR Agent: Microsoft Defender for Endpoint v10.0.19045.1 (OUTDATED - 45 days old)
+- Defender Antivirus: Enabled, Real-time Protection: ON
+- Cloud Protection: Enabled (but agent outdated)
+- Last Scan: 07:30:00 UTC (Clean, but scan may be incomplete)
+- LAPS (Local Administrator Password Solution): NOT ENABLED
+- Local Admin Account: Present (local_admin) - Password may be weak
+
+User Accounts:
+- mkt_user: Standard User (non-admin)
+- local_admin: Local Administrator (weak password policy)
+
+Vulnerability Assessment:
+- Critical Findings: 1 (WIN-LPE-2022-XXXX - Unpatched Local Privilege Escalation)
+- High Findings: 3
+- Medium Findings: 5
+- Local Privilege Escalation Vulnerabilities: DETECTED
+  * CVE-2022-XXXX: Affects Windows 10 1903/1909 (Build 18362, 18363)
+  * Patch Required: KB5001337 (NOT INSTALLED)
+  * Exploit Availability: Public PoC available
+  * Print Spooler Service: Running (vulnerable component active)
+
+Risk Score: High (85/100)
+WARNING: System is vulnerable to local privilege escalation. Outdated OS build and missing critical patch. High risk of successful privilege escalation.""",
+            file_url="/api/artifacts/files/defender_ws-mkt-02_phase3.txt",
+            notes_for_gm="Defender shows WS-MKT-02 is vulnerable with unpatched LPE."
         )
         db.add(artifact6_blue)
         db.flush()
 
-        # Red Team Artifacts
+        artifact7_blue = Artifact(
+            name="Microsoft Sentinel - Vulnerability Scan Correlation",
+            type=ArtifactType.INTEL_REPORT,
+            description="""Microsoft Sentinel Incident Correlation
+Incident ID: INC-2024-00234
+Title: Privilege Escalation Risk Assessment
+
+Vulnerability Scan Results (Microsoft Defender Vulnerability Management):
+
+WS-FIN-01 (Finance):
+- Overall Risk Score: Low (25/100)
+- Patch Status: Fully patched through latest security updates
+- LPE Vulnerabilities: 0
+- EDR Coverage: Strong (latest agent)
+- Recommendation: Low priority - system is hardened
+
+WS-MKT-02 (Marketing):
+- Overall Risk Score: High (85/100)
+- Patch Status: Missing critical patch KB5001337
+- LPE Vulnerabilities: 1 Critical (WIN-LPE-2022-XXXX)
+- EDR Coverage: Weak (outdated agent, 45 days old)
+- Recommendation: HIGH PRIORITY - Immediate patching required
+
+Threat Intelligence:
+- CVE-2022-XXXX has public exploit available
+- Affects Windows 10 1903/1909 (Build 18362, 18363)
+- Exploit combines with Print Spooler service for LPE
+- WS-MKT-02 matches all vulnerability criteria
+
+Recommendation: Prioritize containment and patching of WS-MKT-02. This system is at HIGH RISK of imminent privilege escalation.""",
+            file_url="/api/artifacts/files/sentinel_vuln_correlation_phase3.txt",
+            notes_for_gm="Sentinel shows WS-MKT-02 is high risk for privilege escalation."
+        )
+        db.add(artifact7_blue)
+        db.flush()
+
+        # Red Team Artifacts - Phase 3
         artifact5_red = Artifact(
-            name="Credential Harvesting Success",
+            name="WS-FIN-01 System Information & Vulnerability Assessment",
             type=ArtifactType.TOOL_OUTPUT,
-            description="Credential Harvesting Report:\n✓ Domain Admin Credentials Obtained: CORP\\svc_backup\nMethod: Memory dump (lsass.exe)\nTechnique: Pass-the-Hash\nPrivileges: Domain Admin, Backup Operator, Local Admin on all systems\nAccess Verified:\n  - DC-01: SUCCESS (Domain Controller access)\n  - FS-01: SUCCESS (File server access)\n  - FS-02: SUCCESS (File server access)\n  - BACKUP-01: SUCCESS (Backup system access)\nAll target systems accessible. Ready for data collection phase.",
-            file_url="/api/artifacts/files/credential_success_phase3.txt",
-            notes_for_gm="Red Team sees their successful credential harvesting."
+            description="""Target: WS-FIN-01 (Finance Department)
+
+System Information Collected:
+- OS: Windows 10 Enterprise Build 19045
+- Install Date: 2022-06-15
+- Hotfixes: KB5023696, KB5026361, KB5030219, KB5034123 (All latest)
+- EDR Agent: Microsoft Defender for Endpoint v10.0.26100.1 (Latest)
+- LAPS: ENABLED (Local admin passwords managed)
+- Local Admin: PAM-managed (strong password, rotated)
+
+Vulnerability Scan Results:
+- Critical LPE Vulnerabilities: 0
+- High Vulnerabilities: 0
+- Medium Vulnerabilities: 0
+- Exploitable Privilege Escalation Paths: NONE
+
+Privilege Escalation Assessment:
+- Generic token-stealing/UAC bypass: LOW SUCCESS PROBABILITY
+  * Fully patched OS
+  * Strong EDR monitoring
+  * LAPS prevents weak local admin passwords
+  * PAM-managed accounts difficult to compromise
+- Estimated Success Rate: 20-30%
+- Detection Risk: HIGH (strong EDR will likely detect)
+
+Recommendation: This target is HARDENED. Privilege escalation will be difficult and high-risk. Consider alternative target.""",
+            file_url="/api/artifacts/files/ws-fin-01_assessment_phase3.txt",
+            notes_for_gm="Red Team sees WS-FIN-01 is hardened and difficult to escalate."
         )
         db.add(artifact5_red)
         db.flush()
 
         artifact6_red = Artifact(
-            name="Lateral Movement Status",
+            name="WS-MKT-02 System Information & Vulnerability Assessment",
             type=ArtifactType.TOOL_OUTPUT,
-            description="Lateral Movement Status Report:\nSystems Compromised:\n1. DC-01: Domain Controller - FULL ACCESS\n   - SYSVOL accessed\n   - Group Policy enumeration complete\n2. FS-01: File Server - FULL ACCESS\n   - Finance share: 1,234 files enumerated\n   - R&D share: 156 files enumerated\n3. FS-02: File Server - FULL ACCESS\n   - HR share: 856 files enumerated\n   - PII directory: 342 files enumerated\n4. BACKUP-01: Backup Server - FULL ACCESS\n   - Backup catalog accessed\n   - 2,109 backup files identified\nAll critical systems under control. No detection alerts.",
-            file_url="/api/artifacts/files/lateral_status_phase3.txt",
-            notes_for_gm="Red Team sees their successful lateral movement."
+            description="""Target: WS-MKT-02 (Marketing Department)
+
+System Information Collected:
+- OS: Windows 10 Enterprise Build 18363 (OLD - 1903/1909)
+- Install Date: 2019-09-03
+- Hotfixes: KB4528760, KB4532693 (OLD)
+- Missing Patch: KB5001337 (CRITICAL - LPE vulnerability)
+- EDR Agent: Microsoft Defender for Endpoint v10.0.19045.1 (OUTDATED - 45 days old)
+- LAPS: NOT ENABLED
+- Local Admin: local_admin account present (weak password policy)
+
+Vulnerability Scan Results:
+- Critical LPE Vulnerabilities: 1 (WIN-LPE-2022-XXXX)
+- High Vulnerabilities: 3
+- Medium Vulnerabilities: 5
+- Exploitable Privilege Escalation Paths: IDENTIFIED
+
+Privilege Escalation Assessment:
+- Specific LPE Exploit (CVE-2022-XXXX): HIGH SUCCESS PROBABILITY
+  * OS Build 18363 matches vulnerable version
+  * Missing patch KB5001337
+  * Print Spooler service running (vulnerable component)
+  * Public PoC available and tested
+  * Outdated EDR agent may not detect modern exploits
+- Estimated Success Rate: 80-90%
+- Detection Risk: MEDIUM (outdated EDR, but may still detect)
+
+Recommendation: This target is VULNERABLE. Specific LPE exploit available with high success probability. Best target for privilege escalation.""",
+            file_url="/api/artifacts/files/ws-mkt-02_assessment_phase3.txt",
+            notes_for_gm="Red Team sees WS-MKT-02 is vulnerable with specific LPE exploit."
         )
         db.add(artifact6_red)
         db.flush()
 
-        # Phase 4 Artifacts
-        # Blue Team Artifacts
+        artifact7_red = Artifact(
+            name="Exploit Availability & Success Probability Analysis",
+            type=ArtifactType.INTEL_REPORT,
+            description="""Privilege Escalation Exploit Analysis
+
+Target Comparison:
+
+WS-FIN-01 (Finance):
+- Exploit Method: Generic token-stealing/UAC bypass
+- OS Build: 19045 (Latest, fully patched)
+- LPE Vulnerabilities: None
+- EDR Coverage: Strong (latest agent)
+- Success Probability: 20-30%
+- Detection Risk: HIGH
+- Time to Escalate: 30-60 minutes (if successful)
+- Recommendation: LOW PRIORITY - High risk, low reward
+
+WS-MKT-02 (Marketing):
+- Exploit Method: Specific LPE exploit (CVE-2022-XXXX)
+- OS Build: 18363 (Vulnerable - missing KB5001337)
+- LPE Vulnerabilities: 1 Critical (exploitable)
+- EDR Coverage: Weak (outdated agent)
+- Success Probability: 80-90%
+- Detection Risk: MEDIUM
+- Time to Escalate: 5-10 minutes (exploit is reliable)
+- Recommendation: HIGH PRIORITY - High reward, manageable risk
+
+Decision Matrix:
+Focus escalation on WS-MKT-02. Specific exploit available with high success rate. WS-FIN-01 is hardened and low probability of success.""",
+            file_url="/api/artifacts/files/exploit_analysis_phase3.txt",
+            notes_for_gm="Red Team sees clear recommendation to focus on WS-MKT-02."
+        )
+        db.add(artifact7_red)
+        db.flush()
+
+        # Phase 4 Artifacts - Data Exfiltration (REDESIGNED with two-file-server decision)
+        # Blue Team Artifacts - Microsoft Defender/E5 Security Stack
         artifact7_blue = Artifact(
-            name="Data Exfiltration Traffic Analysis",
+            name="Microsoft Purview Data Loss Prevention - FS-01 (Finance) Monitoring",
             type=ArtifactType.LOG_SNIPPET,
-            description="Network flow analysis showing large data transfers. Outbound connections from FS-01 and FS-02 to external IPs (185.220.101.45, 45.146.164.110) on port 443. Total data transferred: ~450 GB over 6 hours. Traffic patterns indicate use of cloud storage APIs (Mega.nz, Dropbox). Files transferred include .db, .xlsx, .pdf, .docx extensions. Transfer rate: ~75 GB/hour.",
-            file_url="/api/artifacts/files/exfiltration_traffic_phase4.txt",
-            notes_for_gm="Network logs showing data exfiltration patterns and volumes."
+            description="""Microsoft Purview Data Loss Prevention (DLP) Report
+File Server: FS-01 (Finance File Server)
+Monitoring Period: Last 24 hours
+
+DLP Policy Coverage:
+- Financial Data: STRONG (DLP policies active)
+- Customer PII: STRONG (DLP policies active)
+- Intellectual Property: STRONG (DLP policies active)
+- Data Classification Labels: Applied to 95% of files
+
+Network Monitoring:
+- Microsoft Defender for Cloud Apps: ACTIVE
+- Cloud App Security: Enabled
+- Anomaly Detection: Enabled
+- Real-time Monitoring: ACTIVE
+
+Access Logs (Last 24 hours):
+- Unusual Access Patterns: DETECTED
+- Large File Transfers: DETECTED (270 GB)
+- External Connections: DETECTED (185.220.101.45)
+- DLP Alerts Generated: 12 HIGH-SEVERITY alerts
+- Action Taken: ALERTED (investigation in progress)
+
+Data Classification:
+- Financial Records: 120 GB (High Sensitivity)
+- Customer PII: 45 GB (Critical Sensitivity)
+- Intellectual Property: 105 GB (Critical Sensitivity)
+- Total Sensitive Data: 270 GB
+
+Risk Assessment:
+- Detection Risk: HIGH (strong DLP monitoring)
+- Alert Status: MULTIPLE HIGH-SEVERITY alerts
+- Investigation: ACTIVE
+- Recommendation: IMMEDIATE CONTAINMENT REQUIRED
+
+WARNING: FS-01 has strong DLP coverage and has generated multiple alerts. High detection risk.""",
+            file_url="/api/artifacts/files/purview_fs-01_phase4.txt",
+            notes_for_gm="Purview shows FS-01 has strong DLP and high detection risk."
         )
         db.add(artifact7_blue)
         db.flush()
 
         artifact8_blue = Artifact(
-            name="Data Classification Report",
-            type=ArtifactType.INTEL_REPORT,
-            description="Data classification analysis of exfiltrated data. Categories identified: Customer PII (125,000 records), Employee data (2,400 records), Financial records (Q1-Q4 financials), Intellectual property (proprietary algorithms, research data), Legal documents (contracts, NDAs). Estimated regulatory impact: GDPR violation potential, CCPA notification required, potential HIPAA implications if healthcare data included.",
-            file_url="/api/artifacts/files/data_classification_phase4.pdf",
-            notes_for_gm="Report showing what data was stolen and regulatory implications."
+            name="Microsoft Purview Data Loss Prevention - FS-02 (HR/Operations) Monitoring",
+            type=ArtifactType.LOG_SNIPPET,
+            description="""Microsoft Purview Data Loss Prevention (DLP) Report
+File Server: FS-02 (HR/Operations File Server)
+Monitoring Period: Last 24 hours
+
+DLP Policy Coverage:
+- Employee Data: MEDIUM (DLP policies partially configured)
+- HR Records: MEDIUM (DLP policies partially configured)
+- Operational Documents: WEAK (limited DLP coverage)
+- Data Classification Labels: Applied to 45% of files (many unclassified)
+
+Network Monitoring:
+- Microsoft Defender for Cloud Apps: ACTIVE
+- Cloud App Security: Enabled
+- Anomaly Detection: PARTIALLY ENABLED (coverage gaps)
+- Real-time Monitoring: ACTIVE (but limited policy coverage)
+
+Access Logs (Last 24 hours):
+- Unusual Access Patterns: DETECTED (but fewer alerts)
+- Large File Transfers: DETECTED (180 GB)
+- External Connections: DETECTED (45.146.164.110)
+- DLP Alerts Generated: 3 MEDIUM-SEVERITY alerts
+- Action Taken: ALERTED (but lower priority due to medium severity)
+
+Data Classification:
+- Employee Records: 8.2 GB (Medium Sensitivity - many unclassified)
+- HR Data: 45 GB (Medium Sensitivity)
+- Operational Documents: 127 GB (Low-Medium Sensitivity - many unclassified)
+- Total Sensitive Data: 180 GB (but 60% unclassified)
+
+Risk Assessment:
+- Detection Risk: MEDIUM (weaker DLP coverage, fewer alerts)
+- Alert Status: MEDIUM-SEVERITY alerts (lower priority)
+- Investigation: PENDING (not yet prioritized)
+- Recommendation: Monitor but lower immediate priority
+
+NOTE: FS-02 has weaker DLP coverage and fewer alerts generated. Lower detection risk but still concerning.""",
+            file_url="/api/artifacts/files/purview_fs-02_phase4.txt",
+            notes_for_gm="Purview shows FS-02 has weaker DLP and lower detection risk."
         )
         db.add(artifact8_blue)
         db.flush()
 
-        # Red Team Artifacts
+        artifact9_blue = Artifact(
+            name="Microsoft Sentinel - Data Exfiltration Risk Correlation",
+            type=ArtifactType.INTEL_REPORT,
+            description="""Microsoft Sentinel Incident Correlation
+Incident ID: INC-2024-00345
+Title: Data Exfiltration Risk Assessment
+
+File Server Comparison:
+
+FS-01 (Finance):
+- DLP Coverage: STRONG (95% of files classified)
+- DLP Alerts: 12 HIGH-SEVERITY alerts
+- Detection Risk: HIGH (strong monitoring, active investigation)
+- Data Sensitivity: CRITICAL (financial, customer PII, IP)
+- Network Monitoring: STRONG (Defender for Cloud Apps active)
+- Recommendation: HIGH PRIORITY - Immediate containment required
+
+FS-02 (HR/Operations):
+- DLP Coverage: WEAK (45% of files classified, many unclassified)
+- DLP Alerts: 3 MEDIUM-SEVERITY alerts
+- Detection Risk: MEDIUM (weaker monitoring, lower priority)
+- Data Sensitivity: MEDIUM (employee data, operational docs)
+- Network Monitoring: ACTIVE but limited policy coverage
+- Recommendation: MEDIUM PRIORITY - Monitor but lower immediate risk
+
+Threat Intelligence:
+- Both servers showing large data transfers
+- FS-01: 270 GB transferred (HIGH-SEVERITY alerts)
+- FS-02: 180 GB transferred (MEDIUM-SEVERITY alerts)
+- External destinations: Cloud storage (Mega.nz, Dropbox)
+
+Recommendation: Prioritize containment of FS-01 due to HIGH-SEVERITY alerts and critical data sensitivity. FS-02 requires monitoring but has lower immediate risk due to weaker DLP coverage.""",
+            file_url="/api/artifacts/files/sentinel_exfiltration_risk_phase4.txt",
+            notes_for_gm="Sentinel shows FS-01 is higher priority due to strong DLP alerts."
+        )
+        db.add(artifact9_blue)
+        db.flush()
+
+        # Red Team Artifacts - Phase 4
         artifact7_red = Artifact(
-            name="Data Exfiltration Progress",
-            type=ArtifactType.TOOL_OUTPUT,
-            description="Data Exfiltration Status: IN PROGRESS\n\nTarget Systems:\n- FS-01: 270 GB transferred (60% complete)\n- FS-02: 180 GB transferred (100% complete)\n\nData Categories Collected:\n✓ Customer Databases: 45 GB (125,000 records)\n✓ Financial Records: 120 GB (Q1-Q4 2023, Q1 2024)\n✓ Employee PII: 8.2 GB (2,400 records)\n✓ Intellectual Property: 105 GB (algorithms, research)\n✓ Legal Documents: 85 GB (contracts, NDAs)\n\nUpload Status:\n- Mega.nz: 270 GB uploaded\n- Dropbox: 180 GB uploaded\nTotal: 450 GB / 450 GB (100%)\n\nExfiltration complete. Ready for encryption phase.",
-            file_url="/api/artifacts/files/exfiltration_progress_phase4.txt",
-            notes_for_gm="Red Team sees their exfiltration progress and success."
+            name="FS-01 (Finance) Network Path & DLP Analysis",
+            type=ArtifactType.INTEL_REPORT,
+            description="""Target: FS-01 (Finance File Server)
+
+Network Topology:
+- Internal IP: 192.168.0.20
+- Network Segment: Finance VLAN (isolated)
+- Firewall Rules: Strict (limited outbound)
+- Egress Path: Through proxy server (monitored)
+
+Data Classification:
+- Financial Records: 120 GB (High Sensitivity)
+- Customer PII: 45 GB (Critical Sensitivity)
+- Intellectual Property: 105 GB (Critical Sensitivity)
+- Total: 270 GB of high-value data
+
+DLP Coverage Analysis:
+- Microsoft Purview DLP: ACTIVE
+- Data Classification Labels: 95% of files labeled
+- DLP Policies: STRONG (financial, PII, IP policies active)
+- Monitoring: Real-time (Defender for Cloud Apps)
+- Alert Threshold: LOW (sensitive to large transfers)
+
+Exfiltration Risk Assessment:
+- Detection Risk: HIGH
+  * Strong DLP monitoring
+  * 12 HIGH-SEVERITY alerts already generated
+  * Real-time monitoring active
+  * Investigation in progress
+- Network Path: Monitored (proxy logs)
+- Success Probability: 40-50% (high detection risk)
+- Time to Detection: IMMINENT (alerts already generated)
+
+Recommendation: HIGH-VALUE target but HIGH DETECTION RISK. DLP has already generated multiple alerts. Exfiltration likely to be detected and blocked.""",
+            file_url="/api/artifacts/files/fs-01_analysis_phase4.txt",
+            notes_for_gm="Red Team sees FS-01 has high-value data but high detection risk."
         )
         db.add(artifact7_red)
         db.flush()
 
         artifact8_red = Artifact(
-            name="Stolen Data Inventory",
+            name="FS-02 (HR/Operations) Network Path & DLP Analysis",
             type=ArtifactType.INTEL_REPORT,
-            description="Stolen Data Inventory:\n\nHigh-Value Data:\n- Customer PII: 125,000 records (estimated value: $50/record = $6.25M)\n- Financial Records: Complete Q1-Q4 2023, Q1 2024\n- Employee Data: 2,400 records with SSNs, salaries\n- Intellectual Property: Proprietary algorithms, research data\n- Legal Documents: Contracts, NDAs, compliance records\n\nTotal Data Value: $50+ million\nLeverage: High - can threaten publication if ransom not paid\nStatus: All data successfully exfiltrated and verified",
-            file_url="/api/artifacts/files/stolen_data_inventory_phase4.txt",
-            notes_for_gm="Red Team sees their inventory of stolen data."
+            description="""Target: FS-02 (HR/Operations File Server)
+
+Network Topology:
+- Internal IP: 192.168.0.21
+- Network Segment: Operations VLAN (less isolated)
+- Firewall Rules: Moderate (more permissive outbound)
+- Egress Path: Direct internet access (less monitored)
+
+Data Classification:
+- Employee Records: 8.2 GB (Medium Sensitivity)
+- HR Data: 45 GB (Medium Sensitivity)
+- Operational Documents: 127 GB (Low-Medium Sensitivity)
+- Total: 180 GB (60% unclassified, lower sensitivity)
+
+DLP Coverage Analysis:
+- Microsoft Purview DLP: PARTIALLY ACTIVE
+- Data Classification Labels: 45% of files labeled (many unclassified)
+- DLP Policies: WEAK (limited coverage, many gaps)
+- Monitoring: Active but limited policy coverage
+- Alert Threshold: MEDIUM (fewer alerts generated)
+
+Exfiltration Risk Assessment:
+- Detection Risk: MEDIUM
+  * Weaker DLP monitoring
+  * Only 3 MEDIUM-SEVERITY alerts generated
+  * Limited policy coverage (many files unclassified)
+  * Investigation pending (lower priority)
+- Network Path: Less monitored (direct internet access)
+- Success Probability: 70-80% (lower detection risk)
+- Time to Detection: DELAYED (weaker monitoring, lower priority)
+
+Recommendation: MEDIUM-VALUE target with LOWER DETECTION RISK. Weaker DLP coverage and fewer alerts. Better opportunity for successful exfiltration before detection.""",
+            file_url="/api/artifacts/files/fs-02_analysis_phase4.txt",
+            notes_for_gm="Red Team sees FS-02 has lower detection risk due to weaker DLP."
         )
         db.add(artifact8_red)
+        db.flush()
+
+        artifact9_red = Artifact(
+            name="Data Exfiltration Strategy & Risk Comparison",
+            type=ArtifactType.INTEL_REPORT,
+            description="""Data Exfiltration Strategy Analysis
+
+Target Comparison:
+
+FS-01 (Finance):
+- Data Value: HIGH (270 GB, critical sensitivity)
+- DLP Coverage: STRONG (95% classified, active policies)
+- Detection Risk: HIGH (12 HIGH-SEVERITY alerts already)
+- Network Monitoring: STRONG (proxy monitored)
+- Success Probability: 40-50%
+- Time to Detection: IMMINENT
+- Recommendation: HIGH-VALUE but HIGH-RISK. Likely to be detected and blocked.
+
+FS-02 (HR/Operations):
+- Data Value: MEDIUM (180 GB, lower sensitivity)
+- DLP Coverage: WEAK (45% classified, limited policies)
+- Detection Risk: MEDIUM (3 MEDIUM-SEVERITY alerts)
+- Network Monitoring: MODERATE (direct internet, less monitored)
+- Success Probability: 70-80%
+- Time to Detection: DELAYED
+- Recommendation: MEDIUM-VALUE but LOWER-RISK. Better opportunity for successful exfiltration.
+
+Decision Matrix:
+Prioritize FS-02 for exfiltration. Lower detection risk and higher success probability. FS-01 has already generated multiple HIGH-SEVERITY alerts and is likely to be blocked. FS-02 offers better opportunity to complete exfiltration before detection.""",
+            file_url="/api/artifacts/files/exfiltration_strategy_phase4.txt",
+            notes_for_gm="Red Team sees clear recommendation to prioritize FS-02."
+        )
+        db.add(artifact9_red)
         db.flush()
 
         # Phase 5 Artifacts
@@ -356,13 +913,15 @@ def seed_data():
         db.flush()
 
         # Associate artifacts with phases and team roles
-        # Phase 1: Initial Compromise
-        # Blue Team sees: phishing email and EDR alert
+        # Phase 1: Initial Compromise (REDESIGNED)
+        # Blue Team sees: Defender alerts for both departments and Sentinel analysis
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1.id, artifact_id=artifact1_blue.id, team_role="blue"))
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1.id, artifact_id=artifact2_blue.id, team_role="blue"))
-        # Red Team sees: access confirmation and C2 status
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1.id, artifact_id=artifact3_blue.id, team_role="blue"))
+        # Red Team sees: reconnaissance reports for both departments and C2 status
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1.id, artifact_id=artifact1_red.id, team_role="red"))
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1.id, artifact_id=artifact2_red.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase1.id, artifact_id=artifact3_red.id, team_role="red"))
 
         # Phase 2: Establishing Foothold
         # Blue Team sees: network scan and C2 traffic analysis
@@ -372,21 +931,25 @@ def seed_data():
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase2.id, artifact_id=artifact3_red.id, team_role="red"))
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase2.id, artifact_id=artifact4_red.id, team_role="red"))
 
-        # Phase 3: Privilege Escalation & Lateral Movement
-        # Blue Team sees: privilege escalation logs and lateral movement indicators
+        # Phase 3: Privilege Escalation & Lateral Movement (REDESIGNED)
+        # Blue Team sees: Defender system info for both hosts and Sentinel vulnerability correlation
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3.id, artifact_id=artifact5_blue.id, team_role="blue"))
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3.id, artifact_id=artifact6_blue.id, team_role="blue"))
-        # Red Team sees: credential success and lateral movement status
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3.id, artifact_id=artifact7_blue.id, team_role="blue"))
+        # Red Team sees: system assessments for both hosts and exploit analysis
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3.id, artifact_id=artifact5_red.id, team_role="red"))
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3.id, artifact_id=artifact6_red.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase3.id, artifact_id=artifact7_red.id, team_role="red"))
 
-        # Phase 4: Data Exfiltration
-        # Blue Team sees: exfiltration traffic analysis and data classification
+        # Phase 4: Data Exfiltration (REDESIGNED)
+        # Blue Team sees: Purview DLP reports for both servers and Sentinel correlation
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4.id, artifact_id=artifact7_blue.id, team_role="blue"))
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4.id, artifact_id=artifact8_blue.id, team_role="blue"))
-        # Red Team sees: exfiltration progress and stolen data inventory
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4.id, artifact_id=artifact9_blue.id, team_role="blue"))
+        # Red Team sees: network/DLP analysis for both servers and strategy comparison
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4.id, artifact_id=artifact7_red.id, team_role="red"))
         db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4.id, artifact_id=artifact8_red.id, team_role="red"))
+        db.execute(scenario_phase_artifacts.insert().values(phase_id=phase4.id, artifact_id=artifact9_red.id, team_role="red"))
 
         # Phase 5: Ransomware Deployment & Response
         # Blue Team sees: ransom note, impact assessment, and backup status
