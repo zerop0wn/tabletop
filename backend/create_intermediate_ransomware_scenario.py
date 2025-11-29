@@ -351,7 +351,7 @@ try:
         name="HR Department Reconnaissance Report",
         type=ArtifactType.TOOL_OUTPUT,
         description="Reconnaissance data collected on WS-HR-042 (HR Department). Contains security posture assessment, EDR status, and user privilege information.",
-        file_url="/files/hr_recon_phase1.txt",
+        file_url="/api/artifacts/files/hr_recon_phase1.txt",
         notes_for_gm="This artifact shows HR has strong security (latest EDR, attack was blocked). Red Team should NOT choose HR."
     )
     db.add(hr_recon)
@@ -361,7 +361,7 @@ try:
         name="Operations Department Reconnaissance Report",
         type=ArtifactType.TOOL_OUTPUT,
         description="Reconnaissance data collected on WS-OPS-089 (Operations Department). Contains security posture assessment, EDR status, and user privilege information.",
-        file_url="/files/ops_recon_phase1.txt",
+        file_url="/api/artifacts/files/ops_recon_phase1.txt",
         notes_for_gm="This artifact shows Operations has weaker security (outdated EDR, attack succeeded). Red Team SHOULD choose Operations."
     )
     db.add(ops_recon)
@@ -371,7 +371,7 @@ try:
         name="C2 Connection Status Comparison",
         type=ArtifactType.TOOL_OUTPUT,
         description="Command and Control (C2) connection test results comparing HR and Operations workstations. Shows which target has operational C2 connectivity.",
-        file_url="/files/c2_status_phase1.txt",
+        file_url="/api/artifacts/files/c2_status_phase1.txt",
         notes_for_gm="Shows HR blocked C2, Operations has operational C2. Confirms Operations is the better target."
     )
     db.add(c2_status)
@@ -382,7 +382,7 @@ try:
         name="Defender Alert - HR Department",
         type=ArtifactType.LOG_SNIPPET,
         description="Microsoft Defender for Endpoint alert for WS-HR-042 (HR Department). Contains detection details, EDR status, and response actions.",
-        file_url="/files/defender_hr_alert_phase1.txt",
+        file_url="/api/artifacts/files/defender_hr_alert_phase1.txt",
         notes_for_gm="Shows HR attack was blocked, strong EDR. Blue Team should NOT prioritize HR."
     )
     db.add(hr_defender)
@@ -392,7 +392,7 @@ try:
         name="Defender Alert - Operations Department",
         type=ArtifactType.LOG_SNIPPET,
         description="Microsoft Defender for Endpoint alert for WS-OPS-089 (Operations Department). Contains detection details, EDR status, and response actions.",
-        file_url="/files/defender_ops_alert_phase1.txt",
+        file_url="/api/artifacts/files/defender_ops_alert_phase1.txt",
         notes_for_gm="Shows Operations attack succeeded, outdated EDR. Blue Team SHOULD prioritize Operations."
     )
     db.add(ops_defender)
@@ -402,7 +402,7 @@ try:
         name="Sentinel Phishing Analysis",
         type=ArtifactType.INTEL_REPORT,
         description="Microsoft Sentinel incident analysis comparing phishing campaign impact on HR and Operations departments. Includes risk scoring and recommendations.",
-        file_url="/files/sentinel_phishing_phase1.txt",
+        file_url="/api/artifacts/files/sentinel_phishing_phase1.txt",
         notes_for_gm="Shows Operations has higher risk score due to successful execution and outdated security. Confirms Operations is higher priority."
     )
     db.add(sentinel_phishing)
@@ -425,7 +425,7 @@ try:
         name="Persistence Method Testing Results",
         type=ArtifactType.TOOL_OUTPUT,
         description="Results from testing three persistence mechanisms: Scheduled Tasks, Registry Run Keys, and WMI Event Subscriptions. Includes reliability and detection risk assessment.",
-        file_url="/files/persistence_testing_phase2.txt",
+        file_url="/api/artifacts/files/persistence_testing_phase2.txt",
         notes_for_gm="Shows Registry Run Key has best balance of reliability and low detection. Red Team should choose Registry."
     )
     db.add(persistence_testing)
@@ -435,7 +435,7 @@ try:
         name="Detection Risk Assessment",
         type=ArtifactType.TOOL_OUTPUT,
         description="Assessment of detection risk for each persistence method based on security tool responses and system logging.",
-        file_url="/files/detection_risk_phase2.txt",
+        file_url="/api/artifacts/files/detection_risk_phase2.txt",
         notes_for_gm="Shows Registry has lowest detection risk, WMI highest. Confirms Registry is best choice."
     )
     db.add(detection_risk)
@@ -446,7 +446,7 @@ try:
         name="Defender Process Monitoring",
         type=ArtifactType.LOG_SNIPPET,
         description="Microsoft Defender for Endpoint process monitoring showing detection and blocking status for each persistence method attempt.",
-        file_url="/files/defender_process_phase2.txt",
+        file_url="/api/artifacts/files/defender_process_phase2.txt",
         notes_for_gm="Shows Registry modifications were detected but not blocked, WMI was blocked. Blue Team should focus on Registry."
     )
     db.add(defender_process)
@@ -456,7 +456,7 @@ try:
         name="System Audit Logs",
         type=ArtifactType.LOG_SNIPPET,
         description="Windows System audit logs showing successful modifications for each persistence method. Includes registry changes, scheduled task creation, and WMI subscription attempts.",
-        file_url="/files/system_audit_phase2.txt",
+        file_url="/api/artifacts/files/system_audit_phase2.txt",
         notes_for_gm="Shows Registry modifications were successful and logged, WMI was blocked. Confirms Registry was deployed."
     )
     db.add(system_audit)
@@ -477,7 +477,7 @@ try:
         name="FS-PROD-01 Reconnaissance Report",
         type=ArtifactType.TOOL_OUTPUT,
         description="Reconnaissance data collected on File Server FS-PROD-01. Contains vulnerability scan results, patch status, and exploit availability.",
-        file_url="/files/fs_prod_recon_phase3.txt",
+        file_url="/api/artifacts/files/fs_prod_recon_phase3.txt",
         notes_for_gm="Shows FS-PROD-01 is fully patched, no known exploits. Red Team should NOT choose FS-PROD-01."
     )
     db.add(fs_prod_recon)
@@ -487,7 +487,7 @@ try:
         name="APP-DEV-02 Reconnaissance Report",
         type=ArtifactType.TOOL_OUTPUT,
         description="Reconnaissance data collected on Application Server APP-DEV-02. Contains vulnerability scan results, patch status, and exploit availability.",
-        file_url="/files/app_dev_recon_phase3.txt",
+        file_url="/api/artifacts/files/app_dev_recon_phase3.txt",
         notes_for_gm="Shows APP-DEV-02 has unpatched LPE vulnerability with public exploit available. Red Team SHOULD choose APP-DEV-02."
     )
     db.add(app_dev_recon)
@@ -498,7 +498,7 @@ try:
         name="Vulnerability Scan Results",
         type=ArtifactType.INTEL_REPORT,
         description="Microsoft Defender Vulnerability Management scan results for FS-PROD-01 and APP-DEV-02. Includes CVE details, patch status, and risk scoring.",
-        file_url="/files/vuln_scan_phase3.txt",
+        file_url="/api/artifacts/files/vuln_scan_phase3.txt",
         notes_for_gm="Shows FS-PROD-01 patched, APP-DEV-02 has CVE-2024-XXXXX unpatched. Blue Team should prioritize APP-DEV-02."
     )
     db.add(vuln_scan)
@@ -508,7 +508,7 @@ try:
         name="Sentinel Vulnerability Correlation",
         type=ArtifactType.INTEL_REPORT,
         description="Microsoft Sentinel correlation of vulnerability data with exploit activity. Shows which server has active exploit attempts.",
-        file_url="/files/sentinel_vuln_phase3.txt",
+        file_url="/api/artifacts/files/sentinel_vuln_phase3.txt",
         notes_for_gm="Shows APP-DEV-02 has high risk score and exploit activity detected. Confirms APP-DEV-02 is priority."
     )
     db.add(sentinel_vuln)
@@ -529,7 +529,7 @@ try:
         name="Network Mapping Results",
         type=ArtifactType.TOOL_OUTPUT,
         description="Network mapping and connectivity test results for DB-CUST-PROD and DB-HR-PROD. Shows network segmentation and access paths.",
-        file_url="/files/network_mapping_phase4.txt",
+        file_url="/api/artifacts/files/network_mapping_phase4.txt",
         notes_for_gm="Shows DB-CUST-PROD is isolated, DB-HR-PROD is accessible. Red Team should choose DB-HR-PROD."
     )
     db.add(network_mapping)
@@ -539,7 +539,7 @@ try:
         name="Database Access Test Results",
         type=ArtifactType.TOOL_OUTPUT,
         description="Connection test results for both databases. Shows which database accepts connections and which is blocked.",
-        file_url="/files/access_test_phase4.txt",
+        file_url="/api/artifacts/files/access_test_phase4.txt",
         notes_for_gm="Shows DB-CUST-PROD blocked, DB-HR-PROD successful connection. Confirms DB-HR-PROD is accessible."
     )
     db.add(access_test)
@@ -550,7 +550,7 @@ try:
         name="Database Access Logs",
         type=ArtifactType.LOG_SNIPPET,
         description="Database access logs showing connection attempts and query activity for DB-CUST-PROD and DB-HR-PROD.",
-        file_url="/files/db_access_logs_phase4.txt",
+        file_url="/api/artifacts/files/db_access_logs_phase4.txt",
         notes_for_gm="Shows DB-CUST-PROD no access, DB-HR-PROD successful queries detected. Blue Team should prioritize DB-HR-PROD."
     )
     db.add(db_access_logs)
@@ -560,7 +560,7 @@ try:
         name="Network Segmentation Analysis",
         type=ArtifactType.INTEL_REPORT,
         description="Microsoft Defender for Cloud network segmentation analysis showing VLAN assignments and access controls for both databases.",
-        file_url="/files/network_seg_phase4.txt",
+        file_url="/api/artifacts/files/network_seg_phase4.txt",
         notes_for_gm="Shows DB-CUST-PROD isolated VLAN, DB-HR-PROD standard VLAN. Confirms DB-HR-PROD is less protected."
     )
     db.add(network_seg)
@@ -581,7 +581,7 @@ try:
         name="Exfiltration Method Testing",
         type=ArtifactType.TOOL_OUTPUT,
         description="Testing results for HTTPS tunnel and DNS tunneling exfiltration methods. Includes speed, reliability, and detection risk assessment.",
-        file_url="/files/exfil_testing_phase5.txt",
+        file_url="/api/artifacts/files/exfil_testing_phase5.txt",
         notes_for_gm="Shows HTTPS well-monitored, DNS tunneling has detection gaps. Red Team should choose DNS tunneling."
     )
     db.add(exfil_testing)
@@ -591,7 +591,7 @@ try:
         name="Data Transfer Analysis",
         type=ArtifactType.TOOL_OUTPUT,
         description="Analysis of data transfer capabilities for both exfiltration methods. Includes bandwidth, reliability, and detection risk comparison.",
-        file_url="/files/data_transfer_phase5.txt",
+        file_url="/api/artifacts/files/data_transfer_phase5.txt",
         notes_for_gm="Shows HTTPS faster but detected, DNS slower but more reliable with lower detection. Confirms DNS is better choice."
     )
     db.add(data_transfer)
@@ -602,7 +602,7 @@ try:
         name="DLP Alert Analysis",
         type=ArtifactType.INTEL_REPORT,
         description="Microsoft Purview Data Loss Prevention alert analysis comparing detection capabilities for HTTPS and DNS tunneling exfiltration methods.",
-        file_url="/files/dlp_analysis_phase5.txt",
+        file_url="/api/artifacts/files/dlp_analysis_phase5.txt",
         notes_for_gm="Shows HTTPS well-monitored, DNS tunneling has detection gaps. Blue Team should prioritize DNS tunneling blocking."
     )
     db.add(dlp_analysis)
@@ -612,7 +612,7 @@ try:
         name="Network Bandwidth Analysis",
         type=ArtifactType.LOG_SNIPPET,
         description="Microsoft Defender for Cloud network bandwidth analysis showing anomalies for HTTPS and DNS traffic patterns.",
-        file_url="/files/bandwidth_analysis_phase5.txt",
+        file_url="/api/artifacts/files/bandwidth_analysis_phase5.txt",
         notes_for_gm="Shows HTTPS anomalies are clear, DNS anomalies less obvious. Confirms DNS tunneling is being used and needs attention."
     )
     db.add(bandwidth_analysis)
