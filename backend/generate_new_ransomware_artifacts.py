@@ -5,8 +5,10 @@ Creates realistic Microsoft Defender, Sentinel, and Red Team tool outputs.
 import os
 from pathlib import Path
 
-# Artifacts directory
-ARTIFACTS_DIR = Path(__file__).parent / "artifacts" / "files"
+# Artifacts directory - match the path expected by the artifacts router
+# The router expects files in /app/artifacts, but we're running from /app
+# So we use the same path structure
+ARTIFACTS_DIR = Path("/app/artifacts/files")
 ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
