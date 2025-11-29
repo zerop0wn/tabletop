@@ -6,9 +6,9 @@ import sys
 sys.path.insert(0, '/app')
 
 from sqlalchemy.orm import Session
-from sqlalchemy import delete
+from sqlalchemy import delete, update
 from app.database import SessionLocal
-from app.models import Scenario, ScenarioPhase, Artifact
+from app.models import Scenario, ScenarioPhase, Artifact, Game
 from app.models import scenario_phase_artifacts
 
 db: Session = SessionLocal()
@@ -32,6 +32,23 @@ try:
     print(f"  Phases: {len(phases)}")
     
     if phase_ids:
+        # First, check for games that reference these phases
+        print("\nChecking for games using this scenario...")
+        games_using_phases = db.query(Game).filter(Game.current_phase_id.in_(phase_ids)).all()
+        games_using_scenario = db.query(Game).filter(Game.scenario_id == scenario.id).all()
+        all_affected_games = list(set(games_using_phases + games_using_scenario))
+        
+        if all_affected_games:
+            print(f"  Found {len(all_affected_games)} game(s) using this scenario")
+            print("  Setting current_phase_id to NULL for affected games...")
+            for game in all_affected_games:
+                if game.current_phase_id in phase_ids:
+                    game.current_phase_id = None
+            db.flush()
+            print(f"  ✓ Updated {len(all_affected_games)} game(s)")
+        else:
+            print("  ✓ No games using this scenario")
+        
         # Delete artifact associations first
         print("\nDeleting artifact associations...")
         assoc_count = db.execute(
@@ -41,23 +58,6 @@ try:
         ).rowcount
         db.flush()
         print(f"  ✓ Deleted {assoc_count} artifact associations")
-        
-        # Get artifact IDs that are linked to these phases
-        artifact_ids = db.execute(
-            scenario_phase_artifacts.select().where(
-                scenario_phase_artifacts.c.phase_id.in_(phase_ids)
-            )
-        ).fetchall()
-        # Note: artifact_ids will be empty now since we deleted associations
-        # But we need to find artifacts that were only linked to this scenario
-        
-        # Find artifacts that are only linked to this scenario's phases
-        all_artifact_ids = set()
-        for phase_id in phase_ids:
-            # Get artifacts for this phase (before we deleted associations)
-            # We'll query directly from the association table won't work now
-            # Instead, let's get artifacts that might be orphaned
-            pass
         
         # Delete phases
         print("\nDeleting phases...")
