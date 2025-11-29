@@ -138,6 +138,7 @@ def get_player_state(game_id: int, player_id: int, db: Session = Depends(get_db)
             team_voting_status = VotingStatusResponse(
                 team_id=player.team_id,
                 team_name=player.team.name,
+                team_role=player.team.role,
                 total_players=len(team_players),
                 votes_submitted=len(votes),
                 votes=vote_responses,
