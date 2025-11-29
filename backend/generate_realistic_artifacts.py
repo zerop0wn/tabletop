@@ -4953,6 +4953,230 @@ Target organization's security controls were insufficient to prevent or quickly 
     filepath.write_text(content)
     print(f"Created: {filepath}")
 
+def create_tutorial_email_alert():
+    """Create tutorial email security alert."""
+    content = """Email Security Gateway Alert
+
+Alert ID: ESG-2024-TUT-001
+Timestamp: 09:00:15 UTC
+User: marketing.user@company.local
+Subject: 'URGENT: Invoice Payment Required'
+From: vendor-support@legitimate-vendor.com
+
+Action Taken: BLOCKED
+Reason: Suspicious link detected
+Link: http://secure-invoice-download[.]tk/invoice.pdf
+
+Status: Email quarantined, download blocked
+User Notified: Yes
+
+This is a tutorial artifact. In real scenarios, you would see actual email screenshots or logs.
+"""
+    filepath = ARTIFACTS_DIR / "tutorial_email_alert.txt"
+    filepath.write_text(content)
+    print(f"Created: {filepath}")
+
+
+def create_tutorial_workstation_status():
+    """Create tutorial workstation status report."""
+    content = """Workstation Status Report
+
+Hostname: WS-MKT-015
+User: marketing.user@company.local
+Department: Marketing
+Last Login: 08:45:00 UTC
+
+Current Status:
+- Endpoint Protection: Active
+- Last Scan: 08:00:00 UTC (Clean)
+- Network Connections: Normal
+- Running Processes: No anomalies detected
+
+Note: Initial scan shows no malware detected. Further investigation recommended.
+
+This is a tutorial artifact. In real scenarios, you would see detailed system logs.
+"""
+    filepath = ARTIFACTS_DIR / "tutorial_workstation_status.txt"
+    filepath.write_text(content)
+    print(f"Created: {filepath}")
+
+
+def create_tutorial_phish_status():
+    """Create tutorial phishing campaign status."""
+    content = """Phishing Campaign Status
+
+Campaign: Invoice Payment Phish
+Target: Company Marketing Department
+Method: Email with malicious link
+
+Results:
+- Emails Sent: 50
+- Emails Opened: 12
+- Links Clicked: 3
+- Downloads Blocked: 3
+
+Status: Initial email link was blocked by target's email security.
+
+Next Steps:
+- Alternative access methods available
+- Consider secondary payload delivery
+- Maintain persistence through other vectors
+
+This is a tutorial artifact. In real scenarios, you would see actual attack tool outputs.
+"""
+    filepath = ARTIFACTS_DIR / "tutorial_phish_status.txt"
+    filepath.write_text(content)
+    print(f"Created: {filepath}")
+
+
+def create_tutorial_target_info():
+    """Create tutorial target information report."""
+    content = """Target Reconnaissance Report
+
+Target: Company Marketing Department
+Initial Vector: Email phishing
+
+Target Information:
+- Email Security: Active (blocked initial attempt)
+- Endpoint Protection: Present
+- Network Segmentation: Unknown
+
+Assessment:
+- Initial email link blocked
+- Alternative access methods needed
+- Target appears security-aware
+
+Recommendation:
+- Try alternative delivery method
+- Consider social engineering
+- Prepare backup access vectors
+
+This is a tutorial artifact. In real scenarios, you would see detailed reconnaissance data.
+"""
+    filepath = ARTIFACTS_DIR / "tutorial_target_info.txt"
+    filepath.write_text(content)
+    print(f"Created: {filepath}")
+
+
+def create_tutorial_network_traffic():
+    """Create tutorial network traffic analysis."""
+    content = """Network Traffic Analysis Report
+
+Hostname: WS-MKT-015
+Time Range: 09:00:00 - 09:15:00 UTC
+
+Suspicious Activity Detected:
+- Outbound Connection: 185.220.101.45:443
+- Protocol: HTTPS
+- Duration: 12 minutes
+- Data Transferred: 2.3 MB
+- Connection Pattern: Unusual (not typical user behavior)
+
+Analysis:
+- Destination IP not in whitelist
+- Connection established shortly after email alert
+- Encrypted traffic (cannot inspect payload)
+
+Recommendation: Investigate further, consider isolating workstation.
+
+This is a tutorial artifact. In real scenarios, you would see detailed network logs.
+"""
+    filepath = ARTIFACTS_DIR / "tutorial_network_traffic.txt"
+    filepath.write_text(content)
+    print(f"Created: {filepath}")
+
+
+def create_tutorial_ir_checklist():
+    """Create tutorial incident response checklist."""
+    content = """Incident Response Checklist
+
+Current Status: Investigation Phase
+
+Completed:
+✓ Email alert reviewed
+✓ Workstation identified
+✓ Initial scan completed
+
+In Progress:
+- Network traffic analysis
+- Forensic investigation
+
+Next Steps:
+- [ ] Isolate affected workstation
+- [ ] Collect forensic evidence
+- [ ] Determine scope of compromise
+- [ ] Notify management
+- [ ] Document incident
+
+This is a tutorial artifact. In real scenarios, you would see actual incident response procedures.
+"""
+    filepath = ARTIFACTS_DIR / "tutorial_ir_checklist.txt"
+    filepath.write_text(content)
+    print(f"Created: {filepath}")
+
+
+def create_tutorial_access_confirm():
+    """Create tutorial access confirmation."""
+    content = """Access Status Report
+
+Target: WS-MKT-015
+Access Method: Alternative delivery (USB drop + social engineering)
+Status: ACCESS ESTABLISHED
+
+Connection Details:
+- C2 Server: 185.220.101.45:443
+- Beacon Interval: 300 seconds
+- Last Check-in: 09:12:00 UTC
+- Connection: Stable
+
+System Information:
+- OS: Windows 10 Enterprise
+- Domain: COMPANY.LOCAL
+- User Privileges: Standard User
+
+Current Status:
+- Persistence: Established
+- Detection: Not detected (yet)
+- Next Phase: Maintain access, escalate privileges
+
+This is a tutorial artifact. In real scenarios, you would see actual C2 tool outputs.
+"""
+    filepath = ARTIFACTS_DIR / "tutorial_access_confirm.txt"
+    filepath.write_text(content)
+    print(f"Created: {filepath}")
+
+
+def create_tutorial_defender_activity():
+    """Create tutorial defender activity report."""
+    content = """Defender Activity Assessment
+
+Target Response:
+- Email Security: Blocked initial attempt
+- Endpoint Protection: Active
+- Network Monitoring: Detecting unusual traffic
+
+Defender Actions Observed:
+- Email alert generated
+- Workstation scan initiated
+- Network traffic analysis in progress
+
+Assessment:
+- Defenders are aware of initial email
+- Network monitoring may detect C2 connection
+- Time to detection: ~15 minutes
+
+Recommendation:
+- Maintain low profile
+- Prepare for potential isolation
+- Have backup access methods ready
+
+This is a tutorial artifact. In real scenarios, you would see detailed defender intelligence.
+"""
+    filepath = ARTIFACTS_DIR / "tutorial_defender_activity.txt"
+    filepath.write_text(content)
+    print(f"Created: {filepath}")
+
+
 if __name__ == "__main__":
     print("Generating realistic artifact files...")
     print(f"Artifacts directory: {ARTIFACTS_DIR}\n")
@@ -5016,6 +5240,17 @@ if __name__ == "__main__":
     # Phase 1
     create_sharepoint_advisory()
     create_sharepoint_version()
+    
+    # Tutorial scenario artifacts
+    print("\nCreating Tutorial: Basic Security Incident artifacts...")
+    create_tutorial_email_alert()
+    create_tutorial_workstation_status()
+    create_tutorial_phish_status()
+    create_tutorial_target_info()
+    create_tutorial_network_traffic()
+    create_tutorial_ir_checklist()
+    create_tutorial_access_confirm()
+    create_tutorial_defender_activity()
     create_recon_report()
     create_vuln_verification()
     # Phase 2
