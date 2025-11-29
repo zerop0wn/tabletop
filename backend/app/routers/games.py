@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 from typing import List
 from collections import Counter
@@ -10,6 +11,7 @@ from app.auth import get_current_gm
 from app.models import Game, Scenario, ScenarioPhase, Team, GameStatus, PhaseState, Player, PlayerVote, PhaseDecision, DecisionStatus, ScoreEvent, PhaseGMNotes, AfterActionReport
 from app.schemas import GameCreate, GameResponse, PhaseCommentsResponse, PhaseCommentResponse, GMNotesUpdate, AfterActionReportResponse, PhaseAnalysis
 from app.scoring import calculate_team_decision_score, calculate_weighted_score
+from app.report_generator import generate_word_report, generate_pdf_report
 
 router = APIRouter()
 
@@ -600,8 +602,7 @@ def export_word_report(
     ).first()
     
     if not existing_report:
-        # Generate report first
-        from app.routers.games import generate_after_action_report
+        # Generate report first by calling the endpoint logic directly
         aar_response = generate_after_action_report(game_id, db, current_gm)
         report_data = {
             "game_id": game_id,
@@ -645,8 +646,7 @@ def export_pdf_report(
     ).first()
     
     if not existing_report:
-        # Generate report first
-        from app.routers.games import generate_after_action_report
+        # Generate report first by calling the endpoint logic directly
         aar_response = generate_after_action_report(game_id, db, current_gm)
         report_data = {
             "game_id": game_id,
