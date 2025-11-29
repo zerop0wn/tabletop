@@ -44,9 +44,12 @@ export default function GMGameDashboard() {
       const response = await apiClient.get<Game>(`/games/${id}`)
       setGame(response.data)
       setLoading(false)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to fetch game:', err)
-      setLoading(false)
+      // If 401, the interceptor will handle redirect
+      if (err.response?.status !== 401) {
+        setLoading(false)
+      }
     }
   }
 
@@ -65,8 +68,11 @@ export default function GMGameDashboard() {
     try {
       const response = await apiClient.get(`/games/${id}/phases/${game.current_phase_id}/comments`)
       setPhaseComments(response.data.comments || [])
-    } catch (err) {
-      console.error('Failed to fetch comments:', err)
+    } catch (err: any) {
+      // If 401, the interceptor will handle redirect
+      if (err.response?.status !== 401) {
+        console.error('Failed to fetch comments:', err)
+      }
     }
   }
 
@@ -98,8 +104,11 @@ export default function GMGameDashboard() {
     try {
       const response = await apiClient.get<VotingStatus[]>(`/games/${id}/phases/${game.current_phase_id}/voting-status`)
       setVotingStatus(response.data)
-    } catch (err) {
-      console.error('Failed to fetch voting status:', err)
+    } catch (err: any) {
+      // If 401, the interceptor will handle redirect
+      if (err.response?.status !== 401) {
+        console.error('Failed to fetch voting status:', err)
+      }
     }
   }
 
