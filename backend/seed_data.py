@@ -55,7 +55,7 @@ def seed_data():
             scenario_id=scenario.id,
             order_index=0,
             name="Phase 1: Initial Compromise",
-            briefing_text="At 08:15 AM, your phishing campaign has successfully delivered emails to two departments:\n- Finance Department: 12 emails opened, 3 links clicked\n- Marketing Department: 8 emails opened, 2 links clicked\n\nBoth departments have users who clicked the malicious links. You now have initial access attempts on workstations in both departments. However, you have limited resources and want to focus your efforts on the target that offers the **best chance of establishing a persistent foothold without immediate detection**.\n\nYou've collected initial reconnaissance data on both targets. Your decision: **Which department should you prioritize for establishing persistence?**\n\n- Option A: Focus on Finance Department (WS-FIN-042)\n- Option B: Focus on Marketing Department (WS-MKT-015)\n- Option C: Split efforts between both departments\n\n**Remember:** Review the artifacts carefully. They contain critical information about security posture, EDR coverage, and user privileges that will determine your success.",
+            briefing_text="At 08:15 AM, your phishing campaign has successfully delivered emails to two departments:\n- Finance Department (WS-FIN-042): 12 emails opened, 3 links clicked\n- Marketing Department (WS-MKT-015): 8 emails opened, 2 links clicked\n\nBoth departments have users who clicked the malicious links. You now have initial access attempts on workstations in both departments:\n- **WS-FIN-042** (Finance): finance.user@corp.local clicked malicious link\n- **WS-MKT-015** (Marketing): marketing.user@corp.local clicked malicious link\n\nHowever, you have limited resources and want to focus your efforts on the target that offers the **best chance of establishing a persistent foothold without immediate detection**.\n\nYou've collected initial reconnaissance data on both targets (WS-FIN-042 and WS-MKT-015). Your decision: **Which department should you prioritize for establishing persistence?**\n\n- Option A: Focus on Finance Department (WS-FIN-042)\n- Option B: Focus on Marketing Department (WS-MKT-015)\n- Option C: Split efforts between both departments\n\n**Remember:** Review the artifacts carefully. They contain critical information about security posture, EDR coverage, and user privileges for **both WS-FIN-042 and WS-MKT-015** that will determine your success. The artifacts will reveal which target has weaker security controls and presents the better opportunity.",
             red_objective="Analyze the reconnaissance data from both departments to identify which target offers the best opportunity for establishing persistent access with minimal detection risk. Focus your initial persistence efforts on the most vulnerable target.",
             blue_objective="Review security telemetry from both departments to identify which department shows the most concerning indicators of compromise. Prioritize containment and investigation efforts on the department with the highest risk of successful attacker persistence.",
             default_duration_seconds=900,
@@ -86,11 +86,11 @@ def seed_data():
                 "blue": [
                     {
                         "name": "Isolate Finance Department host (WS-FIN-042)",
-                        "description": "Disconnect the Finance department workstation from the network to prevent further spread. Review artifacts to assess risk level."
+                        "description": "Disconnect WS-FIN-042 (Finance) from the network to prevent further spread. Review artifacts comparing WS-FIN-042 and WS-MKT-015 to assess risk level."
                     },
                     {
                         "name": "Isolate Marketing Department host (WS-MKT-015)",
-                        "description": "Disconnect the Marketing department workstation from the network to prevent further spread. Review artifacts to assess risk level."
+                        "description": "Disconnect WS-MKT-015 (Marketing) from the network to prevent further spread. Review artifacts comparing WS-FIN-042 and WS-MKT-015 to assess risk level."
                     },
                     {
                         "name": "Isolate both hosts",

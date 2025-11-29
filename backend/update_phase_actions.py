@@ -26,11 +26,11 @@ try:
         "red": [
             {
                 "name": "Focus on Finance Department (WS-FIN-042)",
-                "description": "Prioritize establishing persistence on the Finance department workstation. Review artifacts to assess security posture and detection risk."
+                "description": "Prioritize establishing persistence on WS-FIN-042 (Finance). Review artifacts comparing WS-FIN-042 and WS-MKT-015 to assess security posture and detection risk."
             },
             {
                 "name": "Focus on Marketing Department (WS-MKT-015)",
-                "description": "Prioritize establishing persistence on the Marketing department workstation. Review artifacts to assess security posture and detection risk."
+                "description": "Prioritize establishing persistence on WS-MKT-015 (Marketing). Review artifacts comparing WS-FIN-042 and WS-MKT-015 to assess security posture and detection risk."
             },
             {
                 "name": "Split efforts between both departments",
@@ -48,11 +48,11 @@ try:
         "blue": [
             {
                 "name": "Isolate Finance Department host (WS-FIN-042)",
-                "description": "Disconnect the Finance department workstation from the network to prevent further spread. Review artifacts to assess risk level."
+                "description": "Disconnect WS-FIN-042 (Finance) from the network to prevent further spread. Review artifacts comparing WS-FIN-042 and WS-MKT-015 to assess risk level."
             },
             {
                 "name": "Isolate Marketing Department host (WS-MKT-015)",
-                "description": "Disconnect the Marketing department workstation from the network to prevent further spread. Review artifacts to assess risk level."
+                "description": "Disconnect WS-MKT-015 (Marketing) from the network to prevent further spread. Review artifacts comparing WS-FIN-042 and WS-MKT-015 to assess risk level."
             },
             {
                 "name": "Isolate both hosts",
