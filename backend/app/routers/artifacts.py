@@ -12,7 +12,8 @@ from app.schemas import ArtifactResponse
 router = APIRouter()
 
 # Create artifacts directory if it doesn't exist
-ARTIFACTS_DIR = Path("/app/artifacts")
+# Files are stored in /app/artifacts/files/ to match URLs like /api/artifacts/files/{filename}
+ARTIFACTS_DIR = Path("/app/artifacts/files")
 ARTIFACTS_DIR.mkdir(exist_ok=True, parents=True)
 
 
