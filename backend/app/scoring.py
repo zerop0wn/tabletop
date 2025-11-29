@@ -206,6 +206,103 @@ EMAIL_BOMB_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     },
 }
 
+# New Ransomware Attack: Advanced Persistent Threat scenario scoring
+NEW_RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
+    # Phase 1: Initial Access - IT vs Sales (order_index=0)
+    # Artifacts show Sales has weaker security (outdated EDR) vs IT (strong EDR, blocked attack)
+    # Red Team should prioritize Sales for persistence (lower detection risk)
+    # Blue Team should prioritize Sales for containment (higher risk)
+    (0, "red"): {
+        "Focus on Sales Department (WS-SLS-203)": 10,  # CORRECT - Artifacts show Sales has weaker EDR
+        "Focus on IT Department (WS-IT-089)": 4,       # WRONG - IT has strong EDR, attack was blocked
+        "Split efforts between both departments": 6,   # MEDIUM - Spreads risk
+        "Cover tracks": 7,                             # Secondary objective
+        "Escalate privileges": 3,                      # Too early, risky
+    },
+    (0, "blue"): {
+        "Isolate Sales Department host (WS-SLS-203)": 10,  # CORRECT - Artifacts show Sales is higher risk
+        "Isolate IT Department host (WS-IT-089)": 6,     # WRONG - IT already blocked, lower risk
+        "Isolate both hosts": 8,                         # MEDIUM - Conservative
+        "Collect forensic evidence": 8,                   # Critical for analysis
+        "Deploy countermeasures": 5,                      # Good but takes time
+    },
+    
+    # Phase 2: Establishing Persistence (order_index=1)
+    # Artifacts show Registry Run Key is best (detected but not blocked, low visibility)
+    # Scheduled Task is detected but visible, Service Creation is blocked
+    (1, "red"): {
+        "Deploy Registry Run Key persistence": 10,      # CORRECT - Best balance of success and stealth
+        "Deploy Scheduled Task persistence": 7,         # Good but more visible
+        "Deploy Service Creation persistence": 2,        # WRONG - Blocked by Defender
+        "Move laterally": 6,                            # Secondary
+        "Cover tracks": 7,                              # Important
+    },
+    (1, "blue"): {
+        "Audit and clean registry": 10,                 # CORRECT - Registry is the persistence method used
+        "Remove scheduled tasks": 8,                    # Good but secondary
+        "Monitor and block services": 6,                # Good but services were blocked
+        "Collect forensic evidence": 8,                 # Critical
+        "Deploy countermeasures": 7,                    # Good defense
+    },
+    
+    # Phase 3: Privilege Escalation (order_index=2)
+    # Artifacts show APP-02 has unpatched LPE vulnerability vs FS-01 is fully patched
+    # Red Team should prioritize APP-02 for escalation (high success probability)
+    # Blue Team should prioritize APP-02 for containment (high risk)
+    (2, "red"): {
+        "Escalate privileges on APP-02 (Application Server)": 10,  # CORRECT - Unpatched LPE vulnerability
+        "Escalate privileges on FS-01 (File Server)": 3,           # WRONG - Fully patched, low success
+        "Attempt escalation on both servers": 5,                   # MEDIUM - Spreads risk
+        "Move laterally": 7,                                       # Secondary
+        "Cover tracks": 6,                                         # Important
+    },
+    (2, "blue"): {
+        "Isolate APP-02 (Application Server)": 10,     # CORRECT - Artifacts show APP-02 is high risk
+        "Isolate FS-01 (File Server)": 6,              # WRONG - FS-01 is fully patched, lower risk
+        "Isolate both servers": 8,                     # MEDIUM - Conservative
+        "Patch vulnerabilities": 9,                    # Critical for APP-02
+        "Collect forensic evidence": 7,                 # Important
+    },
+    
+    # Phase 4: Lateral Movement & Data Discovery (order_index=3)
+    # Artifacts show DB-FIN-02 is accessible and has successful access vs DB-CUST-01 is isolated and blocked
+    # Red Team should prioritize DB-FIN-02 (accessible, weaker controls)
+    # Blue Team should prioritize DB-FIN-02 (shows signs of compromise)
+    (3, "red"): {
+        "Target DB-FIN-02 (Financial Records)": 10,    # CORRECT - Accessible, weaker controls
+        "Target DB-CUST-01 (Customer Database)": 2,   # WRONG - Not accessible, isolated
+        "Target both databases": 4,                    # MEDIUM - One not accessible
+        "Cover tracks": 8,                              # Important
+        "Establish persistence": 7,                    # Good
+    },
+    (3, "blue"): {
+        "Isolate DB-FIN-02 (Financial Records)": 10,   # CORRECT - Shows signs of compromise
+        "Isolate DB-CUST-01 (Customer Database)": 6,   # WRONG - Already secure, lower priority
+        "Isolate both databases": 8,                    # MEDIUM - Conservative
+        "Block database access": 9,                     # Critical
+        "Collect forensic evidence": 8,                 # Important
+    },
+    
+    # Phase 5: Data Exfiltration (order_index=4)
+    # Artifacts show DNS tunneling has lower detection risk vs HTTPS is well-monitored
+    # Red Team should prioritize DNS tunneling (more reliable, less detected)
+    # Blue Team should prioritize blocking DNS tunneling (less monitored)
+    (4, "red"): {
+        "Use DNS tunneling": 10,                       # CORRECT - Lower detection risk, more reliable
+        "Use HTTPS encrypted tunnel": 6,               # MEDIUM - Well-monitored but faster
+        "Split data across both methods": 7,           # MEDIUM - Balances speed and stealth
+        "Cover tracks": 8,                              # Important
+        "Establish persistence": 7,                     # Good
+    },
+    (4, "blue"): {
+        "Block DNS tunneling": 10,                     # CORRECT - Less monitored, needs attention
+        "Block HTTPS exfiltration": 8,                 # Good but well-monitored already
+        "Deploy DLP countermeasures": 9,               # Comprehensive
+        "Collect forensic evidence": 8,                # Critical
+        "Escalate to management": 7,                  # Important
+    },
+}
+
 # SharePoint RCE Zero-Day Exploitation scenario scoring
 SHAREPOINT_RCE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     # Phase 1: Vulnerability Disclosure & Initial Reconnaissance (order_index=0)
@@ -327,6 +424,7 @@ TUTORIAL_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
 # Map scenario names to their scoring matrices
 SCORING_MATRICES: Dict[str, Dict[Tuple[int, str], Dict[str, int]]] = {
     "Ransomware Incident Response": RANSOMWARE_SCORING,
+    "Ransomware Attack: Advanced Persistent Threat": NEW_RANSOMWARE_SCORING,
     "Email Bomb & Social Engineering Attack": EMAIL_BOMB_SCORING,
     "SharePoint RCE Zero-Day Exploitation": SHAREPOINT_RCE_SCORING,
     "Tutorial: Basic Security Incident": TUTORIAL_SCORING,
