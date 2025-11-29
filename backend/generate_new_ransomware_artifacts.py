@@ -6,8 +6,8 @@ import os
 from pathlib import Path
 
 # Artifacts directory - match the path expected by the artifacts router
-# The router expects files in /app/artifacts, but we're running from /app
-# So we use the same path structure
+# The router serves files from /app/artifacts and the route is /files/{filename}
+# So files should be in /app/artifacts/files/ to match the URL /api/artifacts/files/{filename}
 ARTIFACTS_DIR = Path("/app/artifacts/files")
 ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
 
