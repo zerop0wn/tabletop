@@ -11,7 +11,7 @@ from app.database import SessionLocal
 from app.models import (
     Scenario, ScenarioPhase, Artifact, Game, Team, Player, 
     PlayerVote, PhaseDecision, ScoreEvent, PhaseGMNotes,
-    PlayerComment, AfterActionReport
+    AfterActionReport
 )
 from app.models import scenario_phase_artifacts
 
@@ -60,12 +60,7 @@ try:
         db.flush()
         print(f"  ✓ Deleted {scores_count} score events")
     
-    # Delete player comments
-    comments_count = db.query(PlayerComment).count()
-    if comments_count > 0:
-        db.execute(delete(PlayerComment))
-        db.flush()
-        print(f"  ✓ Deleted {comments_count} player comments")
+    # Player comments are stored in PlayerVote.comments field, so they'll be deleted with votes
     
     # Delete GM notes
     notes_count = db.query(PhaseGMNotes).count()
