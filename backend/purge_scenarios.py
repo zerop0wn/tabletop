@@ -23,75 +23,76 @@ try:
     print("=" * 60)
     print()
     
-    # Step 1: Delete all games (this should cascade delete related data)
-    print("Step 1: Deleting all games...")
-    games_count = db.query(Game).count()
+    # Step 1: Get all game IDs first
+    print("Step 1: Finding all games...")
+    all_games = db.query(Game).all()
+    games_count = len(all_games)
+    game_ids = [g.id for g in all_games]
     print(f"  Found {games_count} games")
     
-    if games_count > 0:
-        # Delete all games - cascade should handle teams, players, votes, etc.
-        db.execute(delete(Game))
+    if games_count == 0:
+        print("  ✓ No games to delete")
+    else:
+        # Step 2: Delete in correct order to respect foreign key constraints
+        print("\nStep 2: Deleting game-related data in correct order...")
+        
+        # Delete player votes (references game_id, team_id, phase_id, player_id)
+        votes_count = db.query(PlayerVote).filter(PlayerVote.game_id.in_(game_ids)).count()
+        if votes_count > 0:
+            db.execute(delete(PlayerVote).where(PlayerVote.game_id.in_(game_ids)))
+            db.flush()
+            print(f"  ✓ Deleted {votes_count} player votes")
+        
+        # Delete phase decisions (references game_id, team_id, phase_id)
+        decisions_count = db.query(PhaseDecision).filter(PhaseDecision.game_id.in_(game_ids)).count()
+        if decisions_count > 0:
+            db.execute(delete(PhaseDecision).where(PhaseDecision.game_id.in_(game_ids)))
+            db.flush()
+            print(f"  ✓ Deleted {decisions_count} phase decisions")
+        
+        # Delete score events (references game_id, team_id, phase_id)
+        scores_count = db.query(ScoreEvent).filter(ScoreEvent.game_id.in_(game_ids)).count()
+        if scores_count > 0:
+            db.execute(delete(ScoreEvent).where(ScoreEvent.game_id.in_(game_ids)))
+            db.flush()
+            print(f"  ✓ Deleted {scores_count} score events")
+        
+        # Delete GM notes (references game_id, phase_id, gm_id)
+        notes_count = db.query(PhaseGMNotes).filter(PhaseGMNotes.game_id.in_(game_ids)).count()
+        if notes_count > 0:
+            db.execute(delete(PhaseGMNotes).where(PhaseGMNotes.game_id.in_(game_ids)))
+            db.flush()
+            print(f"  ✓ Deleted {notes_count} GM notes")
+        
+        # Delete after action reports (references game_id, gm_id)
+        aar_count = db.query(AfterActionReport).filter(AfterActionReport.game_id.in_(game_ids)).count()
+        if aar_count > 0:
+            db.execute(delete(AfterActionReport).where(AfterActionReport.game_id.in_(game_ids)))
+            db.flush()
+            print(f"  ✓ Deleted {aar_count} after action reports")
+        
+        # Delete players (references game_id, team_id)
+        players_count = db.query(Player).filter(Player.game_id.in_(game_ids)).count()
+        if players_count > 0:
+            db.execute(delete(Player).where(Player.game_id.in_(game_ids)))
+            db.flush()
+            print(f"  ✓ Deleted {players_count} players")
+        
+        # Delete teams (references game_id)
+        teams_count = db.query(Team).filter(Team.game_id.in_(game_ids)).count()
+        if teams_count > 0:
+            db.execute(delete(Team).where(Team.game_id.in_(game_ids)))
+            db.flush()
+            print(f"  ✓ Deleted {teams_count} teams")
+        
+        # Finally, delete games
+        print("\nStep 3: Deleting games...")
+        db.execute(delete(Game).where(Game.id.in_(game_ids)))
         db.flush()
         print(f"  ✓ Deleted {games_count} games")
-    else:
-        print("  ✓ No games to delete")
     
-    # Step 2: Manually clean up related tables (in case cascade doesn't work)
-    print("\nStep 2: Cleaning up related tables...")
-    
-    # Delete player votes
-    votes_count = db.query(PlayerVote).count()
-    if votes_count > 0:
-        db.execute(delete(PlayerVote))
-        db.flush()
-        print(f"  ✓ Deleted {votes_count} player votes")
-    
-    # Delete phase decisions
-    decisions_count = db.query(PhaseDecision).count()
-    if decisions_count > 0:
-        db.execute(delete(PhaseDecision))
-        db.flush()
-        print(f"  ✓ Deleted {decisions_count} phase decisions")
-    
-    # Delete score events
-    scores_count = db.query(ScoreEvent).count()
-    if scores_count > 0:
-        db.execute(delete(ScoreEvent))
-        db.flush()
-        print(f"  ✓ Deleted {scores_count} score events")
-    
-    # Player comments are stored in PlayerVote.comments field, so they'll be deleted with votes
-    
-    # Delete GM notes
-    notes_count = db.query(PhaseGMNotes).count()
-    if notes_count > 0:
-        db.execute(delete(PhaseGMNotes))
-        db.flush()
-        print(f"  ✓ Deleted {notes_count} GM notes")
-    
-    # Delete after action reports
-    aar_count = db.query(AfterActionReport).count()
-    if aar_count > 0:
-        db.execute(delete(AfterActionReport))
-        db.flush()
-        print(f"  ✓ Deleted {aar_count} after action reports")
-    
-    # Delete players
-    players_count = db.query(Player).count()
-    if players_count > 0:
-        db.execute(delete(Player))
-        db.flush()
-        print(f"  ✓ Deleted {players_count} players")
-    
-    # Delete teams
-    teams_count = db.query(Team).count()
-    if teams_count > 0:
-        db.execute(delete(Team))
-        db.flush()
-        print(f"  ✓ Deleted {teams_count} teams")
-    
-    # Step 3: Find and keep tutorial scenario
-    print("\nStep 3: Finding tutorial scenario...")
+    # Step 4: Find and keep tutorial scenario
+    print("\nStep 4: Finding tutorial scenario...")
     tutorial_scenario = db.query(Scenario).filter(
         Scenario.name.like("%Tutorial%")
     ).first()
@@ -121,8 +122,8 @@ try:
     else:
         print("  ⚠️  No tutorial scenario found")
     
-    # Step 4: Delete all scenarios except tutorial
-    print("\nStep 4: Deleting non-tutorial scenarios...")
+    # Step 5: Delete all scenarios except tutorial
+    print("\nStep 5: Deleting non-tutorial scenarios...")
     all_scenarios = db.query(Scenario).all()
     scenarios_to_delete = [s for s in all_scenarios if s.id != (tutorial_scenario.id if tutorial_scenario else None)]
     
@@ -158,8 +159,8 @@ try:
     
     print(f"  ✓ Deleted {len(scenarios_to_delete)} scenarios")
     
-    # Step 5: Delete artifacts not linked to tutorial
-    print("\nStep 5: Cleaning up orphaned artifacts...")
+    # Step 6: Delete artifacts not linked to tutorial
+    print("\nStep 6: Cleaning up orphaned artifacts...")
     all_artifacts = db.query(Artifact).all()
     
     if tutorial_artifact_ids:
