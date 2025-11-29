@@ -14,18 +14,26 @@ RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     # Red Team should prioritize Marketing for persistence (lower detection risk)
     # Blue Team should prioritize Marketing for containment (higher risk)
     (0, "red"): {
-        "Establish persistence": 10,  # Primary objective - Artifacts guide to Marketing target
-        "Cover tracks": 7,           # Secondary objective - Good for avoiding detection
-        "Escalate privileges": 4,    # Too early, risky
-        "Move laterally": 3,         # Too early
-        "Exfiltrate data": 1,        # Way too early
+        "Focus on Marketing Department (WS-MKT-015)": 10,  # CORRECT - Artifacts show Marketing has weaker EDR
+        "Focus on Finance Department (WS-FIN-042)": 4,     # WRONG - Finance has strong EDR, attack was blocked
+        "Split efforts between both departments": 6,       # MEDIUM - Spreads risk
+        "Cover tracks": 7,                                 # Secondary objective - Good for avoiding detection
+        "Escalate privileges": 3,                          # Too early, risky
+        "Move laterally": 2,                               # Too early
+        "Exfiltrate data": 1,                              # Way too early
+        # Fallback for generic actions
+        "Establish persistence": 8,                        # Generic fallback
     },
     (0, "blue"): {
-        "Isolate host": 10,          # Primary objective - Artifacts show Marketing is higher risk
-        "Collect forensic evidence": 8,  # Critical for analysis
-        "Block IP address": 6,       # Good but may be too late
-        "Deploy countermeasures": 5, # Good but takes time
-        "Escalate to management": 4,  # Important but not immediate
+        "Isolate Marketing Department host (WS-MKT-015)": 10,  # CORRECT - Artifacts show Marketing is higher risk
+        "Isolate Finance Department host (WS-FIN-042)": 6,     # WRONG - Finance already blocked, lower risk
+        "Isolate both hosts": 8,                               # MEDIUM - Conservative but may be overkill
+        "Collect forensic evidence": 8,                        # Critical for analysis
+        "Block IP address": 6,                                 # Good but may be too late
+        "Deploy countermeasures": 5,                           # Good but takes time
+        "Escalate to management": 4,                           # Important but not immediate
+        # Fallback for generic actions
+        "Isolate host": 8,                                     # Generic fallback
     },
     
     # Phase 2: Establishing Foothold (order_index=1)
@@ -49,18 +57,26 @@ RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     # Red Team should prioritize WS-MKT-02 for escalation (high success probability)
     # Blue Team should prioritize WS-MKT-02 for containment (high risk)
     (2, "red"): {
-        "Escalate privileges": 10,    # Primary objective - Artifacts guide to WS-MKT-02
-        "Move laterally": 7,          # Secondary - Good after escalation
-        "Cover tracks": 6,            # Important to avoid detection
-        "Establish persistence": 5,    # Good but already done
-        "Exfiltrate data": 3,         # Too early
+        "Escalate privileges on WS-MKT-02 (Marketing)": 10,  # CORRECT - Artifacts show unpatched LPE vulnerability
+        "Escalate privileges on WS-FIN-01 (Finance)": 3,     # WRONG - Fully patched, low success probability
+        "Split efforts - escalate on both hosts": 5,         # MEDIUM - Spreads risk
+        "Move laterally": 7,                                 # Secondary - Good after escalation
+        "Cover tracks": 6,                                   # Important to avoid detection
+        "Establish persistence": 4,                          # Good but already done
+        "Exfiltrate data": 2,                                # Too early
+        # Fallback for generic actions
+        "Escalate privileges": 8,                             # Generic fallback
     },
     (2, "blue"): {
-        "Isolate host": 10,            # Primary - Artifacts show WS-MKT-02 is high risk
-        "Deploy countermeasures": 9,   # Network segmentation, patching
-        "Escalate to management": 8,    # Coordinate response
-        "Collect forensic evidence": 6, # Document movement
-        "Block IP address": 5,         # May be too late
+        "Isolate WS-MKT-02 (Marketing host)": 10,            # CORRECT - Artifacts show WS-MKT-02 is high risk
+        "Isolate WS-FIN-01 (Finance host)": 6,              # WRONG - WS-FIN-01 is fully patched, lower risk
+        "Isolate both hosts": 8,                             # MEDIUM - Conservative approach
+        "Deploy countermeasures": 9,                         # Network segmentation, patching
+        "Escalate to management": 8,                          # Coordinate response
+        "Collect forensic evidence": 6,                       # Document movement
+        "Block IP address": 5,                                # May be too late
+        # Fallback for generic actions
+        "Isolate host": 8,                                    # Generic fallback
     },
     
     # Phase 4: Data Exfiltration (order_index=3) - REDESIGNED
@@ -68,18 +84,26 @@ RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     # Red Team should prioritize FS-02 for exfiltration (lower detection risk)
     # Blue Team should prioritize FS-01 for containment (already has HIGH-SEVERITY alerts)
     (3, "red"): {
-        "Exfiltrate data": 10,        # Primary objective - Artifacts guide to FS-02
-        "Cover tracks": 8,            # Hide exfiltration
-        "Establish persistence": 7,    # Maintain access
-        "Move laterally": 5,          # Already done
-        "Escalate privileges": 4,     # Already done
+        "Exfiltrate data from FS-02 (HR/Operations)": 10,  # CORRECT - Artifacts show weaker DLP, lower detection risk
+        "Exfiltrate data from FS-01 (Finance)": 4,       # WRONG - Strong DLP, already has HIGH-SEVERITY alerts
+        "Exfiltrate from both servers simultaneously": 6, # MEDIUM - Higher detection risk
+        "Cover tracks": 8,                                 # Hide exfiltration
+        "Establish persistence": 7,                        # Maintain access
+        "Move laterally": 4,                               # Already done
+        "Escalate privileges": 3,                           # Already done
+        # Fallback for generic actions
+        "Exfiltrate data": 8,                              # Generic fallback
     },
     (3, "blue"): {
-        "Block IP address": 10,       # Primary - Stop exfiltration, artifacts show FS-01 priority
-        "Collect forensic evidence": 9, # Document theft
-        "Escalate to management": 8,    # Breach notification
-        "Deploy countermeasures": 6,   # May be too late
-        "Isolate host": 5,            # May be too late
+        "Block exfiltration from FS-01 (Finance)": 10,     # CORRECT - Artifacts show FS-01 has HIGH-SEVERITY alerts
+        "Block exfiltration from FS-02 (HR/Operations)": 6, # WRONG - FS-02 has weaker DLP, lower priority
+        "Block exfiltration from both servers": 8,         # MEDIUM - Conservative approach
+        "Collect forensic evidence": 9,                     # Document theft
+        "Escalate to management": 8,                        # Breach notification
+        "Deploy countermeasures": 5,                       # May be too late
+        "Isolate host": 4,                                 # May be too late
+        # Fallback for generic actions
+        "Block IP address": 8,                             # Generic fallback
     },
     
     # Phase 5: Ransomware Deployment & Response (order_index=4)

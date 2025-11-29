@@ -23,6 +23,10 @@ export interface ScenarioPhase {
   default_duration_seconds?: number
   miro_frame_url?: string
   artifacts: Artifact[]
+  available_actions?: {
+    red?: Array<{ name: string; description: string }>
+    blue?: Array<{ name: string; description: string }>
+  }
 }
 
 export interface Artifact {
@@ -103,6 +107,7 @@ export interface PlayerState {
   team_name?: string
   has_voted?: boolean
   team_voting_status?: VotingStatus
+  available_actions?: Array<{ name: string; description: string }>
 }
 
 export interface Decision {

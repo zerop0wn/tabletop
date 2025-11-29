@@ -70,6 +70,7 @@ class ScenarioPhase(Base):
     blue_objective = Column(Text, nullable=True)
     default_duration_seconds = Column(Integer, nullable=True)
     miro_frame_url = Column(String, nullable=True)
+    available_actions = Column(JSON, nullable=True)  # Phase-specific actions: {"red": [...], "blue": [...]}
 
     scenario = relationship("Scenario", back_populates="phases")
     artifacts = relationship("Artifact", secondary="scenario_phase_artifacts", back_populates="phases")

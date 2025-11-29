@@ -145,6 +145,13 @@ def get_player_state(game_id: int, player_id: int, db: Session = Depends(get_db)
                 all_voted=len(votes) == len(team_players) and len(team_players) > 0
             )
 
+    # Get phase-specific actions if available
+    available_actions = None
+    if current_phase and current_phase.available_actions:
+        team_role_key = player.team.role
+        if team_role_key in current_phase.available_actions:
+            available_actions = current_phase.available_actions[team_role_key]
+    
     return PlayerStateResponse(
         current_phase=current_phase,
         phase_state=game.phase_state,
@@ -157,5 +164,6 @@ def get_player_state(game_id: int, player_id: int, db: Session = Depends(get_db)
         team_name=player.team.name,
         has_voted=has_voted,
         team_voting_status=team_voting_status,
+        available_actions=available_actions,
     )
 

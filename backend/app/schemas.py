@@ -45,6 +45,7 @@ class ScenarioPhaseResponse(ScenarioPhaseBase):
     id: int
     scenario_id: int
     artifacts: List[ArtifactResponse] = []
+    available_actions: Optional[Dict[str, List[Dict[str, str]]]] = None  # {"red": [{"name": "...", "description": "..."}], "blue": [...]}
 
     class Config:
         from_attributes = True
@@ -129,6 +130,7 @@ class PlayerStateResponse(BaseModel):
     team_name: Optional[str] = None
     has_voted: bool = False
     team_voting_status: Optional["VotingStatusResponse"] = None
+    available_actions: Optional[List[Dict[str, str]]] = None  # Phase-specific actions for this team
 
 
 # Decision schemas

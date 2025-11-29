@@ -175,8 +175,10 @@ export default function PlayerView() {
 
   const canSubmit = state.phase_state === 'open_for_decisions' && !submitted
 
-  // Get team-specific actions
-  const availableActions = state.team_role === 'red' ? RED_TEAM_ACTIONS : BLUE_TEAM_ACTIONS
+  // Get team-specific actions - use phase-specific if available, otherwise fall back to generic
+  const availableActions = state.available_actions && state.available_actions.length > 0
+    ? state.available_actions
+    : (state.team_role === 'red' ? RED_TEAM_ACTIONS : BLUE_TEAM_ACTIONS)
 
   const teamBgColor = state.team_role === 'red' ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200'
   const teamTextColor = state.team_role === 'red' ? 'text-red-800' : 'text-blue-800'

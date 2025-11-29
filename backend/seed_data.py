@@ -59,7 +59,53 @@ def seed_data():
             red_objective="Analyze the reconnaissance data from both departments to identify which target offers the best opportunity for establishing persistent access with minimal detection risk. Focus your initial persistence efforts on the most vulnerable target.",
             blue_objective="Review security telemetry from both departments to identify which department shows the most concerning indicators of compromise. Prioritize containment and investigation efforts on the department with the highest risk of successful attacker persistence.",
             default_duration_seconds=900,
-            miro_frame_url="https://miro.com/app/board/example/frame1"
+            miro_frame_url="https://miro.com/app/board/example/frame1",
+            available_actions={
+                "red": [
+                    {
+                        "name": "Focus on Finance Department (WS-FIN-042)",
+                        "description": "Prioritize establishing persistence on the Finance department workstation. Review artifacts to assess security posture and detection risk."
+                    },
+                    {
+                        "name": "Focus on Marketing Department (WS-MKT-015)",
+                        "description": "Prioritize establishing persistence on the Marketing department workstation. Review artifacts to assess security posture and detection risk."
+                    },
+                    {
+                        "name": "Split efforts between both departments",
+                        "description": "Attempt to establish persistence on both Finance and Marketing workstations simultaneously. Higher chance of success but also higher detection risk."
+                    },
+                    {
+                        "name": "Cover tracks",
+                        "description": "Delete logs, clear command history, and remove forensic artifacts. Reduces detection but suspicious log gaps may be noticed."
+                    },
+                    {
+                        "name": "Escalate privileges",
+                        "description": "Gain administrator or root-level access through privilege escalation exploits. Unlocks more system capabilities but increases detection risk."
+                    }
+                ],
+                "blue": [
+                    {
+                        "name": "Isolate Finance Department host (WS-FIN-042)",
+                        "description": "Disconnect the Finance department workstation from the network to prevent further spread. Review artifacts to assess risk level."
+                    },
+                    {
+                        "name": "Isolate Marketing Department host (WS-MKT-015)",
+                        "description": "Disconnect the Marketing department workstation from the network to prevent further spread. Review artifacts to assess risk level."
+                    },
+                    {
+                        "name": "Isolate both hosts",
+                        "description": "Disconnect both Finance and Marketing workstations from the network. Conservative approach but may impact business operations."
+                    },
+                    {
+                        "name": "Collect forensic evidence",
+                        "description": "Gather logs, memory dumps, and system artifacts for analysis. Critical for understanding the attack but takes time and may not stop immediate threats."
+                    },
+                    {
+                        "name": "Deploy countermeasures",
+                        "description": "Implement security controls like patches, endpoint protection, or network segmentation. Proactive defense but may impact system availability."
+                    }
+                ]
+            }
         )
         db.add(phase1)
         db.flush()
@@ -87,7 +133,53 @@ def seed_data():
             red_objective="Analyze system information and vulnerability data from both hosts to identify which target offers the best opportunity for successful privilege escalation. Focus your escalation attempt on the host with the highest probability of success based on the evidence.",
             blue_objective="Review security telemetry and vulnerability scan data to identify which host is at greater risk of imminent privilege escalation. Prioritize containment and investigation efforts on the host with the highest risk based on the evidence.",
             default_duration_seconds=900,
-            miro_frame_url="https://miro.com/app/board/example/frame3"
+            miro_frame_url="https://miro.com/app/board/example/frame3",
+            available_actions={
+                "red": [
+                    {
+                        "name": "Escalate privileges on WS-FIN-01 (Finance)",
+                        "description": "Attempt privilege escalation on WS-FIN-01 using generic token-stealing and UAC bypass techniques. Review artifacts to assess success probability."
+                    },
+                    {
+                        "name": "Escalate privileges on WS-MKT-02 (Marketing)",
+                        "description": "Attempt privilege escalation on WS-MKT-02 using the specific local privilege escalation exploit identified in vulnerability scans. Review artifacts to assess success probability."
+                    },
+                    {
+                        "name": "Split efforts - escalate on both hosts",
+                        "description": "Run automated privilege escalation tooling on both WS-FIN-01 and WS-MKT-02 in parallel. Higher chance of success but also higher detection risk."
+                    },
+                    {
+                        "name": "Move laterally",
+                        "description": "Spread from the initial compromised system to other systems on the network. Expands attack surface but creates more forensic evidence."
+                    },
+                    {
+                        "name": "Cover tracks",
+                        "description": "Delete logs, clear command history, and remove forensic artifacts. Reduces detection but suspicious log gaps may be noticed."
+                    }
+                ],
+                "blue": [
+                    {
+                        "name": "Isolate WS-FIN-01 (Finance host)",
+                        "description": "Disconnect WS-FIN-01 from the network to prevent privilege escalation. Review artifacts to assess risk level."
+                    },
+                    {
+                        "name": "Isolate WS-MKT-02 (Marketing host)",
+                        "description": "Disconnect WS-MKT-02 from the network to prevent privilege escalation. Review artifacts to assess risk level."
+                    },
+                    {
+                        "name": "Isolate both hosts",
+                        "description": "Disconnect both WS-FIN-01 and WS-MKT-02 from the network. Conservative approach but may impact business operations."
+                    },
+                    {
+                        "name": "Deploy countermeasures",
+                        "description": "Implement security controls like patches, network segmentation, or enhanced monitoring. Proactive defense but may impact system availability."
+                    },
+                    {
+                        "name": "Collect forensic evidence",
+                        "description": "Gather logs, memory dumps, and system artifacts for analysis. Critical for understanding the attack but takes time and may not stop immediate threats."
+                    }
+                ]
+            }
         )
         db.add(phase3)
         db.flush()
@@ -101,7 +193,53 @@ def seed_data():
             red_objective="Analyze network topology, data classification, and monitoring coverage to identify which file server offers the best opportunity for successful data exfiltration with minimal detection. Prioritize exfiltration from the source that provides maximum value with lowest detection risk.",
             blue_objective="Review network monitoring, data loss prevention (DLP) alerts, and access logs to identify which file server is at greatest risk of data exfiltration. Prioritize containment and monitoring efforts on the server with the highest risk based on the evidence.",
             default_duration_seconds=900,
-            miro_frame_url="https://miro.com/app/board/example/frame4"
+            miro_frame_url="https://miro.com/app/board/example/frame4",
+            available_actions={
+                "red": [
+                    {
+                        "name": "Exfiltrate data from FS-01 (Finance)",
+                        "description": "Prioritize exfiltration from FS-01 containing financial records, customer PII, and proprietary research data. Review artifacts to assess detection risk."
+                    },
+                    {
+                        "name": "Exfiltrate data from FS-02 (HR/Operations)",
+                        "description": "Prioritize exfiltration from FS-02 containing employee records, HR data, and operational documents. Review artifacts to assess detection risk."
+                    },
+                    {
+                        "name": "Exfiltrate from both servers simultaneously",
+                        "description": "Exfiltrate data from both FS-01 and FS-02 using parallel streams. Maximizes data value but also increases detection risk."
+                    },
+                    {
+                        "name": "Cover tracks",
+                        "description": "Delete logs, clear command history, and remove forensic artifacts. Reduces detection but suspicious log gaps may be noticed."
+                    },
+                    {
+                        "name": "Establish persistence",
+                        "description": "Create backdoors, scheduled tasks, or service accounts to maintain access even if initial entry point is discovered. High risk if detected."
+                    }
+                ],
+                "blue": [
+                    {
+                        "name": "Block exfiltration from FS-01 (Finance)",
+                        "description": "Block external data transfers and isolate FS-01 to prevent data exfiltration. Review artifacts to assess priority."
+                    },
+                    {
+                        "name": "Block exfiltration from FS-02 (HR/Operations)",
+                        "description": "Block external data transfers and isolate FS-02 to prevent data exfiltration. Review artifacts to assess priority."
+                    },
+                    {
+                        "name": "Block exfiltration from both servers",
+                        "description": "Block external data transfers and isolate both FS-01 and FS-02. Conservative approach but may impact business operations."
+                    },
+                    {
+                        "name": "Collect forensic evidence",
+                        "description": "Gather logs, network flow data, and access logs for analysis. Critical for understanding what data was stolen but takes time."
+                    },
+                    {
+                        "name": "Escalate to management",
+                        "description": "Notify leadership and activate incident response procedures. Ensures proper coordination but may slow immediate response actions."
+                    }
+                ]
+            }
         )
         db.add(phase4)
         db.flush()
