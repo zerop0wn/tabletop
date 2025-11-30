@@ -61,6 +61,10 @@ async def get_artifact_file(filename: str):
     import logging
     import sys
     
+    # Force output immediately
+    sys.stderr.flush()
+    sys.stdout.flush()
+    
     logger = logging.getLogger(__name__)
     
     # Security: prevent directory traversal
@@ -68,9 +72,9 @@ async def get_artifact_file(filename: str):
     file_path = ARTIFACTS_DIR / safe_filename
     
     # Debug output - use print to ensure it shows up
-    print(f"[ARTIFACT DEBUG] Request: filename='{filename}', safe_filename='{safe_filename}'", file=sys.stderr)
-    print(f"[ARTIFACT DEBUG] ARTIFACTS_DIR: {ARTIFACTS_DIR}, exists={ARTIFACTS_DIR.exists()}", file=sys.stderr)
-    print(f"[ARTIFACT DEBUG] file_path: {file_path}, exists={file_path.exists()}", file=sys.stderr)
+    print(f"[ARTIFACT DEBUG] Request: filename='{filename}', safe_filename='{safe_filename}'", file=sys.stderr, flush=True)
+    print(f"[ARTIFACT DEBUG] ARTIFACTS_DIR: {ARTIFACTS_DIR}, exists={ARTIFACTS_DIR.exists()}", file=sys.stderr, flush=True)
+    print(f"[ARTIFACT DEBUG] file_path: {file_path}, exists={file_path.exists()}", file=sys.stderr, flush=True)
     
     # Check if directory exists
     if not ARTIFACTS_DIR.exists():
@@ -94,24 +98,51 @@ async def get_artifact_file(filename: str):
             print(f"[ARTIFACT ERROR] File '{safe_filename}' NOT in directory listing", file=sys.stderr)
             print(f"[ARTIFACT DEBUG] Available files (first 10): {file_names[:10]}", file=sys.stderr)
     
-    if not file_path.exists():
-        print(f"[ARTIFACT ERROR] File not found: {file_path}", file=sys.stderr)
-        # Try absolute path
-        abs_path = file_path.resolve()
-        print(f"[ARTIFACT DEBUG] Absolute path: {abs_path}, exists={abs_path.exists()}", file=sys.stderr)
+    # Double-check file existence with multiple methods
+    file_exists = file_path.exists()
+    file_is_file = file_path.is_file() if file_exists else False
+    
+    # Also try resolving the path
+    try:
+        resolved_path = file_path.resolve()
+        resolved_exists = resolved_path.exists()
+        print(f"[ARTIFACT DEBUG] Resolved path: {resolved_path}, exists={resolved_exists}", file=sys.stderr, flush=True)
+    except Exception as e:
+        print(f"[ARTIFACT DEBUG] Could not resolve path: {e}", file=sys.stderr, flush=True)
+        resolved_exists = False
+    
+    if not file_exists and not resolved_exists:
+        print(f"[ARTIFACT ERROR] File not found: {file_path}", file=sys.stderr, flush=True)
         
         # List all files to help debug
         if ARTIFACTS_DIR.exists():
-            all_files = list(ARTIFACTS_DIR.iterdir())
-            print(f"[ARTIFACT DEBUG] All files in directory: {[f.name for f in all_files]}", file=sys.stderr)
+            try:
+                all_files = list(ARTIFACTS_DIR.iterdir())
+                all_file_names = [f.name for f in all_files if f.is_file()]
+                print(f"[ARTIFACT DEBUG] All files in directory ({len(all_file_names)}): {all_file_names[:20]}", file=sys.stderr, flush=True)
+                
+                # Check for exact match (case-insensitive)
+                matching = [f for f in all_file_names if f.lower() == safe_filename.lower()]
+                if matching:
+                    print(f"[ARTIFACT DEBUG] Case-insensitive match found: {matching}", file=sys.stderr, flush=True)
+            except Exception as e:
+                print(f"[ARTIFACT ERROR] Could not list directory: {e}", file=sys.stderr, flush=True)
         
         # More detailed error message
         error_detail = f"File not found: {safe_filename}. "
         if ARTIFACTS_DIR.exists():
-            similar_files = [f.name for f in ARTIFACTS_DIR.glob("*.txt") if safe_filename.lower() in f.name.lower() or f.name.lower() in safe_filename.lower()]
-            if similar_files:
-                error_detail += f"Similar files found: {similar_files[:5]}"
+            try:
+                similar_files = [f.name for f in ARTIFACTS_DIR.glob("*.txt") if safe_filename.lower() in f.name.lower() or f.name.lower() in safe_filename.lower()]
+                if similar_files:
+                    error_detail += f"Similar files found: {similar_files[:5]}"
+            except:
+                pass
         raise HTTPException(status_code=404, detail=error_detail)
+    
+    # Use resolved path if original doesn't exist but resolved does
+    if not file_exists and resolved_exists:
+        file_path = resolved_path
+        print(f"[ARTIFACT DEBUG] Using resolved path: {file_path}", file=sys.stderr, flush=True)
     
     if not file_path.is_file():
         print(f"[ARTIFACT ERROR] Path exists but is not a file: {file_path}", file=sys.stderr)
