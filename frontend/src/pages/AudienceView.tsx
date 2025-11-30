@@ -72,22 +72,27 @@ export default function AudienceView() {
       previousPhaseState !== 'open_for_decisions' &&
       scoreboard.phase_state === 'open_for_decisions'
     ) {
-      // Check if this is the first phase (phase_order 0)
-      // A phase is considered the first phase if:
-      // 1. No teams have any score_history entries, OR
-      // 2. All teams have score_history but phase 0 has score 0 (not scored yet)
-      const isFirstPhase = scoreboard.teams.length === 0 || scoreboard.teams.every(team => {
+      // Check if this is the first phase using multiple methods:
+      // 1. Check phase name (contains "Phase 1" or starts with "1:")
+      // 2. Check score_history - if no phase 0 has been scored, it's first phase
+      const phaseName = scoreboard.current_phase_name || ''
+      const isPhase1ByName = phaseName.includes('Phase 1') || phaseName.includes('1:') || phaseName.match(/^Phase\s*1/i)
+      
+      const isPhase1ByHistory = scoreboard.teams.length === 0 || scoreboard.teams.every(team => {
         if (!team.score_history || team.score_history.length === 0) {
           return true // No scores yet, must be first phase
         }
         // Check if phase 0 has been scored (score > 0)
         const phase0Entry = team.score_history.find(entry => entry.phase_order === 0)
-        // If phase 0 doesn't exist or has score 0, we're still on first phase
-        // If phase 0 has score > 0, we've moved past first phase
         return phase0Entry === undefined || phase0Entry.score === 0
       })
       
+      const isFirstPhase = isPhase1ByName || isPhase1ByHistory
+      
       console.log('Sound check:', {
+        phaseName,
+        isPhase1ByName,
+        isPhase1ByHistory,
         isFirstPhase,
         hasPlayed: hasPlayedFirstPhaseSoundRef.current,
         phaseState: scoreboard.phase_state,
@@ -104,7 +109,7 @@ export default function AudienceView() {
         console.log('Playing first phase sound')
         phaseTransitionSoundRef.current.currentTime = 0 // Reset to start
         phaseTransitionSoundRef.current.play().catch(err => {
-          console.warn('Failed to play decision opening sound:', err)
+          console.error('Failed to play decision opening sound:', err)
         })
         hasPlayedFirstPhaseSoundRef.current = true // Mark as played
       }
