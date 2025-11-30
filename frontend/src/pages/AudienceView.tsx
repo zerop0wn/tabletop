@@ -30,6 +30,20 @@ export default function AudienceView() {
     const audio = new Audio('/sounds/phase-transition.wav')
     audio.volume = 0.5 // Set volume to 50%
     audio.preload = 'auto'
+    
+    // Try to unlock audio with a silent play (browser autoplay policy workaround)
+    const unlockAudio = async () => {
+      try {
+        await audio.play()
+        audio.pause()
+        audio.currentTime = 0
+        console.log('Audio unlocked successfully')
+      } catch (err) {
+        console.log('Audio unlock failed (will require user interaction):', err)
+      }
+    }
+    unlockAudio()
+    
     phaseTransitionSoundRef.current = audio
     
     // Reset sound flag when game changes
@@ -50,6 +64,59 @@ export default function AudienceView() {
       hasPlayedFirstPhaseSoundRef.current = false
     }
   }, [gameIdentifier])
+
+  // Helper function to play sound
+  const playSound = () => {
+    if (!phaseTransitionSoundRef.current) {
+      // Reinitialize if needed
+      const newAudio = new Audio('/sounds/phase-transition.wav')
+      newAudio.volume = 0.5
+      newAudio.preload = 'auto'
+      phaseTransitionSoundRef.current = newAudio
+    }
+
+    const audio = phaseTransitionSoundRef.current
+    
+    // Try to play immediately if ready
+    const tryPlay = async () => {
+      try {
+        audio.currentTime = 0
+        await audio.play()
+        console.log('Sound played successfully')
+        hasPlayedFirstPhaseSoundRef.current = true
+      } catch (err: any) {
+        console.error('Failed to play sound:', err)
+        if (err.name === 'NotAllowedError') {
+          console.warn('Audio autoplay blocked. User interaction required.')
+          // Try to unlock by creating a new audio instance and playing silently
+          const unlockAudio = new Audio('/sounds/phase-transition.wav')
+          unlockAudio.volume = 0.01
+          unlockAudio.play().then(() => {
+            unlockAudio.pause()
+            unlockAudio.currentTime = 0
+            // Now try again with the original audio
+            audio.play().then(() => {
+              console.log('Sound played after unlock')
+              hasPlayedFirstPhaseSoundRef.current = true
+            }).catch(e => console.error('Still failed after unlock:', e))
+          }).catch(e => console.error('Unlock failed:', e))
+        }
+      }
+    }
+
+    if (audio.readyState >= 2) {
+      // Audio is ready, play immediately
+      tryPlay()
+    } else {
+      // Wait for audio to load
+      const handleCanPlay = () => {
+        tryPlay()
+      }
+      audio.addEventListener('canplaythrough', handleCanPlay, { once: true })
+      // Also try to load it
+      audio.load()
+    }
+  }
 
   useEffect(() => {
     if (!scoreboard) return
@@ -109,52 +176,7 @@ export default function AudienceView() {
       // Only play sound if it's the first phase and we haven't played it yet
       if (isFirstPhase && !hasPlayedFirstPhaseSoundRef.current) {
         console.log('Attempting to play first phase sound')
-        if (phaseTransitionSoundRef.current) {
-          try {
-            // Ensure audio is ready
-            if (phaseTransitionSoundRef.current.readyState >= 2) {
-              phaseTransitionSoundRef.current.currentTime = 0 // Reset to start
-              const playPromise = phaseTransitionSoundRef.current.play()
-              if (playPromise !== undefined) {
-                playPromise
-                  .then(() => {
-                    console.log('Sound played successfully')
-                    hasPlayedFirstPhaseSoundRef.current = true // Mark as played
-                  })
-                  .catch(err => {
-                    console.error('Failed to play decision opening sound:', err)
-                    // Try to reinitialize audio if it failed
-                    if (err.name === 'NotAllowedError' || err.name === 'NotSupportedError') {
-                      console.warn('Audio playback blocked or not supported. User interaction may be required.')
-                      // Reinitialize audio for next attempt
-                      phaseTransitionSoundRef.current = new Audio('/sounds/phase-transition.wav')
-                      phaseTransitionSoundRef.current.volume = 0.5
-                      phaseTransitionSoundRef.current.preload = 'auto'
-                    }
-                  })
-              } else {
-                hasPlayedFirstPhaseSoundRef.current = true
-              }
-            } else {
-              // Wait for audio to be ready
-              phaseTransitionSoundRef.current.addEventListener('canplaythrough', () => {
-                phaseTransitionSoundRef.current!.currentTime = 0
-                phaseTransitionSoundRef.current!.play()
-                  .then(() => {
-                    console.log('Sound played successfully after loading')
-                    hasPlayedFirstPhaseSoundRef.current = true
-                  })
-                  .catch(err => {
-                    console.error('Failed to play sound after loading:', err)
-                  })
-              }, { once: true })
-            }
-          } catch (err) {
-            console.error('Error playing sound:', err)
-          }
-        } else {
-          console.warn('Audio element not initialized')
-        }
+        playSound()
       }
     }
     setPreviousPhaseState(scoreboard.phase_state)
