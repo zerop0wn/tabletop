@@ -22,7 +22,7 @@ def get_artifact_content(filename: str) -> str:
     """Get artifact content by generating it directly."""
     import tempfile
     from pathlib import Path
-    import backend.generate_intermediate_ransomware_artifacts as gen_module
+    import generate_intermediate_ransomware_artifacts as gen_module
     
     # Create a temporary directory to capture file writes
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -32,7 +32,7 @@ def get_artifact_content(filename: str) -> str:
         
         try:
             # Import generation functions
-            from backend.generate_intermediate_ransomware_artifacts import (
+            from generate_intermediate_ransomware_artifacts import (
                 create_phase1_artifacts,
                 create_phase2_artifacts,
                 create_phase3_artifacts,
