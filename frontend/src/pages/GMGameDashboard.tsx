@@ -272,15 +272,23 @@ export default function GMGameDashboard() {
                   End Game
                 </button>
               )}
-              {(game.status === 'in_progress' || game.status === 'finished') && (
+            </div>
+
+            {/* After Action Report Section - Always visible when game is in progress or finished */}
+            {(game.status === 'in_progress' || game.status === 'finished') && (
+              <div className="mt-4 p-4 bg-purple-50 border-2 border-purple-200 rounded-md">
+                <h3 className="font-semibold text-purple-900 mb-2">After Action Report</h3>
+                <p className="text-sm text-purple-700 mb-3">
+                  Generate and view the comprehensive After Action Report for this game.
+                </p>
                 <button
                   onClick={() => navigate(`/gm/games/${id}/after-action-report`)}
-                  className="w-full sm:w-auto px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium text-sm sm:text-base"
+                  className="w-full sm:w-auto px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium text-sm sm:text-base shadow-md"
                 >
                   View After Action Report
                 </button>
-              )}
-            </div>
+              </div>
+            )}
 
             {game.current_phase && (
               <div className="mt-6 p-4 bg-gray-50 rounded-md">
