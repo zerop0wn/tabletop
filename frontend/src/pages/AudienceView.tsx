@@ -21,6 +21,7 @@ export default function AudienceView() {
   const previousScoresRef = useRef<Record<number, number>>({})
   const phaseTransitionSoundRef = useRef<HTMLAudioElement | null>(null)
   const hasPlayedFirstPhaseSoundRef = useRef<boolean>(false)
+  const phaseTransitionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     if (!gameIdentifier) return
@@ -40,6 +41,10 @@ export default function AudienceView() {
         phaseTransitionSoundRef.current.pause()
         phaseTransitionSoundRef.current = null
       }
+      if (phaseTransitionTimeoutRef.current) {
+        clearTimeout(phaseTransitionTimeoutRef.current)
+        phaseTransitionTimeoutRef.current = null
+      }
       hasPlayedFirstPhaseSoundRef.current = false
     }
   }, [gameIdentifier])
@@ -49,8 +54,15 @@ export default function AudienceView() {
 
     // Detect phase transitions (for visual animation)
     if (previousPhase && previousPhase !== scoreboard.current_phase_name) {
+      // Clear any existing timeout
+      if (phaseTransitionTimeoutRef.current) {
+        clearTimeout(phaseTransitionTimeoutRef.current)
+      }
       setPhaseTransition(true)
-      setTimeout(() => setPhaseTransition(false), 2000)
+      phaseTransitionTimeoutRef.current = setTimeout(() => {
+        setPhaseTransition(false)
+        phaseTransitionTimeoutRef.current = null
+      }, 2000)
     }
     setPreviousPhase(scoreboard.current_phase_name)
 
@@ -61,21 +73,12 @@ export default function AudienceView() {
       scoreboard.phase_state === 'open_for_decisions'
     ) {
       // Check if this is the first phase (phase_order 0)
-      // A phase is considered the first phase if:
-      // - No team has any score_history entries with phase_order > 0, OR
-      // - All teams' score_history shows phase_order 0 has not been scored yet (score === 0)
+      // A phase is considered the first phase if no team has scored phase 0 yet
       const isFirstPhase = scoreboard.teams.length === 0 || scoreboard.teams.every(team => {
         if (!team.score_history || team.score_history.length === 0) {
           return true // No scores yet, must be first phase
         }
-        // Check if any phase has been scored (score > 0)
-        // If phase_order 0 exists but has score 0, we're still on first phase
-        // If any phase_order > 0 has a score, we've moved past first phase
-        const hasScoredAnyPhase = team.score_history.some(entry => entry.score > 0)
-        if (!hasScoredAnyPhase) {
-          return true // No phases scored yet, must be first phase
-        }
-        // Check if we've scored phase 0 - if yes, we're past first phase
+        // Check if phase 0 has been scored (score > 0)
         const phase0Entry = team.score_history.find(entry => entry.phase_order === 0)
         return phase0Entry === undefined || phase0Entry.score === 0
       })
@@ -113,29 +116,31 @@ export default function AudienceView() {
       }
     })
 
-    // Track new events
+    // Track new events (separate effect to avoid re-running main effect)
     scoreboard.recent_events.forEach(event => {
       const eventId = `${event.team_id}-${event.created_at}-${event.delta}`
       if (!seenEventIds.has(eventId)) {
         setSeenEventIds(prev => new Set([...prev, eventId]))
       }
     })
-  }, [scoreboard, previousPhase, seenEventIds])
+  }, [scoreboard, previousPhase, previousPhaseState])
+
+  // Separate effect for tracking events to avoid re-running main effect
+  useEffect(() => {
+    if (!scoreboard) return
+    scoreboard.recent_events.forEach(event => {
+      const eventId = `${event.team_id}-${event.created_at}-${event.delta}`
+      if (!seenEventIds.has(eventId)) {
+        setSeenEventIds(prev => new Set([...prev, eventId]))
+      }
+    })
+  }, [scoreboard?.recent_events])
 
   const fetchScoreboard = async () => {
     try {
       const response = await apiClient.get<Scoreboard>(
         `/games/${gameIdentifier}/scoreboard`
       )
-      // Debug: log score history
-      response.data.teams.forEach(team => {
-        console.log(`Team ${team.team_name} score_history:`, team.score_history)
-        if (team.score_history) {
-          team.score_history.forEach((entry, idx) => {
-            console.log(`  Phase ${idx + 1}:`, entry)
-          })
-        }
-      })
       setScoreboard(response.data)
       setLoading(false)
     } catch (err) {
