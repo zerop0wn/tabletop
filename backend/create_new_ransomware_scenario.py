@@ -256,10 +256,6 @@ try:
                     "description": "Disconnect DB-FIN-02 from the network to prevent data access. Review artifacts comparing DB-CUST-01 and DB-FIN-02 to assess priority."
                 },
                 {
-                    "name": "Isolate both databases",
-                    "description": "Disconnect both DB-CUST-01 and DB-FIN-02 from the network. Conservative approach but may impact business operations."
-                },
-                {
                     "name": "Block database access",
                     "description": "Implement network rules to block unauthorized database access. Proactive defense but may impact legitimate applications."
                 },
