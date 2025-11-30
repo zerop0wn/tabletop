@@ -65,5 +65,20 @@ async def get_artifact_file(filename: str):
     if not file_path.exists() or not file_path.is_file():
         raise HTTPException(status_code=404, detail="File not found")
     
-    return FileResponse(file_path)
+    # Determine media type based on file extension
+    media_type = None
+    if safe_filename.endswith('.txt'):
+        media_type = 'text/plain'
+    elif safe_filename.endswith('.png'):
+        media_type = 'image/png'
+    elif safe_filename.endswith('.jpg') or safe_filename.endswith('.jpeg'):
+        media_type = 'image/jpeg'
+    elif safe_filename.endswith('.pdf'):
+        media_type = 'application/pdf'
+    
+    return FileResponse(
+        file_path,
+        media_type=media_type,
+        filename=safe_filename
+    )
 
