@@ -307,82 +307,82 @@ NEW_RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
 SHAREPOINT_RCE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     # Phase 1: Vulnerability Disclosure & Initial Reconnaissance (order_index=0)
     (0, "red"): {
-        "Establish persistence": 4,      # Too early, no access yet
-        "Cover tracks": 7,               # Good for stealthy recon
-        "Move laterally": 2,             # Way too early
-        "Escalate privileges": 3,        # Too early
-        "Exfiltrate data": 1,            # Way too early
+        "Conduct version detection and endpoint mapping": 10,  # Primary objective
+        "Test vulnerability without detection": 9,              # Critical for exploitation
+        "Prepare exploitation payload": 8,                      # Good preparation
+        "Gather server configuration details": 7,               # Important reconnaissance
+        "Cover tracks": 6,                                      # Secondary
     },
     (0, "blue"): {
-        "Monitor threat intelligence": 10, # Primary objective
-        "Assess vulnerability": 9,       # Critical assessment
-        "Review logs": 8,                # Important detection
-        "Prepare mitigation": 7,         # Good preparation
-        "Update monitoring": 6,          # Good but secondary
+        "Monitor threat intelligence and assess vulnerability": 10,  # Primary objective
+        "Review SharePoint logs for reconnaissance activity": 9,     # Critical detection
+        "Prepare emergency mitigation procedures": 8,                # Important preparation
+        "Assess business impact and patch readiness": 7,            # Good assessment
+        "Update monitoring and alerting": 6,                        # Secondary
     },
     
     # Phase 2: Exploitation Attempt & Initial Access (order_index=1)
     (1, "red"): {
-        "Establish persistence": 10,     # Primary objective
-        "Cover tracks": 8,               # Important to evade detection
-        "Move laterally": 6,            # Good but early
-        "Escalate privileges": 7,        # Good timing
-        "Exfiltrate data": 2,            # Too early
+        "Execute RCE exploit and establish reverse shell": 10,  # Primary objective
+        "Enumerate server environment": 9,                      # Critical post-exploitation
+        "Prepare for privilege escalation": 8,                  # Good preparation
+        "Evade WAF and security detection": 7,                   # Important evasion
+        "Cover tracks": 6,                                       # Secondary
     },
     (1, "blue"): {
-        "Isolate host": 10,              # Primary - isolate compromised server
-        "Collect forensic evidence": 9,   # Critical for analysis
-        "Block IP address": 8,            # Block C2 communications
-        "Deploy countermeasures": 7,     # Good defense
-        "Escalate to management": 5,     # Important but not immediate
+        "Isolate SharePoint server immediately": 10,            # Primary - isolate compromised server
+        "Collect forensic evidence": 9,                          # Critical for analysis
+        "Block attacker IP and C2 communications": 8,           # Block C2
+        "Deploy countermeasures": 7,                             # Good defense
+        "Escalate to management": 5,                            # Important but not immediate
     },
     
     # Phase 3: Privilege Escalation & Persistence (order_index=2)
     (2, "red"): {
-        "Escalate privileges": 10,      # Primary objective
-        "Establish persistence": 10,     # Primary objective
-        "Cover tracks": 7,               # Important
-        "Move laterally": 6,            # Good preparation
-        "Exfiltrate data": 3,            # Too early
+        "Escalate to farm administrator": 10,                   # Primary objective
+        "Deploy multiple persistence mechanisms": 10,           # Primary objective
+        "Maintain access through backdoors": 8,                  # Important
+        "Reconnaissance for lateral movement": 7,                # Good preparation
+        "Cover tracks": 6,                                       # Secondary
     },
     (2, "blue"): {
-        "Remove persistence": 10,        # Primary - remove all persistence
-        "Revoke credentials": 9,         # Critical security
-        "Prevent lateral movement": 8,    # Important containment
-        "Document changes": 7,           # Good for forensics
-        "Isolate host": 6,               # Good but may be late
+        "Remove all persistence mechanisms": 10,                # Primary - remove all persistence
+        "Revoke compromised credentials": 9,                     # Critical security
+        "Prevent lateral movement": 8,                           # Important containment
+        "Document attacker modifications": 7,                   # Good for forensics
+        "Isolate server": 6,                                     # Good but may be late
     },
     
     # Phase 4: Data Access & Exfiltration (order_index=3)
     (3, "red"): {
-        "Exfiltrate data": 10,          # Primary objective
-        "Cover tracks": 8,               # Hide exfiltration
-        "Establish persistence": 7,       # Maintain access
-        "Move laterally": 5,            # Already done
-        "Escalate privileges": 4,       # Already done
+        "Exfiltrate data via multiple methods": 10,              # Primary objective
+        "Access and catalog sensitive data": 9,                  # Critical for exfiltration
+        "Prioritize high-value data": 8,                         # Good strategy
+        "Maintain access during exfiltration": 7,                # Important
+        "Cover tracks": 6,                                       # Secondary
     },
     (3, "blue"): {
-        "Block exfiltration": 10,        # Primary - stop data theft
-        "Assess data breach": 9,         # Critical assessment
-        "Prepare notifications": 8,      # Regulatory compliance
-        "Isolate host": 7,               # Contain breach
-        "Collect forensic evidence": 6,   # Important but secondary
+        "Block data exfiltration immediately": 10,               # Primary - stop data theft
+        "Assess data breach scope": 9,                           # Critical assessment
+        "Prepare regulatory notifications": 8,                   # Regulatory compliance
+        "Isolate server": 7,                                     # Contain breach
+        "Collect forensic evidence": 6,                          # Important but secondary
     },
     
     # Phase 5: Remediation & Post-Incident (order_index=4)
     (4, "red"): {
-        "Cover tracks": 10,              # Hide remaining access
-        "Establish persistence": 9,       # Maintain backdoors
-        "Move laterally": 7,            # If not already done
-        "Exfiltrate data": 5,            # Already done
-        "Escalate privileges": 4,       # Already done
+        "Cover tracks and hide remaining access": 10,            # Primary - hide remaining access
+        "Maintain persistence if possible": 9,                   # Maintain backdoors
+        "Assess attack success and document techniques": 8,      # Good documentation
+        "Identify remaining access methods": 7,                  # Important
+        "Prepare final attack report": 6,                        # Secondary
     },
     (4, "blue"): {
-        "Deploy patches": 10,           # Primary - patch vulnerability
-        "Complete remediation": 9,       # Critical cleanup
-        "Conduct forensics": 8,          # Full investigation
-        "Assess compliance": 7,          # Regulatory requirements
-        "Create AAR": 6,                 # Important but secondary
+        "Deploy security patches": 10,                           # Primary - patch vulnerability
+        "Complete remediation and cleanup": 9,                  # Critical cleanup
+        "Conduct full forensic investigation": 8,                # Full investigation
+        "Assess regulatory compliance requirements": 7,          # Regulatory requirements
+        "Create after-action report": 6,                         # Important but secondary
     },
 }
 
