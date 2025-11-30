@@ -483,7 +483,6 @@ try:
         type=ArtifactType.TOOL_OUTPUT,
         description="Results from testing three persistence mechanisms: Scheduled Tasks, Registry Run Keys, and WMI Event Subscriptions. Includes reliability and detection risk assessment.",
         file_url=None,  # Content stored in database
-persistence_testing_phase2.txt",
         content=get_artifact_content("persistence_testing_phase2.txt"),
         notes_for_gm="Shows Registry Run Key has best balance of reliability and low detection. Red Team should choose Registry."
     )
@@ -495,7 +494,6 @@ persistence_testing_phase2.txt",
         type=ArtifactType.TOOL_OUTPUT,
         description="Assessment of detection risk for each persistence method based on security tool responses and system logging.",
         file_url=None,  # Content stored in database
-detection_risk_phase2.txt",
         content=get_artifact_content("detection_risk_phase2.txt"),
         notes_for_gm="Shows Registry has lowest detection risk, WMI highest. Confirms Registry is best choice."
     )
@@ -508,7 +506,6 @@ detection_risk_phase2.txt",
         type=ArtifactType.LOG_SNIPPET,
         description="Microsoft Defender for Endpoint process monitoring showing detection and blocking status for each persistence method attempt.",
         file_url=None,  # Content stored in database
-defender_process_phase2.txt",
         content=get_artifact_content("defender_process_phase2.txt"),
         notes_for_gm="Shows Registry modifications were detected but not blocked, WMI was blocked. Blue Team should focus on Registry."
     )
@@ -520,7 +517,6 @@ defender_process_phase2.txt",
         type=ArtifactType.LOG_SNIPPET,
         description="Windows System audit logs showing successful modifications for each persistence method. Includes registry changes, scheduled task creation, and WMI subscription attempts.",
         file_url=None,  # Content stored in database
-system_audit_phase2.txt",
         content=get_artifact_content("system_audit_phase2.txt"),
         notes_for_gm="Shows Registry modifications were successful and logged, WMI was blocked. Confirms Registry was deployed."
     )
@@ -543,7 +539,6 @@ system_audit_phase2.txt",
         type=ArtifactType.TOOL_OUTPUT,
         description="Reconnaissance data collected on File Server FS-PROD-01. Contains vulnerability scan results, patch status, and exploit availability.",
         file_url=None,  # Content stored in database
-fs_prod_recon_phase3.txt",
         content=get_artifact_content("fs_prod_recon_phase3.txt"),
         notes_for_gm="Shows FS-PROD-01 is fully patched, no known exploits. Red Team should NOT choose FS-PROD-01."
     )
@@ -555,7 +550,6 @@ fs_prod_recon_phase3.txt",
         type=ArtifactType.TOOL_OUTPUT,
         description="Reconnaissance data collected on Application Server APP-DEV-02. Contains vulnerability scan results, patch status, and exploit availability.",
         file_url=None,  # Content stored in database
-app_dev_recon_phase3.txt",
         content=get_artifact_content("app_dev_recon_phase3.txt"),
         notes_for_gm="Shows APP-DEV-02 has unpatched LPE vulnerability with public exploit available. Red Team SHOULD choose APP-DEV-02."
     )
@@ -568,7 +562,6 @@ app_dev_recon_phase3.txt",
         type=ArtifactType.INTEL_REPORT,
         description="Microsoft Defender Vulnerability Management scan results for FS-PROD-01 and APP-DEV-02. Includes CVE details, patch status, and risk scoring.",
         file_url=None,  # Content stored in database
-vuln_scan_phase3.txt",
         content=get_artifact_content("vuln_scan_phase3.txt"),
         notes_for_gm="Shows FS-PROD-01 patched, APP-DEV-02 has CVE-2024-XXXXX unpatched. Blue Team should prioritize APP-DEV-02."
     )
@@ -580,7 +573,6 @@ vuln_scan_phase3.txt",
         type=ArtifactType.INTEL_REPORT,
         description="Microsoft Sentinel correlation of vulnerability data with exploit activity. Shows which server has active exploit attempts.",
         file_url=None,  # Content stored in database
-sentinel_vuln_phase3.txt",
         content=get_artifact_content("sentinel_vuln_phase3.txt"),
         notes_for_gm="Shows APP-DEV-02 has high risk score and exploit activity detected. Confirms APP-DEV-02 is priority."
     )
