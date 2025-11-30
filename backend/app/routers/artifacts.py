@@ -81,31 +81,6 @@ async def upload_artifact(
     return {"filename": safe_filename, "file_url": file_url, "message": "File uploaded successfully"}
 
 
-@router.get("/{artifact_id}/content")
-async def get_artifact_content(artifact_id: int, db: Session = Depends(get_db)):
-    """Get artifact content from database."""
-    artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
-    if not artifact:
-        raise HTTPException(status_code=404, detail="Artifact not found")
-    
-    # Return content from database if available
-    if artifact.content:
-        from fastapi.responses import Response
-        return Response(
-            content=artifact.content,
-            media_type="text/plain",
-            headers={"Content-Disposition": f'inline; filename="{artifact.name}.txt"'}
-        )
-    
-    # Fallback to file URL if content not in database
-    if artifact.file_url:
-        # Try to serve from file system as fallback
-        filename = artifact.file_url.split("/")[-1]
-        return await get_artifact_file(filename)
-    
-    raise HTTPException(status_code=404, detail="Artifact content not available")
-
-
 @router.get("/files/{filename}")
 async def get_artifact_file(filename: str, db: Session = Depends(get_db)):
     """Serve artifact files from filesystem (fallback for legacy artifacts)."""
@@ -133,4 +108,29 @@ async def get_artifact_file(filename: str, db: Session = Depends(get_db)):
         )
     
     raise HTTPException(status_code=404, detail=f"File not found: {safe_filename}")
+
+
+@router.get("/{artifact_id}/content")
+async def get_artifact_content(artifact_id: int, db: Session = Depends(get_db)):
+    """Get artifact content from database."""
+    artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
+    if not artifact:
+        raise HTTPException(status_code=404, detail=f"Artifact not found: {artifact_id}")
+    
+    # Return content from database if available
+    if artifact.content:
+        from fastapi.responses import Response
+        return Response(
+            content=artifact.content,
+            media_type="text/plain",
+            headers={"Content-Disposition": f'inline; filename="{artifact.name}.txt"'}
+        )
+    
+    # Fallback to file URL if content not in database
+    if artifact.file_url:
+        # Try to serve from file system as fallback
+        filename = artifact.file_url.split("/")[-1]
+        return await get_artifact_file(filename)
+    
+    raise HTTPException(status_code=404, detail="Artifact content not available")
 
