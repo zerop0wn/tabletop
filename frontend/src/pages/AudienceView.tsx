@@ -17,7 +17,6 @@ export default function AudienceView() {
   const [previousPhaseState, setPreviousPhaseState] = useState<string | undefined>(undefined)
   const [phaseTransition, setPhaseTransition] = useState(false)
   const [animatedScores, setAnimatedScores] = useState<Record<number, AnimatedScore>>({})
-  const [seenEventIds, setSeenEventIds] = useState<Set<string>>(new Set())
   const previousScoresRef = useRef<Record<number, number>>({})
   const phaseTransitionSoundRef = useRef<HTMLAudioElement | null>(null)
   const hasPlayedFirstPhaseSoundRef = useRef<boolean>(false)
@@ -123,8 +122,7 @@ export default function AudienceView() {
         team_id: team.team_id,
         current_score: team.total_score,
         previous_score: prevScore,
-        score_history: team.score_history,
-        recent_events: team.recent_events
+        score_history: team.score_history
       })
       if (team.total_score !== prevScore) {
         console.log(`Score changed for ${team.team_name}: ${prevScore} -> ${team.total_score}`)
@@ -145,26 +143,7 @@ export default function AudienceView() {
         previousScoresRef.current[team.team_id] = team.total_score
       }
     })
-
-    // Track new events (separate effect to avoid re-running main effect)
-    scoreboard.recent_events.forEach(event => {
-      const eventId = `${event.team_id}-${event.created_at}-${event.delta}`
-      if (!seenEventIds.has(eventId)) {
-        setSeenEventIds(prev => new Set([...prev, eventId]))
-      }
-    })
   }, [scoreboard, previousPhase, previousPhaseState])
-
-  // Separate effect for tracking events to avoid re-running main effect
-  useEffect(() => {
-    if (!scoreboard) return
-    scoreboard.recent_events.forEach(event => {
-      const eventId = `${event.team_id}-${event.created_at}-${event.delta}`
-      if (!seenEventIds.has(eventId)) {
-        setSeenEventIds(prev => new Set([...prev, eventId]))
-      }
-    })
-  }, [scoreboard?.recent_events])
 
   const fetchScoreboard = async () => {
     try {
@@ -204,17 +183,6 @@ export default function AudienceView() {
       : 'bg-blue-900/30 border-blue-500/50'
   }
 
-  const formatTimeAgo = (dateString?: string) => {
-    if (!dateString) return 'Just now'
-    const date = new Date(dateString)
-    const now = new Date()
-    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-    if (seconds < 60) return `${seconds}s ago`
-    const minutes = Math.floor(seconds / 60)
-    if (minutes < 60) return `${minutes}m ago`
-    const hours = Math.floor(minutes / 60)
-    return `${hours}h ago`
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-4 md:p-8">
@@ -249,9 +217,8 @@ export default function AudienceView() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 max-w-5xl mx-auto">
           {/* Team Score Cards */}
-          <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
             {scoreboard.teams.map((team) => {
               const percentage = (team.total_score / maxScore) * 100
               const isLeader = team.team_id === leadingTeam.team_id && team.total_score > 0
@@ -429,59 +396,6 @@ export default function AudienceView() {
                 </div>
               )
             })}
-          </div>
-
-          {/* Live Event Feed */}
-          <div className="lg:col-span-1">
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700 h-full">
-              <h3 className="text-xl font-bold mb-4 flex items-center">
-                <span className="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                Live Events
-              </h3>
-              <div className="space-y-3 max-h-[600px] overflow-y-auto">
-                {scoreboard.recent_events.length === 0 ? (
-                  <div className="text-gray-400 text-sm text-center py-8">
-                    No events yet. Waiting for scoring...
-                  </div>
-                ) : (
-                  scoreboard.recent_events.map((event, idx) => {
-                    const isNew = idx < 3 // Highlight first 3 events
-                    return (
-                      <div
-                        key={`${event.team_id}-${event.created_at}-${idx}`}
-                        className={`p-3 rounded-lg border transition-all duration-300 ${
-                          isNew
-                            ? 'bg-gray-700/50 border-opacity-100 scale-105'
-                            : 'bg-gray-800/30 border-opacity-50'
-                        } ${
-                          event.team_role === 'red' ? 'border-red-500/50' : 'border-blue-500/50'
-                        }`}
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <div className="flex items-center">
-                            <div
-                              className={`w-2 h-2 rounded-full mr-2 ${
-                                event.team_role === 'red' ? 'bg-red-500' : 'bg-blue-500'
-                              }`}
-                            ></div>
-                            <span className="font-semibold text-sm">{event.team_name}</span>
-                          </div>
-                          <span
-                            className={`text-lg font-bold ${
-                              event.delta > 0 ? 'text-green-400' : 'text-red-400'
-                            }`}
-                          >
-                            {event.delta > 0 ? '+' : ''}{event.delta}
-                          </span>
-                        </div>
-                        <div className="text-xs text-gray-400 mb-1">{event.reason}</div>
-                        <div className="text-xs text-gray-500">{formatTimeAgo(event.created_at)}</div>
-                      </div>
-                    )
-                  })
-                )}
-              </div>
-            </div>
           </div>
         </div>
 
