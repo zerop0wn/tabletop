@@ -26,8 +26,11 @@ export default function AudienceView() {
     if (!gameIdentifier) return
     
     // Initialize audio element for decision opening sound
-    phaseTransitionSoundRef.current = new Audio('/sounds/phase-transition.wav')
-    phaseTransitionSoundRef.current.volume = 0.5 // Set volume to 50%
+    // Preload the audio to avoid delays
+    const audio = new Audio('/sounds/phase-transition.wav')
+    audio.volume = 0.5 // Set volume to 50%
+    audio.preload = 'auto'
+    phaseTransitionSoundRef.current = audio
     
     // Reset sound flag when game changes
     hasPlayedFirstPhaseSoundRef.current = false
@@ -75,7 +78,7 @@ export default function AudienceView() {
       // 1. Check phase name (contains "Phase 1" or starts with "1:")
       // 2. Check score_history - if no phase 0 has been scored, it's first phase
       const phaseName = scoreboard.current_phase_name || ''
-      const isPhase1ByName = phaseName.includes('Phase 1') || phaseName.includes('1:') || phaseName.match(/^Phase\s*1/i)
+      const isPhase1ByName = phaseName.includes('Phase 1') || phaseName.includes('1:') || /^Phase\s*1/i.test(phaseName)
       
       const isPhase1ByHistory = scoreboard.teams.length === 0 || scoreboard.teams.every(team => {
         if (!team.score_history || team.score_history.length === 0) {
@@ -104,13 +107,54 @@ export default function AudienceView() {
       })
       
       // Only play sound if it's the first phase and we haven't played it yet
-      if (isFirstPhase && !hasPlayedFirstPhaseSoundRef.current && phaseTransitionSoundRef.current) {
-        console.log('Playing first phase sound')
-        phaseTransitionSoundRef.current.currentTime = 0 // Reset to start
-        phaseTransitionSoundRef.current.play().catch(err => {
-          console.error('Failed to play decision opening sound:', err)
-        })
-        hasPlayedFirstPhaseSoundRef.current = true // Mark as played
+      if (isFirstPhase && !hasPlayedFirstPhaseSoundRef.current) {
+        console.log('Attempting to play first phase sound')
+        if (phaseTransitionSoundRef.current) {
+          try {
+            // Ensure audio is ready
+            if (phaseTransitionSoundRef.current.readyState >= 2) {
+              phaseTransitionSoundRef.current.currentTime = 0 // Reset to start
+              const playPromise = phaseTransitionSoundRef.current.play()
+              if (playPromise !== undefined) {
+                playPromise
+                  .then(() => {
+                    console.log('Sound played successfully')
+                    hasPlayedFirstPhaseSoundRef.current = true // Mark as played
+                  })
+                  .catch(err => {
+                    console.error('Failed to play decision opening sound:', err)
+                    // Try to reinitialize audio if it failed
+                    if (err.name === 'NotAllowedError' || err.name === 'NotSupportedError') {
+                      console.warn('Audio playback blocked or not supported. User interaction may be required.')
+                      // Reinitialize audio for next attempt
+                      phaseTransitionSoundRef.current = new Audio('/sounds/phase-transition.wav')
+                      phaseTransitionSoundRef.current.volume = 0.5
+                      phaseTransitionSoundRef.current.preload = 'auto'
+                    }
+                  })
+              } else {
+                hasPlayedFirstPhaseSoundRef.current = true
+              }
+            } else {
+              // Wait for audio to be ready
+              phaseTransitionSoundRef.current.addEventListener('canplaythrough', () => {
+                phaseTransitionSoundRef.current!.currentTime = 0
+                phaseTransitionSoundRef.current!.play()
+                  .then(() => {
+                    console.log('Sound played successfully after loading')
+                    hasPlayedFirstPhaseSoundRef.current = true
+                  })
+                  .catch(err => {
+                    console.error('Failed to play sound after loading:', err)
+                  })
+              }, { once: true })
+            }
+          } catch (err) {
+            console.error('Error playing sound:', err)
+          }
+        } else {
+          console.warn('Audio element not initialized')
+        }
       }
     }
     setPreviousPhaseState(scoreboard.phase_state)
