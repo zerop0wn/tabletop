@@ -20,7 +20,7 @@ export default function AudienceView() {
   const previousScoresRef = useRef<Record<number, number>>({})
   const phaseTransitionSoundRef = useRef<HTMLAudioElement | null>(null)
   const hasPlayedFirstPhaseSoundRef = useRef<boolean>(false)
-  const phaseTransitionTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const phaseTransitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (!gameIdentifier) return
