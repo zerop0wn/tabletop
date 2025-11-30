@@ -252,6 +252,17 @@ export default function PlayerView() {
                       <p className="text-sm text-gray-600 mb-3">{artifact.description}</p>
                     )}
                     {/* Display content from database if available (preferred) */}
+                    {(() => {
+                      // Debug: Log what we have
+                      console.log(`Artifact ${artifact.id} (${artifact.name}):`, {
+                        hasContent: !!artifact.content,
+                        contentType: typeof artifact.content,
+                        contentLength: artifact.content?.length || 0,
+                        hasFileUrl: !!artifact.file_url,
+                        artifact: artifact
+                      });
+                      return null;
+                    })()}
                     {artifact.content ? (
                       <div className="mt-3">
                         <div className="bg-gray-50 border border-gray-200 rounded-md p-4 max-h-96 overflow-y-auto">
