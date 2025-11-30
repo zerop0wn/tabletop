@@ -36,6 +36,7 @@ export interface Artifact {
   description?: string
   file_url?: string
   embed_url?: string
+  content?: string  // Text content stored in database
 }
 
 export interface Game {

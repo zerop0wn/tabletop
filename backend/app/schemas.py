@@ -22,6 +22,7 @@ class ArtifactBase(BaseModel):
     description: Optional[str] = None
     file_url: Optional[str] = None
     embed_url: Optional[str] = None
+    content: Optional[str] = None  # Text content stored in database
 
 
 class ArtifactResponse(ArtifactBase):

@@ -237,7 +237,16 @@ export default function PlayerView() {
                     {artifact.description && (
                       <p className="text-sm text-gray-600 mb-3">{artifact.description}</p>
                     )}
-                    {artifact.file_url && (
+                    {/* Display content from database if available (preferred) */}
+                    {artifact.content ? (
+                      <div className="mt-3">
+                        <div className="bg-gray-50 border border-gray-200 rounded-md p-4 max-h-96 overflow-y-auto">
+                          <pre className="whitespace-pre-wrap text-xs font-mono text-gray-800">
+                            {artifact.content}
+                          </pre>
+                        </div>
+                      </div>
+                    ) : artifact.file_url ? (
                       <div className="mt-3">
                         {isImage ? (
                           <div>
@@ -283,7 +292,7 @@ export default function PlayerView() {
                           </a>
                         )}
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 )
               })}

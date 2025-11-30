@@ -85,6 +85,7 @@ class Artifact(Base):
     description = Column(Text)
     file_url = Column(String, nullable=True)
     embed_url = Column(String, nullable=True)
+    content = Column(Text, nullable=True)  # Store text content directly in database
     notes_for_gm = Column(Text, nullable=True)
 
     phases = relationship("ScenarioPhase", secondary="scenario_phase_artifacts", back_populates="artifacts")
