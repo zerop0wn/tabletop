@@ -127,82 +127,82 @@ RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
 EMAIL_BOMB_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     # Phase 1: Email Bomb Deployment (order_index=0)
     (0, "red"): {
-        "Establish persistence": 10,  # Deploy email bomb infrastructure
-        "Cover tracks": 7,           # Make emails appear legitimate
-        "Move laterally": 4,        # Too early, no access yet
-        "Escalate privileges": 3,   # Too early
-        "Exfiltrate data": 1,       # Way too early
+        "Continue email bomb campaign": 10,  # Primary objective - maintain email flood
+        "Intensify email bomb": 8,          # Increase impact
+        "Prepare Teams call": 9,            # Critical for Phase 2
+        "Monitor user response": 7,         # Important for timing
+        "Cover tracks": 5,                  # Secondary
     },
     (0, "blue"): {
-        "Block IP address": 10,     # Block email sources
-        "Collect forensic evidence": 8,  # Analyze email patterns
-        "Deploy countermeasures": 7, # Email filtering rules
-        "Escalate to management": 6, # Alert user before social engineering
-        "Isolate host": 4,          # Too early, no compromise yet
+        "Contact user and warn about social engineering": 10,  # CRITICAL - Prevent Phase 2
+        "Enhance email filtering": 8,       # Block additional spam
+        "Monitor for follow-up attacks": 7, # Proactive defense
+        "Collect forensic evidence": 6,     # Important but takes time
+        "Isolate user's email account": 4,   # Too disruptive
     },
     
-    # Phase 2: Social Engineering Call (order_index=1)
+    # Phase 2: Teams Call Impersonation (order_index=1)
     (1, "red"): {
-        "Establish persistence": 10,  # Establish trust and rapport
-        "Cover tracks": 8,            # Appear legitimate
-        "Move laterally": 4,          # Too early, no credentials yet
-        "Escalate privileges": 3,     # Too early
-        "Exfiltrate data": 1,         # Way too early
+        "Execute Teams call and request remote access": 10,  # Primary objective
+        "Intensify social engineering": 8,   # Increase success rate
+        "Request credentials during call": 7, # Higher risk but may work
+        "Monitor user response": 6,         # Adjust tactics
+        "Cover tracks": 5,                  # Secondary
     },
     (1, "blue"): {
-        "Escalate to management": 10, # Alert user immediately
-        "Collect forensic evidence": 8, # Document call details
-        "Deploy countermeasures": 6,  # User awareness training
-        "Block IP address": 5,        # May not have IP yet
-        "Isolate host": 3,           # Too early
+        "Contact user and terminate remote session": 10,  # CRITICAL - Stop remote access
+        "Block Quick Assist": 9,            # Prevent unauthorized access
+        "Investigate caller identity": 8,    # Verify impersonation
+        "Collect forensic evidence": 6,      # Important but takes time
+        "Monitor for credential harvesting": 5, # Proactive but may be too late
     },
     
     # Phase 3: Credential Harvesting (order_index=2)
     (2, "red"): {
-        "Establish persistence": 10,  # Harvest and verify credentials
-        "Cover tracks": 7,            # Hide fake portal
-        "Move laterally": 5,          # Starting to test access
-        "Escalate privileges": 4,     # Too early
-        "Exfiltrate data": 2,         # Too early
+        "Request credentials during remote session": 10,  # Primary objective
+        "Use keylogging": 8,                 # Alternative method
+        "Validate credentials": 9,          # Critical for next phase
+        "Deploy credential dumper": 6,      # Higher detection risk
+        "Cover tracks": 5,                  # Secondary
     },
     (2, "blue"): {
-        "Block IP address": 10,       # Block fake portal
-        "Collect forensic evidence": 9, # Document credential compromise
-        "Deploy countermeasures": 8,  # Force password reset
-        "Escalate to management": 7,   # Breach notification
-        "Isolate host": 6,            # Isolate compromised account
+        "Force password reset immediately": 10,  # CRITICAL - Secure account
+        "Disable MFA temporarily": 9,       # Prevent MFA bypass
+        "Review account activity": 8,        # Understand compromise
+        "Collect forensic evidence": 6,      # Important but takes time
+        "Monitor for persistence": 5,       # Proactive but may be too late
     },
     
-    # Phase 4: Initial Access & Privilege Escalation (order_index=3)
+    # Phase 4: Remote Access & Persistence (order_index=3)
     (3, "red"): {
-        "Escalate privileges": 10,    # Gain admin access
-        "Move laterally": 9,          # Access multiple systems
-        "Establish persistence": 8,    # Create backdoors
-        "Cover tracks": 7,            # Hide access
-        "Exfiltrate data": 4,         # Starting to prepare
+        "Deploy scheduled task persistence": 10,  # Primary - reliable method
+        "Deploy registry persistence": 9,        # Secondary - good backup
+        "Deploy email forwarding rule": 8,        # Data exfiltration
+        "Deploy payloads": 7,                     # C2 preparation
+        "Cover tracks": 5,                        # Secondary
     },
     (3, "blue"): {
-        "Isolate host": 10,           # Isolate compromised account
-        "Deploy countermeasures": 9,  # Revoke access, reset passwords
-        "Collect forensic evidence": 8, # Document unauthorized access
-        "Escalate to management": 7,   # Coordinate response
-        "Block IP address": 6,        # May be too late
+        "Remove all persistence mechanisms": 10,  # CRITICAL - Prevent long-term access
+        "Quarantine malware": 9,                  # Remove malicious files
+        "Terminate remote session": 8,             # Stop ongoing access
+        "Isolate device": 7,                      # Contain threat
+        "Collect forensic evidence": 5,           # Important but takes time
     },
     
-    # Phase 5: Lateral Movement & Data Exfiltration (order_index=4)
+    # Phase 5: Initial Access & C2 Communication (order_index=4)
     (4, "red"): {
-        "Exfiltrate data": 10,       # Primary objective
-        "Move laterally": 9,          # Access more systems
-        "Cover tracks": 8,            # Hide exfiltration
-        "Establish persistence": 7,    # Maintain access
-        "Escalate privileges": 5,     # Already done
+        "Establish C2 connection": 10,        # Primary objective
+        "Execute credential dumper": 8,       # Harvest additional credentials
+        "Scan internal network": 7,           # Lateral movement prep
+        "Exfiltrate data": 6,                  # Higher detection risk
+        "Cover tracks": 5,                     # Secondary
     },
     (4, "blue"): {
-        "Block IP address": 10,       # Stop exfiltration
-        "Isolate host": 9,            # Contain breach
-        "Collect forensic evidence": 8, # Document data loss
-        "Escalate to management": 8,    # Breach notification, compliance
-        "Deploy countermeasures": 6,   # May be too late
+        "Isolate device immediately": 10,     # CRITICAL - Stop C2 communication
+        "Block C2 server": 9,                  # Terminate C2 connection
+        "Terminate malicious processes": 8,    # Stop payload execution
+        "Investigate data exfiltration": 7,     # Understand impact
+        "Collect forensic evidence": 5,        # Important but takes time
     },
 }
 
