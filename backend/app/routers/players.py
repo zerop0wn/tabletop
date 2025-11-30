@@ -148,23 +148,27 @@ def get_player_state(game_id: int, player_id: int, db: Session = Depends(get_db)
     # Get phase-specific actions if available
     available_actions = None
     if current_phase:
-        # Debug: Log what we have
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.info(f"Phase {current_phase.id} ({current_phase.name}) - available_actions type: {type(current_phase.available_actions)}")
-        logger.info(f"Phase {current_phase.id} - available_actions value: {current_phase.available_actions}")
-        
-        if current_phase.available_actions:
-            team_role_key = player.team.role
-            logger.info(f"Team role: {team_role_key}, available_actions keys: {list(current_phase.available_actions.keys()) if isinstance(current_phase.available_actions, dict) else 'N/A'}")
-            
-            if isinstance(current_phase.available_actions, dict) and team_role_key in current_phase.available_actions:
-                available_actions = current_phase.available_actions[team_role_key]
-                logger.info(f"Extracted {len(available_actions) if available_actions else 0} actions for {team_role_key} team")
-            else:
-                logger.warning(f"Could not extract actions: available_actions is {type(current_phase.available_actions)}, team_role_key={team_role_key}")
-        else:
-            logger.info(f"Phase {current_phase.id} has no available_actions (NULL or empty)")
+        try:
+            if current_phase.available_actions:
+                team_role_key = player.team.role
+                
+                if isinstance(current_phase.available_actions, dict) and team_role_key in current_phase.available_actions:
+                    available_actions = current_phase.available_actions[team_role_key]
+                    # Ensure it's a list of dicts with name and description
+                    if available_actions and isinstance(available_actions, list):
+                        available_actions = [
+                            {
+                                "name": action.get("name", "") if isinstance(action, dict) else str(action),
+                                "description": action.get("description", "") if isinstance(action, dict) else ""
+                            }
+                            for action in available_actions
+                        ]
+        except Exception as e:
+            # Log error but don't fail the request
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error extracting available_actions: {e}", exc_info=True)
+            available_actions = None
     
     return PlayerStateResponse(
         current_phase=current_phase,
