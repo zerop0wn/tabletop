@@ -440,7 +440,6 @@ export default function AudienceView() {
                 </div>
               )
             })}
-          </div>
         </div>
 
         {scoreboard.teams.length === 0 && (
