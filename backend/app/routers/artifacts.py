@@ -17,6 +17,32 @@ ARTIFACTS_DIR = Path("/app/artifacts/files")
 ARTIFACTS_DIR.mkdir(exist_ok=True, parents=True)
 
 
+@router.get("/debug/list")
+async def list_artifact_files():
+    """Debug endpoint to list all artifact files."""
+    import sys
+    files = []
+    if ARTIFACTS_DIR.exists():
+        try:
+            for f in ARTIFACTS_DIR.iterdir():
+                if f.is_file():
+                    files.append({
+                        "name": f.name,
+                        "size": f.stat().st_size,
+                        "exists": f.exists(),
+                        "path": str(f)
+                    })
+        except Exception as e:
+            return {"error": str(e), "artifacts_dir": str(ARTIFACTS_DIR), "dir_exists": ARTIFACTS_DIR.exists()}
+    
+    return {
+        "artifacts_dir": str(ARTIFACTS_DIR),
+        "dir_exists": ARTIFACTS_DIR.exists(),
+        "file_count": len(files),
+        "files": sorted(files, key=lambda x: x["name"])
+    }
+
+
 @router.post("/upload")
 async def upload_artifact(
     file: UploadFile = File(...),
