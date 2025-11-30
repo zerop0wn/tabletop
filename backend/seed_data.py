@@ -93,10 +93,6 @@ def seed_data():
                         "description": "Disconnect WS-MKT-015 (Marketing) from the network to prevent further spread. Review artifacts comparing WS-FIN-042 and WS-MKT-015 to assess risk level."
                     },
                     {
-                        "name": "Isolate both hosts",
-                        "description": "Disconnect both Finance and Marketing workstations from the network. Conservative approach but may impact business operations."
-                    },
-                    {
                         "name": "Collect forensic evidence",
                         "description": "Gather logs, memory dumps, and system artifacts for analysis. Critical for understanding the attack but takes time and may not stop immediate threats."
                     },

@@ -27,7 +27,6 @@ RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     (0, "blue"): {
         "Isolate Marketing Department host (WS-MKT-015)": 10,  # CORRECT - Artifacts show Marketing is higher risk
         "Isolate Finance Department host (WS-FIN-042)": 6,     # WRONG - Finance already blocked, lower risk
-        "Isolate both hosts": 8,                               # MEDIUM - Conservative but may be overkill
         "Collect forensic evidence": 8,                        # Critical for analysis
         "Block IP address": 6,                                 # Good but may be too late
         "Deploy countermeasures": 5,                           # Good but takes time
@@ -70,7 +69,6 @@ RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     (2, "blue"): {
         "Isolate WS-MKT-02 (Marketing host)": 10,            # CORRECT - Artifacts show WS-MKT-02 is high risk
         "Isolate WS-FIN-01 (Finance host)": 6,              # WRONG - WS-FIN-01 is fully patched, lower risk
-        "Isolate both hosts": 8,                             # MEDIUM - Conservative approach
         "Deploy countermeasures": 9,                         # Network segmentation, patching
         "Escalate to management": 8,                          # Coordinate response
         "Collect forensic evidence": 6,                       # Document movement
