@@ -52,8 +52,8 @@ try:
     print(f"Found {len(artifacts)} artifacts")
     print()
     
-    # Serialize artifacts the same way the API does
-    artifact_responses = [ArtifactResponse.from_orm(a) for a in artifacts]
+    # Serialize artifacts the same way the API does (Pydantic v2)
+    artifact_responses = [ArtifactResponse.model_validate(a) for a in artifacts]
     
     print("Artifact responses (as API would return):")
     for artifact_resp in artifact_responses:
