@@ -143,10 +143,6 @@ try:
                 "description": "Block external data transfers and isolate FS-02 to prevent data exfiltration. Review artifacts to assess priority."
             },
             {
-                "name": "Block exfiltration from both servers",
-                "description": "Block external data transfers and isolate both FS-01 and FS-02. Conservative approach but may impact business operations."
-            },
-            {
                 "name": "Collect forensic evidence",
                 "description": "Gather logs, network flow data, and access logs for analysis. Critical for understanding what data was stolen but takes time."
             },
