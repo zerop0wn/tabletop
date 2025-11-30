@@ -250,10 +250,6 @@ try:
                     "description": "Disconnect Application Server APP-DEV-02 from the network to prevent privilege escalation. Review artifacts to assess risk level."
                 },
                 {
-                    "name": "Isolate both",
-                    "description": "Disconnect both servers from the network. Conservative approach but may impact business operations."
-                },
-                {
                     "name": "Patch vulnerabilities",
                     "description": "Apply security patches to address known vulnerabilities. Critical defense but may require system downtime."
                 },
@@ -309,10 +305,6 @@ try:
                 {
                     "name": "Isolate DB-HR-PROD",
                     "description": "Disconnect Employee Records Database (DB-HR-PROD) from the network to prevent unauthorized access. Review artifacts to assess risk level."
-                },
-                {
-                    "name": "Isolate both",
-                    "description": "Disconnect both databases from the network. Conservative approach but may impact business operations."
                 },
                 {
                     "name": "Block database access",
