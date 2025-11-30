@@ -386,6 +386,89 @@ SHAREPOINT_RCE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     },
 }
 
+# AI Application Data Leakage & Permission Misconfiguration scenario scoring
+AI_APP_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
+    # Phase 1: Initial Detection - Suspicious AI API Activity (order_index=0)
+    (0, "red"): {
+        "Reconnaissance AI application architecture": 10,  # Primary objective
+        "Test document access permissions": 9,              # Critical for exploitation
+        "Map document sources and categories": 8,          # Important reconnaissance
+        "Identify permission inheritance issues": 7,       # Good preparation
+        "Cover tracks": 6,                                 # Secondary
+    },
+    (0, "blue"): {
+        "Investigate unusual API activity": 10,           # Primary objective
+        "Audit access control configurations": 9,         # Critical detection
+        "Review document access logs": 8,                  # Important investigation
+        "Assess permission misconfigurations": 7,          # Good assessment
+        "Verify user account legitimacy": 6,               # Secondary
+    },
+    
+    # Phase 2: Investigation - Unauthorized Document Access (order_index=1)
+    (1, "red"): {
+        "Exploit permission misconfiguration": 10,         # Primary objective
+        "Access sensitive document categories": 9,         # Critical exploitation
+        "Catalog accessible documents": 8,                  # Important preparation
+        "Test document retrieval via AI API": 7,           # Good preparation
+        "Cover tracks": 6,                                 # Secondary
+    },
+    (1, "blue"): {
+        "Investigate unauthorized document access": 10,    # Primary objective
+        "Identify permission misconfiguration root cause": 9,  # Critical analysis
+        "Assess compliance impact": 8,                     # Important assessment
+        "Prepare remediation actions": 7,                 # Good preparation
+        "Review security configuration": 6,                # Secondary
+    },
+    
+    # Phase 3: Containment - Data Leakage Confirmed (order_index=2)
+    (2, "red"): {
+        "Extract sensitive data via prompt injection": 10, # Primary objective
+        "Extract data from multiple categories": 9,        # Critical extraction
+        "Use instruction override techniques": 8,          # Important technique
+        "Catalog extracted information": 7,                # Good organization
+        "Cover tracks": 6,                                 # Secondary
+    },
+    (2, "blue"): {
+        "Confirm data leakage through AI API": 10,        # Primary objective
+        "Detect and analyze prompt injection attacks": 9, # Critical detection
+        "Block unauthorized AI API calls": 8,              # Important containment
+        "Assess compliance violations": 7,                # Good assessment
+        "Prepare regulatory notifications": 6,             # Secondary
+    },
+    
+    # Phase 4: Remediation - Permission Fixes & Access Review (order_index=3)
+    (3, "red"): {
+        "Attempt to maintain access through alternative methods": 10,  # Primary objective
+        "Test remaining vulnerabilities": 9,              # Critical persistence
+        "Assess attack success and document techniques": 8, # Important documentation
+        "Cover tracks and hide remaining access": 7,       # Good stealth
+        "Catalog extracted data": 6,                      # Secondary
+    },
+    (3, "blue"): {
+        "Fix permission misconfigurations": 10,            # Primary objective
+        "Revoke all unauthorized access": 9,               # Critical security
+        "Implement remaining security improvements": 8,    # Important hardening
+        "Conduct comprehensive access review": 7,         # Good assessment
+        "Assess compliance impact and prepare notifications": 6,  # Secondary
+    },
+    
+    # Phase 5: Post-Incident - Security Improvements (order_index=4)
+    (4, "red"): {
+        "Assess overall attack success": 10,              # Primary objective
+        "Document successful attack techniques": 9,       # Critical documentation
+        "Identify areas for improvement": 8,             # Important analysis
+        "Prepare final attack summary report": 7,         # Good documentation
+        "Catalog lessons learned": 6,                     # Secondary
+    },
+    (4, "blue"): {
+        "Implement security improvements plan": 10,       # Primary objective
+        "Complete compliance assessments": 9,             # Critical compliance
+        "Prepare and send regulatory notifications": 8,   # Important notifications
+        "Conduct after-action review": 7,                 # Good analysis
+        "Implement long-term security hardening": 6,       # Secondary
+    },
+}
+
 # Tutorial Scenario Scoring (Simple scoring for learning)
 TUTORIAL_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     # Phase 1: Initial Detection (order_index=0)
@@ -526,6 +609,7 @@ SCORING_MATRICES: Dict[str, Dict[Tuple[int, str], Dict[str, int]]] = {
     "Ransomware Attack: Corporate Network Compromise": INTERMEDIATE_RANSOMWARE_SCORING,
     "Email Bomb & Social Engineering Attack": EMAIL_BOMB_SCORING,
     "SharePoint RCE Zero-Day Exploitation": SHAREPOINT_RCE_SCORING,
+    "AI Application Data Leakage & Permission Misconfiguration": AI_APP_SCORING,
     "Tutorial: Basic Security Incident": TUTORIAL_SCORING,
 }
 
