@@ -17,7 +17,7 @@ function App() {
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl font-bold mb-6">Cyber Tabletop</h1>
               <p className="text-xl text-gray-600 mb-8">Turn-Based Incident Response Training Platform</p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
                 <a href="/gm/login" className="p-6 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                   <h2 className="text-xl font-semibold mb-2">Game Manager</h2>
                   <p className="text-sm">Manage scenarios and games</p>
@@ -25,10 +25,6 @@ function App() {
                 <a href="/play/join" className="p-6 bg-green-600 text-white rounded-lg hover:bg-green-700">
                   <h2 className="text-xl font-semibold mb-2">Join Game</h2>
                   <p className="text-sm">Enter with team code</p>
-                </a>
-                <a href="/audience/demo" className="p-6 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
-                  <h2 className="text-xl font-semibold mb-2">Audience View</h2>
-                  <p className="text-sm">Watch game progress</p>
                 </a>
               </div>
             </div>
