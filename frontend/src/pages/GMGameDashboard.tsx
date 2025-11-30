@@ -274,22 +274,6 @@ export default function GMGameDashboard() {
               )}
             </div>
 
-            {/* After Action Report Section - Always visible when game is in progress or finished */}
-            {(game.status === 'in_progress' || game.status === 'finished') && (
-              <div className="mt-4 p-4 bg-purple-50 border-2 border-purple-200 rounded-md">
-                <h3 className="font-semibold text-purple-900 mb-2">After Action Report</h3>
-                <p className="text-sm text-purple-700 mb-3">
-                  Generate and view the comprehensive After Action Report for this game.
-                </p>
-                <button
-                  onClick={() => navigate(`/gm/games/${id}/after-action-report`)}
-                  className="w-full sm:w-auto px-4 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium text-sm sm:text-base shadow-md"
-                >
-                  View After Action Report
-                </button>
-              </div>
-            )}
-
             {game.current_phase && (
               <div className="mt-6 p-4 bg-gray-50 rounded-md">
                 <h3 className="font-semibold mb-2">Briefing:</h3>
@@ -384,6 +368,26 @@ export default function GMGameDashboard() {
                   )}
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* After Action Report Section - Full width, always visible when game is in progress or finished */}
+        {(game.status === 'in_progress' || game.status === 'finished') && (
+          <div className="bg-purple-50 border-2 border-purple-200 rounded-lg shadow-md p-6 mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-purple-900 mb-2">After Action Report</h2>
+                <p className="text-sm text-purple-700">
+                  Generate and view the comprehensive After Action Report for this game, including phase-by-phase analysis, risk ratings, player comments, and GM notes.
+                </p>
+              </div>
+              <button
+                onClick={() => navigate(`/gm/games/${id}/after-action-report`)}
+                className="px-6 py-3 bg-purple-600 text-white rounded-md hover:bg-purple-700 font-medium text-base shadow-md whitespace-nowrap flex-shrink-0"
+              >
+                View After Action Report
+              </button>
             </div>
           </div>
         )}
