@@ -84,6 +84,12 @@ def get_player_state(game_id: int, player_id: int, db: Session = Depends(get_db)
                 )
             ).scalars().all()
             artifacts = db.query(Artifact).filter(Artifact.id.in_(artifact_ids)).all() if artifact_ids else []
+            # Debug: Log artifacts found
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Phase {current_phase.id}: Found {len(artifacts)} artifacts for {player.team.role} team")
+            for artifact in artifacts:
+                logger.info(f"  - {artifact.name} (ID: {artifact.id}): content={bool(artifact.content)}, content_len={len(artifact.content) if artifact.content else 0}")
             if player.team.role == "red":
                 team_objective = current_phase.red_objective
             else:
