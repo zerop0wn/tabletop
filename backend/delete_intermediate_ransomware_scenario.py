@@ -40,14 +40,26 @@ try:
         
         if all_affected_games:
             print(f"  Found {len(all_affected_games)} game(s) using this scenario")
-            print("  Setting current_phase_id to NULL for affected games...")
+            print("  Setting current_phase_id and scenario_id to NULL for affected games...")
             for game in all_affected_games:
                 if game.current_phase_id in phase_ids:
                     game.current_phase_id = None
+                if game.scenario_id == scenario.id:
+                    game.scenario_id = None
             db.flush()
             print(f"  ✓ Updated {len(all_affected_games)} game(s)")
         else:
             print("  ✓ No games using this scenario")
+    
+    # Also check for any other games that might reference this scenario
+    games_using_scenario = db.query(Game).filter(Game.scenario_id == scenario.id).all()
+    if games_using_scenario:
+        print(f"\nFound {len(games_using_scenario)} additional game(s) referencing this scenario")
+        print("  Setting scenario_id to NULL...")
+        for game in games_using_scenario:
+            game.scenario_id = None
+        db.flush()
+        print(f"  ✓ Updated {len(games_using_scenario)} game(s)")
         
         # Delete artifact associations first
         print("\nDeleting artifact associations...")
