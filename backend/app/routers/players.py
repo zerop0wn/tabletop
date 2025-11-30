@@ -176,6 +176,15 @@ def get_player_state(game_id: int, player_id: int, db: Session = Depends(get_db)
             logger.error(f"Error extracting available_actions: {e}", exc_info=True)
             available_actions = None
     
+    # Debug: Verify artifacts have content before returning
+    import logging
+    logger = logging.getLogger(__name__)
+    for artifact in artifacts:
+        logger.info(f"Returning artifact {artifact.id} ({artifact.name}): content={bool(artifact.content)}, content_len={len(artifact.content) if artifact.content else 0}")
+        # Force load content if it's not loaded (lazy loading issue)
+        if hasattr(artifact, 'content'):
+            _ = artifact.content  # Access to ensure it's loaded
+    
     return PlayerStateResponse(
         current_phase=current_phase,
         phase_state=game.phase_state,
