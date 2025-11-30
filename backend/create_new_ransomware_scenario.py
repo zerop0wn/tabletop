@@ -199,10 +199,6 @@ try:
                     "description": "Disconnect APP-02 from the network to prevent privilege escalation. Review artifacts comparing FS-01 and APP-02 to assess risk level."
                 },
                 {
-                    "name": "Isolate both servers",
-                    "description": "Disconnect both FS-01 and APP-02 from the network. Conservative approach but may impact business operations."
-                },
-                {
                     "name": "Patch vulnerabilities",
                     "description": "Apply security patches to vulnerable systems. Critical for preventing escalation but takes time and may require maintenance windows."
                 },
