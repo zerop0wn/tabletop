@@ -222,7 +222,6 @@ NEW_RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     (0, "blue"): {
         "Isolate Sales Department host (WS-SLS-203)": 10,  # CORRECT - Artifacts show Sales is higher risk
         "Isolate IT Department host (WS-IT-089)": 6,     # WRONG - IT already blocked, lower risk
-        "Isolate both hosts": 8,                         # MEDIUM - Conservative
         "Collect forensic evidence": 8,                   # Critical for analysis
         "Deploy countermeasures": 5,                      # Good but takes time
     },
@@ -259,7 +258,6 @@ NEW_RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     (2, "blue"): {
         "Isolate APP-02 (Application Server)": 10,     # CORRECT - Artifacts show APP-02 is high risk
         "Isolate FS-01 (File Server)": 6,              # WRONG - FS-01 is fully patched, lower risk
-        "Isolate both servers": 8,                     # MEDIUM - Conservative
         "Patch vulnerabilities": 9,                    # Critical for APP-02
         "Collect forensic evidence": 7,                 # Important
     },
@@ -278,7 +276,6 @@ NEW_RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     (3, "blue"): {
         "Isolate DB-FIN-02 (Financial Records)": 10,   # CORRECT - Shows signs of compromise
         "Isolate DB-CUST-01 (Customer Database)": 6,   # WRONG - Already secure, lower priority
-        "Isolate both databases": 8,                    # MEDIUM - Conservative
         "Block database access": 9,                     # Critical
         "Collect forensic evidence": 8,                 # Important
     },
