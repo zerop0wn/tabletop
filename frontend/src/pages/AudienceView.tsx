@@ -145,17 +145,28 @@ export default function AudienceView() {
       // 1. Check phase name (contains "Phase 1" or starts with "1:")
       // 2. Check score_history - if no phase 0 has been scored, it's first phase
       const phaseName = scoreboard.current_phase_name || ''
-      const isPhase1ByName = phaseName.includes('Phase 1') || phaseName.includes('1:') || /^Phase\s*1/i.test(phaseName)
       
+      // Method 1: Check by phase name pattern
+      // All scenarios use "Phase 1:" format, but we also check for variations
+      const isPhase1ByName = 
+        phaseName.includes('Phase 1') || 
+        phaseName.includes('1:') || 
+        /^Phase\s*1/i.test(phaseName) ||
+        /Phase\s*1\s*:/i.test(phaseName)
+      
+      // Method 2: Check by score history
+      // If no teams have scored phase 0 (order_index 0) yet, we're on the first phase
       const isPhase1ByHistory = scoreboard.teams.length === 0 || scoreboard.teams.every(team => {
         if (!team.score_history || team.score_history.length === 0) {
           return true // No scores yet, must be first phase
         }
-        // Check if phase 0 has been scored (score > 0)
+        // Check if phase 0 (order_index 0) has been scored (score > 0)
         const phase0Entry = team.score_history.find(entry => entry.phase_order === 0)
+        // If phase 0 entry doesn't exist or has score 0, we haven't completed phase 1 yet
         return phase0Entry === undefined || phase0Entry.score === 0
       })
       
+      // Use either method - if name matches OR history shows first phase, play sound
       const isFirstPhase = isPhase1ByName || isPhase1ByHistory
       
       console.log('Sound check:', {
