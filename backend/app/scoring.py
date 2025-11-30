@@ -619,13 +619,36 @@ def get_optimal_score(
     scoring_matrix = SCORING_MATRICES.get(scenario_name)
     if not scoring_matrix:
         # Fallback to ransomware scoring if scenario not found
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Scenario '{scenario_name}' not found in SCORING_MATRICES, using fallback")
         scoring_matrix = RANSOMWARE_SCORING
     
     key = (phase_order_index, team_role)
     if key not in scoring_matrix:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Key {key} not found in scoring matrix for scenario '{scenario_name}'")
         return 0
     
-    return scoring_matrix[key].get(selected_action, 0)
+    # Try exact match first
+    score = scoring_matrix[key].get(selected_action, None)
+    if score is not None:
+        return score
+    
+    # Try case-insensitive match
+    for action_name, action_score in scoring_matrix[key].items():
+        if action_name.lower().strip() == selected_action.lower().strip():
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Action name mismatch (case/whitespace): '{selected_action}' matched '{action_name}'")
+            return action_score
+    
+    # No match found
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.warning(f"Action '{selected_action}' not found in scoring matrix for scenario '{scenario_name}', phase {phase_order_index}, role '{team_role}'. Available actions: {list(scoring_matrix[key].keys())}")
+    return 0
 
 
 def calculate_team_decision_score(

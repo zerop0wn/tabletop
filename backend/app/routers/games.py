@@ -211,6 +211,11 @@ def lock_decisions(game_id: int, db: Session = Depends(get_db), current_gm=Depen
         scenario = db.query(Scenario).filter(Scenario.id == game.scenario_id).first()
         scenario_name = scenario.name if scenario else "Ransomware Incident Response"
         
+        # Debug logging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Scoring decision: scenario={scenario_name}, phase={current_phase.order_index}, team_role={team.role}, actions={selected_actions}")
+        
         # Calculate base score
         base_score, explanation = calculate_team_decision_score(
             scenario_name=scenario_name,
@@ -219,6 +224,8 @@ def lock_decisions(game_id: int, db: Session = Depends(get_db), current_gm=Depen
             selected_actions=selected_actions
         )
         
+        logger.info(f"Calculated score: base_score={base_score}, explanation={explanation}")
+        
         # Apply team size weighting (set normalize=True to enable, False to disable)
         final_score = calculate_weighted_score(
             base_score=base_score,
@@ -226,6 +233,8 @@ def lock_decisions(game_id: int, db: Session = Depends(get_db), current_gm=Depen
             average_team_size=average_team_size,
             normalize=False  # Set to True to enable team size normalization
         )
+        
+        logger.info(f"Final score after weighting: {final_score}")
         
         # Update decision
         decision.score_awarded = final_score
@@ -241,6 +250,7 @@ def lock_decisions(game_id: int, db: Session = Depends(get_db), current_gm=Depen
             reason=f"Phase {current_phase.order_index + 1} auto-scored: {explanation}"
         )
         db.add(score_event)
+        logger.info(f"Created ScoreEvent: game_id={game_id}, team_id={decision.team_id}, phase_id={current_phase.id}, delta={final_score}")
 
     # After auto-scoring, automatically move to next phase
     # Find next phase
