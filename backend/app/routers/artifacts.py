@@ -58,12 +58,29 @@ async def upload_artifact(
 @router.get("/files/{filename}")
 async def get_artifact_file(filename: str):
     """Serve artifact files."""
+    import logging
+    logger = logging.getLogger(__name__)
+    
     # Security: prevent directory traversal
     safe_filename = Path(filename).name
     file_path = ARTIFACTS_DIR / safe_filename
     
-    if not file_path.exists() or not file_path.is_file():
-        raise HTTPException(status_code=404, detail="File not found")
+    logger.info(f"Artifact file request: filename={filename}, safe_filename={safe_filename}, file_path={file_path}")
+    logger.info(f"ARTIFACTS_DIR exists: {ARTIFACTS_DIR.exists()}, ARTIFACTS_DIR={ARTIFACTS_DIR}")
+    
+    if not file_path.exists():
+        logger.error(f"File not found: {file_path}")
+        # List some files in the directory for debugging
+        if ARTIFACTS_DIR.exists():
+            files = list(ARTIFACTS_DIR.glob("*.txt"))[:5]
+            logger.error(f"Sample files in directory: {[f.name for f in files]}")
+        raise HTTPException(status_code=404, detail=f"File not found: {safe_filename}")
+    
+    if not file_path.is_file():
+        logger.error(f"Path exists but is not a file: {file_path}")
+        raise HTTPException(status_code=404, detail=f"File not found: {safe_filename}")
+    
+    logger.info(f"File found, serving: {file_path}")
     
     # Determine media type based on file extension
     media_type = None
