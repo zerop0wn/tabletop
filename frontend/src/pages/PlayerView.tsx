@@ -231,9 +231,9 @@ export default function PlayerView() {
         )}
 
         {/* Artifacts */}
-        {state.artifacts.length > 0 && (
+        {state.artifacts && state.artifacts.length > 0 ? (
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h2 className="text-xl font-bold mb-4">Artifacts</h2>
+            <h2 className="text-xl font-bold mb-4">Artifacts ({state.artifacts.length})</h2>
             <div className="space-y-4">
               {state.artifacts.map((artifact) => {
                 const isImage = artifact.type === 'screenshot' || artifact.file_url?.match(/\.(jpg|jpeg|png|gif|webp)$/i)
@@ -252,17 +252,6 @@ export default function PlayerView() {
                       <p className="text-sm text-gray-600 mb-3">{artifact.description}</p>
                     )}
                     {/* Display content from database if available (preferred) */}
-                    {(() => {
-                      // Debug: Log what we have
-                      console.log(`Artifact ${artifact.id} (${artifact.name}):`, {
-                        hasContent: !!artifact.content,
-                        contentType: typeof artifact.content,
-                        contentLength: artifact.content?.length || 0,
-                        hasFileUrl: !!artifact.file_url,
-                        artifact: artifact
-                      });
-                      return null;
-                    })()}
                     {artifact.content ? (
                       <div className="mt-3">
                         <div className="bg-gray-50 border border-gray-200 rounded-md p-4 max-h-96 overflow-y-auto">
@@ -333,6 +322,11 @@ export default function PlayerView() {
                 )
               })}
             </div>
+          </div>
+        ) : (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-6">
+            <p className="text-yellow-800">No artifacts available for this phase.</p>
+            <p className="text-xs text-yellow-600 mt-2">Debug: state.artifacts = {state.artifacts ? JSON.stringify(state.artifacts.length) : 'null/undefined'}</p>
           </div>
         )}
 
