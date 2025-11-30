@@ -557,7 +557,6 @@ INTERMEDIATE_RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     (2, "blue"): {
         "Isolate APP-DEV-02": 10,                  # CORRECT - Artifacts show APP-DEV-02 has unpatched vulnerability
         "Isolate FS-PROD-01": 4,                    # WRONG - FS-PROD-01 is fully patched, lower risk
-        "Isolate both": 6,                         # MEDIUM - Conservative but may be overkill
         "Patch vulnerabilities": 9,                 # Critical - Patch APP-DEV-02
         "Collect forensic evidence": 7,            # Important for analysis
     },
@@ -576,7 +575,6 @@ INTERMEDIATE_RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     (3, "blue"): {
         "Isolate DB-HR-PROD": 10,                  # CORRECT - Artifacts show DB-HR-PROD shows signs of compromise
         "Isolate DB-CUST-PROD": 4,                 # WRONG - DB-CUST-PROD shows no access attempts
-        "Isolate both": 6,                        # MEDIUM - Conservative but may be overkill
         "Block database access": 8,                # Critical - Block unauthorized access
         "Collect forensic evidence": 7,            # Important for analysis
     },
