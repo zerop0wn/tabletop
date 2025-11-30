@@ -95,7 +95,6 @@ RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     (3, "blue"): {
         "Block exfiltration from FS-01 (Finance)": 10,     # CORRECT - Artifacts show FS-01 has HIGH-SEVERITY alerts
         "Block exfiltration from FS-02 (HR/Operations)": 6, # WRONG - FS-02 has weaker DLP, lower priority
-        "Block exfiltration from both servers": 8,         # MEDIUM - Conservative approach
         "Collect forensic evidence": 9,                     # Document theft
         "Escalate to management": 8,                        # Breach notification
         "Deploy countermeasures": 5,                       # May be too late
