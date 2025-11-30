@@ -136,20 +136,6 @@ export default function PlayerView() {
         `/games/${gameId}/player/${playerId}/state`
       )
       setState(response.data)
-      // Debug: Log artifacts received
-      if (response.data.artifacts) {
-        console.log(`Received ${response.data.artifacts.length} artifacts:`, 
-          response.data.artifacts.map(a => ({
-            id: a.id,
-            name: a.name,
-            hasContent: !!a.content,
-            contentLength: a.content?.length || 0,
-            hasFileUrl: !!a.file_url
-          }))
-        )
-      } else {
-        console.log('No artifacts in response')
-      }
     } catch (err) {
       console.error('Failed to fetch state:', err)
     }
