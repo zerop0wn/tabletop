@@ -20,6 +20,7 @@ export default function AudienceView() {
   const [seenEventIds, setSeenEventIds] = useState<Set<string>>(new Set())
   const previousScoresRef = useRef<Record<number, number>>({})
   const phaseTransitionSoundRef = useRef<HTMLAudioElement | null>(null)
+  const hasPlayedFirstPhaseSoundRef = useRef<boolean>(false)
 
   useEffect(() => {
     if (!gameIdentifier) return
@@ -27,6 +28,9 @@ export default function AudienceView() {
     // Initialize audio element for decision opening sound
     phaseTransitionSoundRef.current = new Audio('/sounds/phase-transition.wav')
     phaseTransitionSoundRef.current.volume = 0.5 // Set volume to 50%
+    
+    // Reset sound flag when game changes
+    hasPlayedFirstPhaseSoundRef.current = false
     
     fetchScoreboard()
     const interval = setInterval(fetchScoreboard, 3000) // Poll every 3 seconds for more real-time feel
@@ -36,6 +40,7 @@ export default function AudienceView() {
         phaseTransitionSoundRef.current.pause()
         phaseTransitionSoundRef.current = null
       }
+      hasPlayedFirstPhaseSoundRef.current = false
     }
   }, [gameIdentifier])
 
@@ -49,18 +54,39 @@ export default function AudienceView() {
     }
     setPreviousPhase(scoreboard.current_phase_name)
 
-    // Detect when GM opens game for decisions - play sound
+    // Detect when GM opens game for decisions - play sound ONLY on first phase
     if (
       previousPhaseState !== undefined &&
       previousPhaseState !== 'open_for_decisions' &&
       scoreboard.phase_state === 'open_for_decisions'
     ) {
-      // Play sound when phase state changes to open_for_decisions
-      if (phaseTransitionSoundRef.current) {
+      // Check if this is the first phase (phase_order 0)
+      // A phase is considered the first phase if:
+      // - No team has any score_history entries with phase_order > 0, OR
+      // - All teams' score_history shows phase_order 0 has not been scored yet (score === 0)
+      const isFirstPhase = scoreboard.teams.length === 0 || scoreboard.teams.every(team => {
+        if (!team.score_history || team.score_history.length === 0) {
+          return true // No scores yet, must be first phase
+        }
+        // Check if any phase has been scored (score > 0)
+        // If phase_order 0 exists but has score 0, we're still on first phase
+        // If any phase_order > 0 has a score, we've moved past first phase
+        const hasScoredAnyPhase = team.score_history.some(entry => entry.score > 0)
+        if (!hasScoredAnyPhase) {
+          return true // No phases scored yet, must be first phase
+        }
+        // Check if we've scored phase 0 - if yes, we're past first phase
+        const phase0Entry = team.score_history.find(entry => entry.phase_order === 0)
+        return phase0Entry === undefined || phase0Entry.score === 0
+      })
+      
+      // Only play sound if it's the first phase and we haven't played it yet
+      if (isFirstPhase && !hasPlayedFirstPhaseSoundRef.current && phaseTransitionSoundRef.current) {
         phaseTransitionSoundRef.current.currentTime = 0 // Reset to start
         phaseTransitionSoundRef.current.play().catch(err => {
           console.warn('Failed to play decision opening sound:', err)
         })
+        hasPlayedFirstPhaseSoundRef.current = true // Mark as played
       }
     }
     setPreviousPhaseState(scoreboard.phase_state)
