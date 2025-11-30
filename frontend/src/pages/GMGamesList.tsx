@@ -120,48 +120,48 @@ export default function GMGamesList() {
         </div>
 
         {/* Desktop Table View */}
-        <div className="hidden md:block bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="hidden md:block bg-white rounded-lg shadow-md overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Scenario</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phase</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Scenario</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phase</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase min-w-[200px]">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {games.map((game) => (
                 <tr key={game.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">{game.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm font-medium">{game.id}</td>
+                  <td className="px-4 py-4 text-sm max-w-xs truncate">
                     {game.scenario?.name || 'Unknown'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(game.status)}`}>
                       {game.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-4 py-4 text-sm max-w-xs truncate">
                     {game.current_phase?.name || 'N/A'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                     {new Date(game.created_at).toLocaleDateString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <div className="flex gap-2">
+                  <td className="px-4 py-4 whitespace-nowrap text-sm">
+                    <div className="flex gap-2 flex-nowrap">
                       <button
                         onClick={() => navigate(`/gm/games/${game.id}`)}
-                        className="px-3 py-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded text-sm font-medium"
+                        className="px-3 py-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded text-sm font-medium whitespace-nowrap flex-shrink-0"
                       >
                         Open
                       </button>
                       {(game.status === 'in_progress' || game.status === 'finished') && (
                         <button
                           onClick={() => navigate(`/gm/games/${game.id}/after-action-report`)}
-                          className="px-3 py-1.5 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded text-sm font-medium"
+                          className="px-3 py-1.5 text-purple-600 hover:text-purple-800 hover:bg-purple-50 rounded text-sm font-medium whitespace-nowrap flex-shrink-0"
                         >
                           AAR
                         </button>
@@ -177,7 +177,7 @@ export default function GMGamesList() {
                             }
                           }
                         }}
-                        className="px-3 py-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded text-sm font-medium"
+                        className="px-3 py-1.5 text-red-600 hover:text-red-800 hover:bg-red-50 rounded text-sm font-medium whitespace-nowrap flex-shrink-0"
                       >
                         Delete
                       </button>
