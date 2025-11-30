@@ -65,22 +65,43 @@ async def get_artifact_file(filename: str):
     safe_filename = Path(filename).name
     file_path = ARTIFACTS_DIR / safe_filename
     
-    logger.info(f"Artifact file request: filename={filename}, safe_filename={safe_filename}, file_path={file_path}")
-    logger.info(f"ARTIFACTS_DIR exists: {ARTIFACTS_DIR.exists()}, ARTIFACTS_DIR={ARTIFACTS_DIR}")
+    # Debug logging
+    logger.info(f"Artifact request: filename='{filename}', safe_filename='{safe_filename}'")
+    logger.info(f"ARTIFACTS_DIR: {ARTIFACTS_DIR}, exists={ARTIFACTS_DIR.exists()}")
+    logger.info(f"file_path: {file_path}, exists={file_path.exists()}, is_file={file_path.is_file() if file_path.exists() else 'N/A'}")
+    
+    # Check if directory exists
+    if not ARTIFACTS_DIR.exists():
+        logger.error(f"Artifacts directory does not exist: {ARTIFACTS_DIR}")
+        # Try to create it
+        try:
+            ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+            logger.info(f"Created artifacts directory: {ARTIFACTS_DIR}")
+        except Exception as e:
+            logger.error(f"Failed to create artifacts directory: {e}")
+            raise HTTPException(status_code=500, detail="Artifacts directory not accessible")
+    
+    # List files in directory for debugging
+    if ARTIFACTS_DIR.exists():
+        files = list(ARTIFACTS_DIR.glob("*.txt"))
+        logger.info(f"Found {len(files)} .txt files in directory")
+        if safe_filename in [f.name for f in files]:
+            logger.info(f"File '{safe_filename}' is in the directory listing")
+        else:
+            logger.warning(f"File '{safe_filename}' NOT in directory listing. Available files: {[f.name for f in files[:5]]}")
     
     if not file_path.exists():
         logger.error(f"File not found: {file_path}")
-        # List some files in the directory for debugging
-        if ARTIFACTS_DIR.exists():
-            files = list(ARTIFACTS_DIR.glob("*.txt"))[:5]
-            logger.error(f"Sample files in directory: {[f.name for f in files]}")
+        # Try absolute path
+        abs_path = file_path.resolve()
+        logger.error(f"Absolute path: {abs_path}, exists={abs_path.exists()}")
         raise HTTPException(status_code=404, detail=f"File not found: {safe_filename}")
     
     if not file_path.is_file():
         logger.error(f"Path exists but is not a file: {file_path}")
         raise HTTPException(status_code=404, detail=f"File not found: {safe_filename}")
     
-    logger.info(f"File found, serving: {file_path}")
+    logger.info(f"File found, serving: {file_path} (size: {file_path.stat().st_size} bytes)")
     
     # Determine media type based on file extension
     media_type = None
