@@ -45,7 +45,12 @@ if [ $? -eq 0 ]; then
     echo "✅ Artifact files generated successfully!"
     echo ""
     echo "Verifying files were created..."
-    docker exec "$BACKEND_CONTAINER" ls -la /app/artifacts/files/*.txt | head -20
+    # Use find instead of ls with glob to avoid "No such file" error
+    docker exec "$BACKEND_CONTAINER" find /app/artifacts/files -name "*.txt" -type f | head -20
+    echo ""
+    echo "Running verification script..."
+    docker cp backend/verify_artifact_creation.py "$BACKEND_CONTAINER:/app/verify_artifact_creation.py"
+    docker exec "$BACKEND_CONTAINER" python /app/verify_artifact_creation.py
     echo ""
     echo "You can now use the scenario. Artifacts should be accessible."
 else
