@@ -73,18 +73,35 @@ export default function AudienceView() {
       scoreboard.phase_state === 'open_for_decisions'
     ) {
       // Check if this is the first phase (phase_order 0)
-      // A phase is considered the first phase if no team has scored phase 0 yet
+      // A phase is considered the first phase if:
+      // 1. No teams have any score_history entries, OR
+      // 2. All teams have score_history but phase 0 has score 0 (not scored yet)
       const isFirstPhase = scoreboard.teams.length === 0 || scoreboard.teams.every(team => {
         if (!team.score_history || team.score_history.length === 0) {
           return true // No scores yet, must be first phase
         }
         // Check if phase 0 has been scored (score > 0)
         const phase0Entry = team.score_history.find(entry => entry.phase_order === 0)
+        // If phase 0 doesn't exist or has score 0, we're still on first phase
+        // If phase 0 has score > 0, we've moved past first phase
         return phase0Entry === undefined || phase0Entry.score === 0
+      })
+      
+      console.log('Sound check:', {
+        isFirstPhase,
+        hasPlayed: hasPlayedFirstPhaseSoundRef.current,
+        phaseState: scoreboard.phase_state,
+        previousPhaseState,
+        teams: scoreboard.teams.length,
+        scoreHistories: scoreboard.teams.map(t => ({
+          team: t.team_name,
+          history: t.score_history
+        }))
       })
       
       // Only play sound if it's the first phase and we haven't played it yet
       if (isFirstPhase && !hasPlayedFirstPhaseSoundRef.current && phaseTransitionSoundRef.current) {
+        console.log('Playing first phase sound')
         phaseTransitionSoundRef.current.currentTime = 0 // Reset to start
         phaseTransitionSoundRef.current.play().catch(err => {
           console.warn('Failed to play decision opening sound:', err)
@@ -97,7 +114,15 @@ export default function AudienceView() {
     // Animate score changes
     scoreboard.teams.forEach(team => {
       const prevScore = previousScoresRef.current[team.team_id] || 0
+      console.log(`Team ${team.team_name} score check:`, {
+        team_id: team.team_id,
+        current_score: team.total_score,
+        previous_score: prevScore,
+        score_history: team.score_history,
+        recent_events: team.recent_events
+      })
       if (team.total_score !== prevScore) {
+        console.log(`Score changed for ${team.team_name}: ${prevScore} -> ${team.total_score}`)
         setAnimatedScores(prev => ({
           ...prev,
           [team.team_id]: {
