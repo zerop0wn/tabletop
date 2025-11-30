@@ -59,49 +59,54 @@ async def upload_artifact(
 async def get_artifact_file(filename: str):
     """Serve artifact files."""
     import logging
+    import sys
+    
     logger = logging.getLogger(__name__)
     
     # Security: prevent directory traversal
     safe_filename = Path(filename).name
     file_path = ARTIFACTS_DIR / safe_filename
     
-    # Debug logging
-    logger.info(f"Artifact request: filename='{filename}', safe_filename='{safe_filename}'")
-    logger.info(f"ARTIFACTS_DIR: {ARTIFACTS_DIR}, exists={ARTIFACTS_DIR.exists()}")
-    logger.info(f"file_path: {file_path}, exists={file_path.exists()}, is_file={file_path.is_file() if file_path.exists() else 'N/A'}")
+    # Debug output - use print to ensure it shows up
+    print(f"[ARTIFACT DEBUG] Request: filename='{filename}', safe_filename='{safe_filename}'", file=sys.stderr)
+    print(f"[ARTIFACT DEBUG] ARTIFACTS_DIR: {ARTIFACTS_DIR}, exists={ARTIFACTS_DIR.exists()}", file=sys.stderr)
+    print(f"[ARTIFACT DEBUG] file_path: {file_path}, exists={file_path.exists()}", file=sys.stderr)
     
     # Check if directory exists
     if not ARTIFACTS_DIR.exists():
-        logger.error(f"Artifacts directory does not exist: {ARTIFACTS_DIR}")
+        print(f"[ARTIFACT ERROR] Artifacts directory does not exist: {ARTIFACTS_DIR}", file=sys.stderr)
         # Try to create it
         try:
             ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
-            logger.info(f"Created artifacts directory: {ARTIFACTS_DIR}")
+            print(f"[ARTIFACT DEBUG] Created artifacts directory: {ARTIFACTS_DIR}", file=sys.stderr)
         except Exception as e:
-            logger.error(f"Failed to create artifacts directory: {e}")
+            print(f"[ARTIFACT ERROR] Failed to create artifacts directory: {e}", file=sys.stderr)
             raise HTTPException(status_code=500, detail="Artifacts directory not accessible")
     
     # List files in directory for debugging
     if ARTIFACTS_DIR.exists():
         files = list(ARTIFACTS_DIR.glob("*.txt"))
-        logger.info(f"Found {len(files)} .txt files in directory")
-        if safe_filename in [f.name for f in files]:
-            logger.info(f"File '{safe_filename}' is in the directory listing")
+        print(f"[ARTIFACT DEBUG] Found {len(files)} .txt files in directory", file=sys.stderr)
+        file_names = [f.name for f in files]
+        if safe_filename in file_names:
+            print(f"[ARTIFACT DEBUG] File '{safe_filename}' IS in directory listing", file=sys.stderr)
         else:
-            logger.warning(f"File '{safe_filename}' NOT in directory listing. Available files: {[f.name for f in files[:5]]}")
+            print(f"[ARTIFACT ERROR] File '{safe_filename}' NOT in directory listing", file=sys.stderr)
+            print(f"[ARTIFACT DEBUG] Available files (first 10): {file_names[:10]}", file=sys.stderr)
     
     if not file_path.exists():
-        logger.error(f"File not found: {file_path}")
+        print(f"[ARTIFACT ERROR] File not found: {file_path}", file=sys.stderr)
         # Try absolute path
         abs_path = file_path.resolve()
-        logger.error(f"Absolute path: {abs_path}, exists={abs_path.exists()}")
+        print(f"[ARTIFACT DEBUG] Absolute path: {abs_path}, exists={abs_path.exists()}", file=sys.stderr)
         raise HTTPException(status_code=404, detail=f"File not found: {safe_filename}")
     
     if not file_path.is_file():
-        logger.error(f"Path exists but is not a file: {file_path}")
+        print(f"[ARTIFACT ERROR] Path exists but is not a file: {file_path}", file=sys.stderr)
         raise HTTPException(status_code=404, detail=f"File not found: {safe_filename}")
     
-    logger.info(f"File found, serving: {file_path} (size: {file_path.stat().st_size} bytes)")
+    file_size = file_path.stat().st_size
+    print(f"[ARTIFACT DEBUG] File found, serving: {file_path} (size: {file_size} bytes)", file=sys.stderr)
     
     # Determine media type based on file extension
     media_type = None
