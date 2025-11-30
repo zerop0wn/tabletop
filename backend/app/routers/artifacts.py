@@ -99,7 +99,19 @@ async def get_artifact_file(filename: str):
         # Try absolute path
         abs_path = file_path.resolve()
         print(f"[ARTIFACT DEBUG] Absolute path: {abs_path}, exists={abs_path.exists()}", file=sys.stderr)
-        raise HTTPException(status_code=404, detail=f"File not found: {safe_filename}")
+        
+        # List all files to help debug
+        if ARTIFACTS_DIR.exists():
+            all_files = list(ARTIFACTS_DIR.iterdir())
+            print(f"[ARTIFACT DEBUG] All files in directory: {[f.name for f in all_files]}", file=sys.stderr)
+        
+        # More detailed error message
+        error_detail = f"File not found: {safe_filename}. "
+        if ARTIFACTS_DIR.exists():
+            similar_files = [f.name for f in ARTIFACTS_DIR.glob("*.txt") if safe_filename.lower() in f.name.lower() or f.name.lower() in safe_filename.lower()]
+            if similar_files:
+                error_detail += f"Similar files found: {similar_files[:5]}"
+        raise HTTPException(status_code=404, detail=error_detail)
     
     if not file_path.is_file():
         print(f"[ARTIFACT ERROR] Path exists but is not a file: {file_path}", file=sys.stderr)
