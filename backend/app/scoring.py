@@ -520,7 +520,6 @@ INTERMEDIATE_RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     (0, "blue"): {
         "Isolate Operations Department host (WS-OPS-089)": 10,  # CORRECT - Artifacts show Operations is higher risk
         "Isolate HR Department host (WS-HR-042)": 6,            # WRONG - HR already blocked, lower risk
-        "Isolate both hosts": 8,                                # MEDIUM - Conservative but may be overkill
         "Collect forensic evidence": 8,                          # Critical for analysis
         "Deploy countermeasures": 5,                            # Good but takes time
     },
