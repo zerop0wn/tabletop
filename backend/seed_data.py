@@ -163,10 +163,6 @@ def seed_data():
                         "description": "Disconnect WS-MKT-02 from the network to prevent privilege escalation. Review artifacts to assess risk level."
                     },
                     {
-                        "name": "Isolate both hosts",
-                        "description": "Disconnect both WS-FIN-01 and WS-MKT-02 from the network. Conservative approach but may impact business operations."
-                    },
-                    {
                         "name": "Deploy countermeasures",
                         "description": "Implement security controls like patches, network segmentation, or enhanced monitoring. Proactive defense but may impact system availability."
                     },
