@@ -260,7 +260,7 @@ export default function PlayerView() {
                           </pre>
                         </div>
                         <a
-                          href={`${window.location.origin}/api/artifacts/${artifact.id}/content`}
+                          href={`${window.location.origin}/api/artifacts/content/${artifact.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:text-blue-800 text-sm mt-2 inline-flex items-center"
