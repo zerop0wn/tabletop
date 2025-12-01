@@ -516,12 +516,20 @@ export default function AudienceView() {
                     {team.score_history && team.score_history.length > 0 ? (
                       <div className="flex items-end justify-between h-16 gap-1">
                         {team.score_history.map((entry, idx) => {
-                          const allScores = team.score_history.map(e => e.score)
+                          // Safely get all scores, filtering out any invalid entries
+                          const allScores = team.score_history
+                            .filter(e => e && typeof e.score === 'number')
+                            .map(e => e.score)
                           const maxPhaseScore = Math.max(...allScores, 1)
                           // Ensure minimum height of 10% so bars are always visible, even with 0 scores
                           const height = maxPhaseScore > 0 
                             ? Math.max((entry.score / maxPhaseScore) * 90, entry.score > 0 ? 10 : 5)
                             : 5
+                          // Ensure entry has required fields
+                          if (!entry || typeof entry.phase_order !== 'number' || typeof entry.score !== 'number') {
+                            console.warn('Invalid score_history entry:', entry)
+                            return null
+                          }
                           return (
                             <div key={`${team.team_id}-${entry.phase_order}-${idx}`} className="flex-1 flex flex-col items-center min-w-0">
                               <div
@@ -541,7 +549,7 @@ export default function AudienceView() {
                               )}
                             </div>
                           )
-                        })}
+                        }).filter(Boolean)}
                       </div>
                     ) : (
                       <div className="text-xs text-gray-500 text-center py-4">
