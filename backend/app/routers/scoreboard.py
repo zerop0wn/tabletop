@@ -48,16 +48,30 @@ def get_scoreboard(game_identifier: str, db: Session = Depends(get_db)):
             ).order_by(ScenarioPhase.order_index).all()
             
             for phase in phases:
-                phase_score = db.query(func.coalesce(func.sum(ScoreEvent.delta), 0)).filter(
-                    ScoreEvent.game_id == game.id,
-                    ScoreEvent.team_id == team.id,
-                    ScoreEvent.phase_id == phase.id
-                ).scalar()
-                score_history.append({
-                    "phase_name": phase.name,
-                    "phase_order": phase.order_index,
-                    "score": int(phase_score) if phase_score else 0
-                })
+                try:
+                    phase_score = db.query(func.coalesce(func.sum(ScoreEvent.delta), 0)).filter(
+                        ScoreEvent.game_id == game.id,
+                        ScoreEvent.team_id == team.id,
+                        ScoreEvent.phase_id == phase.id
+                    ).scalar()
+                    # Ensure phase_score is a number
+                    if phase_score is None:
+                        phase_score = 0
+                    score_history.append({
+                        "phase_name": phase.name,
+                        "phase_order": phase.order_index,
+                        "score": int(phase_score)
+                    })
+                except Exception as e:
+                    # If there's an error calculating score for a phase, still include it with 0
+                    import logging
+                    logger = logging.getLogger(__name__)
+                    logger.error(f"Error calculating score for phase {phase.id}: {e}")
+                    score_history.append({
+                        "phase_name": phase.name,
+                        "phase_order": phase.order_index,
+                        "score": 0
+                    })
 
         # Get recent decision
         recent_decision = None

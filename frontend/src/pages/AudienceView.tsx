@@ -314,6 +314,67 @@ export default function AudienceView() {
           )}
         </div>
 
+        {/* Scoring Feed */}
+        {scoreboard.recent_events && scoreboard.recent_events.length > 0 && (
+          <div className="mb-6 max-w-5xl mx-auto">
+            <div className="bg-gray-800/50 rounded-lg p-6 border border-gray-700">
+              <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
+                Scoring
+              </h2>
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {scoreboard.recent_events.map((event, idx) => {
+                  const eventTime = event.created_at ? new Date(event.created_at) : null
+                  const timeAgo = eventTime 
+                    ? eventTime.getTime() > Date.now() - 60000
+                      ? 'Just now'
+                      : eventTime.getTime() > Date.now() - 3600000
+                      ? `${Math.floor((Date.now() - eventTime.getTime()) / 60000)}m ago`
+                      : eventTime.toLocaleTimeString()
+                    : ''
+                  
+                  return (
+                    <div
+                      key={idx}
+                      className={`p-3 rounded-lg border-l-4 ${
+                        event.delta >= 7
+                          ? 'bg-green-900/30 border-green-500'
+                          : event.delta >= 4
+                          ? 'bg-yellow-900/30 border-yellow-500'
+                          : 'bg-red-900/30 border-red-500'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className={`font-semibold ${
+                              event.team_role === 'red' ? 'text-red-300' : 'text-blue-300'
+                            }`}>
+                              {event.team_name}
+                            </span>
+                            <span className={`text-2xl font-bold ${
+                              event.delta >= 7
+                                ? 'text-green-400'
+                                : event.delta >= 4
+                                ? 'text-yellow-400'
+                                : 'text-red-400'
+                            }`}>
+                              {event.delta > 0 ? '+' : ''}{event.delta}
+                            </span>
+                          </div>
+                          <p className="text-sm text-gray-300">{event.reason}</p>
+                        </div>
+                        {timeAgo && (
+                          <span className="text-xs text-gray-400 ml-4">{timeAgo}</span>
+                        )}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 max-w-5xl mx-auto">
           {/* Team Score Cards */}
             {scoreboard.teams.map((team) => {
