@@ -41,40 +41,66 @@ try:
     for phase in phases:
         print(f"Processing Phase {phase.order_index}: {phase.name}")
         
-        # Get all artifacts for this phase
-        artifacts = phase.artifacts
-        
-        red_artifacts = []
-        for artifact in artifacts:
-            # Check if this is a Red Team artifact
-            is_red = (
-                "Red Team" in artifact.name or 
-                "red" in artifact.name.lower() or
-                (hasattr(artifact, 'team_role') and artifact.team_role == 'red')
+        # Get Red Team artifact associations for this phase
+        red_associations = db.execute(
+            scenario_phase_artifacts.select().where(
+                scenario_phase_artifacts.c.phase_id == phase.id,
+                scenario_phase_artifacts.c.team_role == 'red'
             )
-            
-            if is_red:
-                red_artifacts.append(artifact)
+        ).fetchall()
         
-        # Remove associations first
-        for artifact in red_artifacts:
-            # Remove from scenario_phase_artifacts table
-            db.execute(
-                scenario_phase_artifacts.delete().where(
-                    scenario_phase_artifacts.c.phase_id == phase.id,
-                    scenario_phase_artifacts.c.artifact_id == artifact.id
+        if not red_associations:
+            # Fallback: check artifact names if team_role is not set
+            artifacts = phase.artifacts
+            red_artifacts = []
+            for artifact in artifacts:
+                # Check if this is a Red Team artifact by name
+                is_red = (
+                    "Red Team" in artifact.name or 
+                    "red" in artifact.name.lower()
                 )
-            )
-            print(f"  🗑️  Removed association for: {artifact.name}")
-        
-        # Delete the artifacts themselves
-        for artifact in red_artifacts:
-            db.delete(artifact)
-            removed_count += 1
-            print(f"  ✅ Deleted artifact: {artifact.name}")
-        
-        if not red_artifacts:
-            print(f"  ⏭️  No Red Team artifacts found for this phase")
+                if is_red:
+                    red_artifacts.append(artifact)
+            
+            if red_artifacts:
+                # Remove associations first
+                for artifact in red_artifacts:
+                    db.execute(
+                        scenario_phase_artifacts.delete().where(
+                            scenario_phase_artifacts.c.phase_id == phase.id,
+                            scenario_phase_artifacts.c.artifact_id == artifact.id
+                        )
+                    )
+                    print(f"  🗑️  Removed association for: {artifact.name}")
+                
+                # Delete the artifacts themselves
+                for artifact in red_artifacts:
+                    db.delete(artifact)
+                    removed_count += 1
+                    print(f"  ✅ Deleted artifact: {artifact.name}")
+            else:
+                print(f"  ⏭️  No Red Team artifacts found for this phase")
+        else:
+            # Remove associations and artifacts using team_role
+            artifact_ids = [assoc.artifact_id for assoc in red_associations]
+            
+            # Remove associations
+            for assoc in red_associations:
+                db.execute(
+                    scenario_phase_artifacts.delete().where(
+                        scenario_phase_artifacts.c.phase_id == assoc.phase_id,
+                        scenario_phase_artifacts.c.artifact_id == assoc.artifact_id
+                    )
+                )
+            
+            # Delete the artifacts themselves
+            for artifact_id in artifact_ids:
+                artifact = db.query(Artifact).filter(Artifact.id == artifact_id).first()
+                if artifact:
+                    print(f"  🗑️  Removed association for: {artifact.name}")
+                    db.delete(artifact)
+                    removed_count += 1
+                    print(f"  ✅ Deleted artifact: {artifact.name}")
         
         print()
     
