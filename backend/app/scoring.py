@@ -463,6 +463,84 @@ AI_APP_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     },
 }
 
+# Operation Inbox Overload scenario scoring
+OPERATION_INBOX_OVERLOAD_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
+    # PHASE 0 (index 0) – Email Flood Disruption
+    # Red is trying to create believable inbox overload that sets up the callback.
+    (0, "red"): {
+        "Use look-alike IT domain without links": 10,   # Optimal: highly believable, low detection risk for classic phishing
+        "Vary sender display name and timing": 7,        # Good stealth / deliverability boost
+        "Send from generic/free mailbox": 4,             # Acceptable but low credibility
+        "Include suspicious links in email body": 0,     # Counterproductive to callback goal (triggers phishing engines)
+    },
+    (0, "blue"): {
+        "Purge messages and block sending domain": 10,   # Optimal: scalable containment
+        "Notify affected users about suspicious emails": 4,   # Acceptable but not sufficient alone
+        "Block sender address only": 1,                  # Poor: easy to bypass
+        "Do nothing and continue monitoring": 0,         # Counterproductive
+    },
+
+    # PHASE 1 (index 1) – Panic Driven Help-Seeking
+    # Red wants user to see them as fastest path to help; Blue wants early comms.
+    (1, "red"): {
+        "Send Teams DM first, then place a call": 10,    # Optimal trust-building sequence
+        "Call user directly with no prior context": 4,   # Acceptable but lower success
+        "Send additional email claiming IT will call": 1,# Poor; adds noise more than trust
+        "Send Teams message with external support link": 0,  # Counterproductive: link may trigger detection
+    },
+    (1, "blue"): {
+        "Send org-wide Teams broadcast about phishing/callback": 10,  # Optimal: proactive, preempts callback
+        "Reset user password only": 4,                                # Acceptable: fixes identity but not awareness
+        "Disable user account preemptively": 7,                       # Good but heavy-handed at this early stage
+        "Do nothing and continue monitoring": 0,                      # Counterproductive
+    },
+
+    # PHASE 2 (index 2) – Teams Impersonation Callback
+    # Red is impersonating IT; Blue must choose identity containment strategy.
+    (2, "red"): {
+        "Ask user to share screen to show the issue": 10,             # Optimal: visibility into settings + trust
+        "Provide fake ticket number and internal jargon": 7,          # Good: builds credibility but no direct access
+        "Ask user directly for MFA reset code": 4,                    # Acceptable: might work but more suspicious
+        "Ask user to install remote support tool": 1,                 # Poor: highly suspicious for many users
+    },
+    (2, "blue"): {
+        "Disable user account immediately": 10,                       # Optimal: strong containment given context
+        "Validate caller via Teams tenant and internal directory": 7, # Good verification, less disruptive
+        "Allow screen share with external caller": 1,                 # Poor: exposes sensitive views
+        "Monitor call and collect more evidence only": 0,             # Counterproductive: gives attacker time
+    },
+
+    # PHASE 3 (index 3) – MFA Reset Attempt & Endpoint Foothold
+    # Red is trying to seize MFA; Blue must manage identity + endpoint.
+    (3, "red"): {
+        "Trick user into approving MFA reset prompt": 10,             # Optimal: full identity takeover
+        "Ask user to navigate to Security and Privacy settings": 7,   # Good: step toward MFA reset
+        "Access SharePoint/OneDrive from compromised session": 4,     # Acceptable: gets data but no long-term control
+        "Attempt to install malicious support application": 1,        # Poor: high chance of user suspicion
+    },
+    (3, "blue"): {
+        "Isolate host in Defender for Endpoint": 10,                  # Optimal: stops active hands-on-keyboard + preserves evidence
+        "Disable user account": 7,                                    # Good: strong identity containment, less host focus
+        "Revoke active sessions only": 4,                             # Acceptable: better than nothing, but host still risky
+        "Take no action until more logs are collected": 0,            # Counterproductive
+    },
+
+    # PHASE 4 (index 4) – Persistence vs Containment
+    # Red is trying to maintain long-term access; Blue must break persistence.
+    (4, "red"): {
+        "Create app password for IMAP/legacy auth": 10,               # Optimal persistence tactic
+        "Create mailbox forwarding rule to external address": 7,      # Good long-term exfil method
+        "Perform one-time data exfiltration only": 4,                 # Acceptable: impact but no persistence
+        "Attempt another MFA reset after being blocked": 1,           # Poor: noisy and likely fails
+    },
+    (4, "blue"): {
+        "Full token revoke and add Conditional Access block": 10,     # Optimal: breaks persistence + hardens future access
+        "Disable user account only": 7,                               # Good: stops immediate abuse but not policy-hardening
+        "Reset user password only": 4,                                # Acceptable: still leaves some tokens/apps alive
+        "Enable extra logging and auditing only": 1,                  # Poor: observation without mitigation
+    },
+}
+
 # Tutorial Scenario Scoring (Simple scoring for learning)
 TUTORIAL_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     # Phase 1: Initial Detection (order_index=0)
@@ -599,6 +677,7 @@ SCORING_MATRICES: Dict[str, Dict[Tuple[int, str], Dict[str, int]]] = {
     "Ransomware Attack: Advanced Persistent Threat": NEW_RANSOMWARE_SCORING,
     "Ransomware Attack: Corporate Network Compromise": INTERMEDIATE_RANSOMWARE_SCORING,
     "Email Bomb & Social Engineering Attack": EMAIL_BOMB_SCORING,
+    "Operation Inbox Overload": OPERATION_INBOX_OVERLOAD_SCORING,
     "SharePoint RCE Zero-Day Exploitation": SHAREPOINT_RCE_SCORING,
     "AI Application Data Leakage & Permission Misconfiguration": AI_APP_SCORING,
     "Tutorial: Basic Security Incident": TUTORIAL_SCORING,
