@@ -271,30 +271,8 @@ export default function AfterActionReportView() {
                   </div>
                 )}
 
-                {/* Comments */}
-                {phase.comments.length > 0 && (
-                  <div className="mt-4">
-                    <h4 className="font-semibold mb-3">Player Comments</h4>
-                    <div className="space-y-2">
-                      {phase.comments.map((comment, cIdx) => (
-                        <div key={cIdx} className="bg-gray-50 p-3 rounded border-l-4 border-gray-300">
-                          <div className="flex justify-between items-start mb-1">
-                            <span className="font-medium">{comment.player_name}</span>
-                            {comment.rating && (
-                              <span className="text-sm text-gray-600">
-                                Rating: {comment.rating}/10
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-700 mt-1">{comment.comments}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {phase.comments.length === 0 && !phase.gm_notes && (
-                  <p className="text-sm text-gray-500 italic">No comments or notes for this phase.</p>
+                {!phase.gm_notes && (
+                  <p className="text-sm text-gray-500 italic">No GM notes for this phase.</p>
                 )}
               </div>
             ))}

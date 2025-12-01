@@ -109,17 +109,6 @@ def generate_word_report(report_data: Dict[str, Any]) -> BytesIO:
         details_para.add_run('Total Responses: ').bold = True
         details_para.add_run(str(phase.get('total_responses', 0)))
         
-        # Player Comments
-        comments = phase.get('comments', [])
-        if comments:
-            doc.add_heading('Player Feedback', 3)
-            for comment in comments:
-                comment_para = doc.add_paragraph(style='List Bullet')
-                comment_para.add_run(f"{comment.get('player_name', 'Unknown')} ({comment.get('team_role', 'unknown').upper()} Team): ").bold = True
-                if comment.get('rating'):
-                    comment_para.add_run(f"[Rating: {comment.get('rating')}/10] ")
-                comment_para.add_run(comment.get('comments', ''))
-        
         # GM Notes
         if phase.get('gm_notes'):
             doc.add_heading('Game Manager Notes & Takeaways', 3)
@@ -163,7 +152,7 @@ def generate_word_report(report_data: Dict[str, Any]) -> BytesIO:
     doc.add_heading('Conclusion', 1)
     conclusion_para = doc.add_paragraph(
         "This after action report provides a comprehensive analysis of the tabletop exercise outcomes. "
-        "The risk ratings and player feedback should be used to inform security improvements and training priorities. "
+        "The risk ratings and Game Manager notes should be used to inform security improvements and training priorities. "
         "Regular tabletop exercises are recommended to maintain and improve incident response capabilities."
     )
     
@@ -302,24 +291,6 @@ def generate_pdf_report(report_data: Dict[str, Any]) -> BytesIO:
         elements.append(phase_table)
         elements.append(Spacer(1, 0.2*inch))
         
-        # Player Comments
-        comments = phase.get('comments', [])
-        if comments:
-            elements.append(Paragraph('Player Feedback', ParagraphStyle(
-                'FeedbackHeading',
-                parent=styles['Heading3'],
-                fontSize=12,
-                spaceAfter=6,
-                fontName='Helvetica-Bold'
-            )))
-            for comment in comments:
-                comment_text = f"<b>{comment.get('player_name', 'Unknown')} ({comment.get('team_role', 'unknown').upper()} Team):</b>"
-                if comment.get('rating'):
-                    comment_text += f" [Rating: {comment.get('rating')}/10] "
-                comment_text += comment.get('comments', '')
-                elements.append(Paragraph(comment_text, styles['Normal']))
-                elements.append(Spacer(1, 0.1*inch))
-        
         # GM Notes
         if phase.get('gm_notes'):
             elements.append(Paragraph('Game Manager Notes & Takeaways', ParagraphStyle(
@@ -376,7 +347,7 @@ def generate_pdf_report(report_data: Dict[str, Any]) -> BytesIO:
     elements.append(Paragraph('Conclusion', heading_style))
     conclusion_text = (
         "This after action report provides a comprehensive analysis of the tabletop exercise outcomes. "
-        "The risk ratings and player feedback should be used to inform security improvements and training priorities. "
+        "The risk ratings and Game Manager notes should be used to inform security improvements and training priorities. "
         "Regular tabletop exercises are recommended to maintain and improve incident response capabilities."
     )
     elements.append(Paragraph(conclusion_text, styles['Normal']))
