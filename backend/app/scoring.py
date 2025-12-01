@@ -124,82 +124,82 @@ RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
 EMAIL_BOMB_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
     # Phase 1: Email Bomb Deployment (order_index=0)
     (0, "red"): {
-        "Continue email bomb campaign": 10,  # Primary objective - maintain email flood
-        "Intensify email bomb": 8,          # Increase impact
-        "Prepare Teams call": 9,            # Critical for Phase 2
-        "Monitor user response": 7,         # Important for timing
-        "Cover tracks": 5,                  # Secondary
+        "Monitor recipient engagement metrics": 7,         # Important for timing
+        "Initialize VOIP infrastructure": 9,              # Critical for Phase 2
+        "Maintain SMTP relay throughput": 10,            # Primary objective
+        "Increase message volume parameters": 8,          # Increase impact
+        "Execute log sanitization procedure": 5,         # Secondary
     },
     (0, "blue"): {
-        "Contact user and warn about social engineering": 10,  # CRITICAL - Prevent Phase 2
-        "Enhance email filtering": 8,       # Block additional spam
-        "Monitor for follow-up attacks": 7, # Proactive defense
-        "Collect forensic evidence": 6,     # Important but takes time
-        "Isolate user's email account": 4,   # Too disruptive
+        "Collect EOP telemetry data": 6,                  # Important but takes time
+        "Initiate user security awareness protocol": 10,  # CRITICAL - Prevent Phase 2
+        "Update transport rule policies": 8,             # Block additional spam
+        "Enable enhanced monitoring protocols": 7,       # Proactive defense
+        "Execute account isolation procedure": 4,        # Too disruptive
     },
     
     # Phase 2: Teams Call Impersonation (order_index=1)
     (1, "red"): {
-        "Execute Teams call and request remote access": 10,  # Primary objective
-        "Intensify social engineering": 8,   # Increase success rate
-        "Request credentials during call": 7, # Higher risk but may work
-        "Monitor user response": 6,         # Adjust tactics
-        "Cover tracks": 5,                  # Secondary
+        "Monitor user response": 6,                      # Adjust tactics
+        "Establish remote assistance session": 10,       # Primary objective
+        "Intensify social engineering": 8,                # Increase success rate
+        "Execute log sanitization procedure": 5,         # Secondary
+        "Initiate credential collection workflow": 7,    # Higher risk but may work
     },
     (1, "blue"): {
-        "Contact user and terminate remote session": 10,  # CRITICAL - Stop remote access
-        "Block Quick Assist": 9,            # Prevent unauthorized access
-        "Investigate caller identity": 8,    # Verify impersonation
-        "Collect forensic evidence": 6,      # Important but takes time
-        "Monitor for credential harvesting": 5, # Proactive but may be too late
+        "Review Teams call logs and caller metadata": 8, # Verify impersonation
+        "Terminate active remote assistance connections": 10,  # CRITICAL - Stop remote access
+        "Disable remote support protocols": 9,           # Prevent unauthorized access
+        "Collect forensic evidence": 6,                  # Important but takes time
+        "Enable credential harvesting monitoring": 5,    # Proactive but may be too late
     },
     
     # Phase 3: Credential Harvesting (order_index=2)
     (2, "red"): {
-        "Request credentials during remote session": 10,  # Primary objective
-        "Use keylogging": 8,                 # Alternative method
-        "Validate credentials": 9,          # Critical for next phase
-        "Deploy credential dumper": 6,      # Higher detection risk
-        "Cover tracks": 5,                  # Secondary
+        "Execute log sanitization procedure": 5,         # Secondary
+        "Perform account verification procedure": 10,    # Primary objective
+        "Deploy authentication capture module": 8,       # Alternative method
+        "Initiate credential validation process": 9,     # Critical for next phase
+        "Execute credential extraction utility": 6,      # Higher detection risk
     },
     (2, "blue"): {
-        "Force password reset immediately": 10,  # CRITICAL - Secure account
-        "Disable MFA temporarily": 9,       # Prevent MFA bypass
-        "Review account activity": 8,        # Understand compromise
-        "Collect forensic evidence": 6,      # Important but takes time
-        "Monitor for persistence": 5,       # Proactive but may be too late
+        "Collect forensic evidence": 6,                  # Important but takes time
+        "Execute credential rotation procedure": 10,     # CRITICAL - Secure account
+        "Initiate account security remediation": 9,       # Prevent MFA bypass
+        "Review account activity logs": 8,              # Understand compromise
+        "Enable persistence mechanism monitoring": 5,    # Proactive but may be too late
     },
     
     # Phase 4: Remote Access & Persistence (order_index=3)
     (3, "red"): {
-        "Deploy scheduled task persistence": 10,  # Primary - reliable method
-        "Deploy registry persistence": 9,        # Secondary - good backup
-        "Deploy email forwarding rule": 8,        # Data exfiltration
-        "Deploy payloads": 7,                     # C2 preparation
-        "Cover tracks": 5,                        # Secondary
+        "Execute log sanitization procedure": 5,         # Secondary
+        "Configure scheduled task automation": 10,       # Primary - reliable method
+        "Modify registry startup parameters": 9,         # Secondary - good backup
+        "Deploy email routing configuration": 8,         # Data exfiltration
+        "Initialize payload deployment": 7,              # C2 preparation
     },
     (3, "blue"): {
-        "Remove all persistence mechanisms": 10,  # CRITICAL - Prevent long-term access
-        "Quarantine malware": 9,                  # Remove malicious files
-        "Terminate remote session": 8,             # Stop ongoing access
-        "Isolate device": 7,                      # Contain threat
-        "Collect forensic evidence": 5,           # Important but takes time
+        "Collect forensic evidence": 5,                  # Important but takes time
+        "Execute persistence removal procedure": 10,     # CRITICAL - Prevent long-term access
+        "Quarantine detected malware artifacts": 9,     # Remove malicious files
+        "Terminate remote access sessions": 8,          # Stop ongoing access
+        "Execute network isolation protocol": 7,         # Contain threat
     },
     
     # Phase 5: Initial Access & C2 Communication (order_index=4)
     (4, "red"): {
-        "Establish C2 connection": 10,        # Primary objective
-        "Execute credential dumper": 8,       # Harvest additional credentials
-        "Scan internal network": 7,           # Lateral movement prep
-        "Exfiltrate data": 6,                  # Higher detection risk
-        "Cover tracks": 5,                     # Secondary
+        "Execute log sanitization procedure": 5,        # Secondary
+        "Verify C2 channel stability": 10,              # Primary objective
+        "Execute credential extraction utility": 8,     # Harvest additional credentials
+        "Initiate network reconnaissance scan": 7,      # Lateral movement prep
+        "Begin data transfer operations": 6,            # Higher detection risk
     },
     (4, "blue"): {
-        "Isolate device immediately": 10,     # CRITICAL - Stop C2 communication
-        "Block C2 server": 9,                  # Terminate C2 connection
-        "Terminate malicious processes": 8,    # Stop payload execution
-        "Investigate data exfiltration": 7,     # Understand impact
-        "Collect forensic evidence": 5,        # Important but takes time
+        "Collect forensic evidence": 5,                 # Important but takes time
+        "Execute network isolation protocol": 10,       # CRITICAL - Stop C2 communication
+        "Deploy firewall blocking rules": 9,            # Terminate C2 connection
+        "Terminate malicious process execution": 8,      # Stop payload execution
+        "Analyze data exfiltration patterns": 7,        # Understand impact
     },
 }
 

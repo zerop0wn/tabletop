@@ -69,53 +69,53 @@ try:
         order_index=0,
         name="Phase 1: Email Bomb Deployment",
         briefing_text="At 09:00 AM, a sophisticated email bomb attack has been launched against finance.director@corp.local. Over 800 emails have been sent to the target's inbox, with 623 emails successfully delivered (73.6% delivery rate). The email flood has overwhelmed the inbox, making it difficult for the user to find important messages.\n\nMicrosoft Defender for Office 365 has detected the email bomb and blocked 224 emails (26.4%), but the majority have been delivered. The user has reported being unable to find important financial documents and is experiencing significant productivity loss.\n\nSecurity monitoring shows:\n- 847 total emails sent in 12 minutes\n- 623 emails delivered (73.6%)\n- 224 emails blocked (26.4%)\n- Peak delivery rate: 87 emails per minute\n- User inbox: Overwhelmed and unusable\n\n**Your decision: How should you respond to this email bomb attack?**\n\n**Remember:** Review the artifacts carefully. They contain email volume analysis, sender reputation data, and user impact assessment. The artifacts will reveal the severity of the attack and help determine the appropriate response. This attack may be preparation for a follow-up social engineering attempt.",
-        red_objective="Monitor the email bomb campaign to ensure it successfully overwhelms the target's inbox and creates the desired psychological state (stress, anxiety, need for help). Your goal is to prepare the target for Phase 2 (Teams call impersonation) by making them vulnerable and seeking assistance.",
+        red_objective="Monitor the email bomb campaign effectiveness and assess user impact. Your goal is to verify the attack successfully overwhelmed the target's inbox and prepare for Phase 2 (Teams call impersonation) by ensuring the target is vulnerable and seeking assistance.",
         blue_objective="Assess the email bomb attack and determine the appropriate response. Your goal is to protect the user, prevent follow-up attacks, and maintain business operations. Be aware that email bombs are often used as preparation for social engineering attacks.",
         default_duration_seconds=900,
         miro_frame_url="https://miro.com/app/board/example/frame1",
         available_actions={
             "red": [
                 {
-                    "name": "Continue email bomb campaign",
-                    "description": "Maintain the email bomb to keep the target's inbox overwhelmed. Review artifacts to assess delivery success and user impact."
+                    "name": "Monitor recipient engagement metrics",
+                    "description": "Track user behavior and email client performance to assess operational effectiveness. Review artifacts to evaluate psychological impact and optimal timing for next phase."
                 },
                 {
-                    "name": "Intensify email bomb",
-                    "description": "Increase email volume to further overwhelm the target. Higher impact but may trigger stronger security responses."
+                    "name": "Initialize VOIP infrastructure",
+                    "description": "Prepare communication channels and support engagement protocols. Review artifacts to assess optimal timing and configuration parameters."
                 },
                 {
-                    "name": "Prepare Teams call",
-                    "description": "Prepare for Phase 2 by setting up Teams call infrastructure and social engineering scripts. Review artifacts to assess optimal timing."
+                    "name": "Maintain SMTP relay throughput",
+                    "description": "Continue current email delivery operations at existing rate. Review artifacts to assess delivery metrics and infrastructure performance."
                 },
                 {
-                    "name": "Cover tracks",
-                    "description": "Delete logs, clear command history, and remove forensic artifacts. Reduces detection but suspicious log gaps may be noticed."
+                    "name": "Increase message volume parameters",
+                    "description": "Adjust sending rate configuration to maximize delivery throughput. Higher volume but may impact infrastructure stability and trigger security responses."
                 },
                 {
-                    "name": "Monitor user response",
-                    "description": "Monitor user behavior and email client performance to assess psychological impact. Critical for timing Phase 2."
+                    "name": "Execute log sanitization procedure",
+                    "description": "Remove operational artifacts from system logs and clear command history. Reduces forensic visibility but may create suspicious gaps in audit trails."
                 }
             ],
             "blue": [
                 {
-                    "name": "Contact user and warn about social engineering",
-                    "description": "Immediately contact the user to warn them about potential follow-up social engineering attacks (phone calls, Teams calls). Review artifacts to assess attack severity."
+                    "name": "Collect EOP telemetry data",
+                    "description": "Gather email logs, sender reputation data, and threat intelligence feeds for analysis. Critical for understanding attack infrastructure but time-consuming process."
                 },
                 {
-                    "name": "Enhance email filtering",
-                    "description": "Implement stricter email filtering rules to block additional spam emails. Review artifacts to identify suspicious sender domains."
+                    "name": "Initiate user security awareness protocol",
+                    "description": "Contact user to provide security guidance and threat awareness. Review artifacts to assess attack severity and user risk level."
                 },
                 {
-                    "name": "Isolate user's email account",
-                    "description": "Temporarily isolate the user's email account to prevent further email delivery. Conservative approach but may impact business operations."
+                    "name": "Update transport rule policies",
+                    "description": "Modify email filtering rules and sender reputation thresholds. Review artifacts to identify suspicious sender patterns and domains."
                 },
                 {
-                    "name": "Collect forensic evidence",
-                    "description": "Gather email logs, sender data, and threat intelligence for analysis. Critical for understanding the attack but takes time."
+                    "name": "Enable enhanced monitoring protocols",
+                    "description": "Deploy additional monitoring and alerting for potential follow-up activity. Proactive defense measure but may not prevent immediate threats."
                 },
                 {
-                    "name": "Monitor for follow-up attacks",
-                    "description": "Monitor user's account and systems for potential follow-up social engineering attempts. Proactive defense but may not stop immediate threats."
+                    "name": "Execute account isolation procedure",
+                    "description": "Temporarily restrict email account access to prevent further message delivery. Conservative approach that may impact business operations."
                 }
             ]
         }
@@ -130,53 +130,53 @@ try:
         order_index=1,
         name="Phase 2: Teams Call Impersonation",
         briefing_text="At 09:18 AM, approximately 6 minutes after the email bomb peak, a Teams call was placed to finance.director@corp.local. The caller claimed to be IT support and referenced the email bomb attack, offering to help secure the account.\n\nThe caller used an external phone number (+1-555-IT-SUPPORT) but identified themselves as \"IT Support - Corp IT Department\". The call lasted 4 minutes and 32 seconds, during which the caller convinced the user to grant remote access via Quick Assist.\n\nSecurity monitoring shows:\n- External Teams call from unrecognized number\n- Caller claimed to be IT support\n- User granted remote access via Quick Assist\n- Screen share active for 3+ minutes\n- Suspicious actions observed during remote session\n\n**Your decision: How should you respond to this Teams call impersonation?**\n\n**Remember:** Review the artifacts carefully. They contain call analysis, caller verification data, and remote access activity logs. The artifacts will reveal whether this is a legitimate IT support call or a social engineering attack. The timing (immediately after email bomb) is highly suspicious.",
-        red_objective="Execute the Teams call impersonation to establish trust and gain remote access to the target's system. Your goal is to convince the user you are legitimate IT support and obtain remote control via Quick Assist.",
+        red_objective="Maintain remote access session and continue social engineering to build trust. Your goal is to keep the user convinced you are legitimate IT support and maintain remote control via Quick Assist while preparing for credential harvesting.",
         blue_objective="Identify this Teams call as a social engineering attack and prevent the attacker from gaining remote access. Your goal is to protect the user and terminate any unauthorized remote sessions.",
         default_duration_seconds=900,
         miro_frame_url="https://miro.com/app/board/example/frame2",
         available_actions={
             "red": [
                 {
-                    "name": "Execute Teams call and request remote access",
-                    "description": "Place the Teams call, impersonate IT support, and request remote access via Quick Assist. Review artifacts to assess user trust level and optimal timing."
+                    "name": "Monitor user response",
+                    "description": "Track user behavior and trust indicators during engagement. Review artifacts to assess trust level and adjust operational tactics accordingly."
+                },
+                {
+                    "name": "Establish remote assistance session",
+                    "description": "Initiate support workflow and configure remote desktop protocol access. Review artifacts to assess user trust level and optimal engagement approach."
                 },
                 {
                     "name": "Intensify social engineering",
-                    "description": "Use more aggressive social engineering tactics to gain user trust. Higher success rate but may raise suspicion."
+                    "description": "Apply enhanced persuasion techniques to increase user compliance. Higher success probability but may raise suspicion if tactics are too aggressive."
                 },
                 {
-                    "name": "Request credentials during call",
-                    "description": "Attempt to harvest credentials during the Teams call. Higher risk but may provide immediate access."
+                    "name": "Execute log sanitization procedure",
+                    "description": "Remove operational artifacts from system logs and clear command history. Reduces forensic visibility but may create suspicious gaps in audit trails."
                 },
                 {
-                    "name": "Cover tracks",
-                    "description": "Delete logs, clear command history, and remove forensic artifacts. Reduces detection but suspicious log gaps may be noticed."
-                },
-                {
-                    "name": "Monitor user response",
-                    "description": "Monitor user behavior during the call to assess trust level and adjust social engineering tactics accordingly."
+                    "name": "Initiate credential collection workflow",
+                    "description": "Begin identity verification process during active session. Higher risk approach but may provide immediate access credentials."
                 }
             ],
             "blue": [
                 {
-                    "name": "Contact user and terminate remote session",
-                    "description": "Immediately contact the user to verify the Teams call and instruct them to disconnect Quick Assist. Review artifacts to confirm this is a social engineering attack."
+                    "name": "Review Teams call logs and caller metadata",
+                    "description": "Analyze call records, caller identification data, and phone number verification. Review artifacts to confirm if this is legitimate IT support or impersonation."
                 },
                 {
-                    "name": "Block Quick Assist",
-                    "description": "Disable or block Quick Assist to prevent unauthorized remote access. Conservative approach but may impact legitimate IT support."
+                    "name": "Terminate active remote assistance connections",
+                    "description": "Immediately disconnect Quick Assist sessions and block remote access protocols. Review artifacts to confirm unauthorized remote access activity."
                 },
                 {
-                    "name": "Investigate caller identity",
-                    "description": "Verify the caller's identity and phone number to confirm if this is legitimate IT support or an impersonation attempt. Review artifacts for caller verification data."
+                    "name": "Disable remote support protocols",
+                    "description": "Block Quick Assist and other remote assistance tools at the system level. Conservative approach that may impact legitimate IT support operations."
                 },
                 {
                     "name": "Collect forensic evidence",
-                    "description": "Gather Teams call logs, remote access activity, and system logs for analysis. Critical for understanding the attack but takes time."
+                    "description": "Gather Teams call logs, remote access activity logs, and system modification records. Critical for understanding the attack but time-consuming process."
                 },
                 {
-                    "name": "Monitor for credential harvesting",
-                    "description": "Monitor user's account and systems for potential credential harvesting attempts. Proactive defense but may not stop immediate threats."
+                    "name": "Enable credential harvesting monitoring",
+                    "description": "Deploy monitoring for potential credential collection attempts. Proactive defense measure but may not stop immediate threats."
                 }
             ]
         }
@@ -191,53 +191,53 @@ try:
         order_index=2,
         name="Phase 3: Credential Harvesting",
         briefing_text="During the Teams call and remote access session, the attacker requested the user's corporate password and MFA code, claiming it was needed to \"verify account security\". The user complied, providing their email password, Windows password, and approving an MFA request.\n\nMicrosoft Defender for Identity has detected suspicious credential entry during the remote access session. The credentials have been validated, and the attacker has successfully logged into the user's account from an external IP address.\n\nSecurity monitoring shows:\n- Password entered in visible text field during remote session\n- MFA push notification approved by user\n- Successful login from external IP (185.220.101.45)\n- Account access confirmed (email, OneDrive, Teams)\n\n**Your decision: How should you respond to this credential compromise?**\n\n**Remember:** Review the artifacts carefully. They contain credential entry detection data, login attempt logs, and account access information. The artifacts will reveal the extent of the compromise and help determine the appropriate response. Immediate action is required to secure the account.",
-        red_objective="Harvest credentials from the target during the remote access session. Your goal is to obtain the user's corporate password and MFA code to gain full account access.",
+        red_objective="Validate obtained credentials and test account access. Your goal is to confirm the harvested credentials work and use them to gain full account access for the next phase.",
         blue_objective="Detect and prevent credential harvesting during the remote access session. Your goal is to secure the compromised account and prevent unauthorized access.",
         default_duration_seconds=900,
         miro_frame_url="https://miro.com/app/board/example/frame3",
         available_actions={
             "red": [
                 {
-                    "name": "Request credentials during remote session",
-                    "description": "Ask the user for their password and MFA code during the Teams call, claiming it's needed for account verification. Review artifacts to assess user trust level."
+                    "name": "Execute log sanitization procedure",
+                    "description": "Remove operational artifacts from system logs and clear command history. Reduces forensic visibility but may create suspicious gaps in audit trails."
                 },
                 {
-                    "name": "Use keylogging",
-                    "description": "Use keylogging capabilities to capture credentials as the user types. Lower suspicion but requires additional tools."
+                    "name": "Perform account verification procedure",
+                    "description": "Execute identity validation workflow to obtain authentication credentials. Review artifacts to assess user trust level and session status."
                 },
                 {
-                    "name": "Deploy credential dumper",
-                    "description": "Deploy a credential dumper tool to extract saved passwords from the system. Higher detection risk but may provide additional credentials."
+                    "name": "Deploy authentication capture module",
+                    "description": "Install keylogging capabilities to capture credentials as user types. Lower suspicion approach but requires additional tool deployment."
                 },
                 {
-                    "name": "Cover tracks",
-                    "description": "Delete logs, clear command history, and remove forensic artifacts. Reduces detection but suspicious log gaps may be noticed."
+                    "name": "Initiate credential validation process",
+                    "description": "Test obtained authentication artifacts to confirm account access. Critical operational step for proceeding to next phase."
                 },
                 {
-                    "name": "Validate credentials",
-                    "description": "Test the obtained credentials to confirm account access. Critical for proceeding to next phase."
+                    "name": "Execute credential extraction utility",
+                    "description": "Deploy tool to extract saved passwords from system credential stores. Higher detection risk but may provide additional authentication artifacts."
                 }
             ],
             "blue": [
                 {
-                    "name": "Force password reset immediately",
-                    "description": "Immediately force a password reset for the compromised account and revoke all active sessions. Review artifacts to confirm credential compromise."
-                },
-                {
-                    "name": "Disable MFA temporarily",
-                    "description": "Temporarily disable MFA to prevent further MFA bypass attempts, then re-enable with a new method. Review artifacts to assess MFA compromise."
-                },
-                {
-                    "name": "Review account activity",
-                    "description": "Review all account activity (email, OneDrive, Teams) to identify what the attacker accessed. Critical for understanding the compromise."
-                },
-                {
                     "name": "Collect forensic evidence",
-                    "description": "Gather credential entry logs, login attempt logs, and account access logs for analysis. Critical for understanding the attack but takes time."
+                    "description": "Gather credential entry logs, login attempt records, and account access telemetry. Critical for understanding the attack but time-consuming process."
                 },
                 {
-                    "name": "Monitor for persistence",
-                    "description": "Monitor the user's system and account for potential persistence mechanisms. Proactive defense but may not stop immediate threats."
+                    "name": "Execute credential rotation procedure",
+                    "description": "Immediately force password reset and revoke all active authentication sessions. Review artifacts to confirm credential compromise."
+                },
+                {
+                    "name": "Initiate account security remediation",
+                    "description": "Reset authentication tokens and deploy account protection measures. Review artifacts to assess MFA compromise and account access status."
+                },
+                {
+                    "name": "Review account activity logs",
+                    "description": "Analyze all account activity across email, OneDrive, and Teams to identify accessed resources. Critical for understanding compromise scope."
+                },
+                {
+                    "name": "Enable persistence mechanism monitoring",
+                    "description": "Deploy monitoring for potential long-term access mechanisms. Proactive defense measure but may not stop immediate threats."
                 }
             ]
         }
@@ -252,53 +252,53 @@ try:
         order_index=3,
         name="Phase 4: Remote Access & Persistence",
         briefing_text="With remote access established and credentials obtained, the attacker has deployed multiple persistence mechanisms to maintain long-term access. Microsoft Defender for Endpoint has detected suspicious scheduled tasks, registry modifications, email forwarding rules, and startup folder items.\n\nSecurity monitoring shows:\n- Scheduled task created (\"WindowsUpdateService\")\n- Registry run key modified (\"MicrosoftEdgeUpdate\")\n- Email forwarding rule created (forwards financial emails to external address)\n- Startup folder item added (edgeupdate.vbs)\n- Malware files deployed (update.ps1, cred.exe, scan.exe)\n\n**Your decision: How should you respond to these persistence mechanisms?**\n\n**Remember:** Review the artifacts carefully. They contain persistence mechanism details, malware detection data, and system modification logs. The artifacts will reveal which persistence methods were deployed and which present the highest ongoing risk. Immediate removal is critical to prevent long-term compromise.",
-        red_objective="Establish persistence mechanisms to maintain access even if the initial compromise is discovered. Your goal is to deploy multiple persistence methods that provide reliable long-term access with low detection risk.",
+        red_objective="Verify persistence mechanisms are active and test reliability. Your goal is to confirm all deployed persistence methods are functioning correctly and prepare for C2 communication setup.",
         blue_objective="Identify and remove all persistence mechanisms to prevent the attacker from maintaining long-term access. Your goal is to fully remediate the compromise and prevent re-infection.",
         default_duration_seconds=900,
         miro_frame_url="https://miro.com/app/board/example/frame4",
         available_actions={
             "red": [
                 {
-                    "name": "Deploy scheduled task persistence",
-                    "description": "Create a scheduled task that runs malicious code automatically. Review artifacts to assess detection risk and reliability."
+                    "name": "Execute log sanitization procedure",
+                    "description": "Remove operational artifacts from system logs and clear command history. Reduces forensic visibility but may create suspicious gaps in audit trails."
                 },
                 {
-                    "name": "Deploy registry persistence",
-                    "description": "Modify Windows Registry to execute code on login. Review artifacts to assess detection risk and reliability."
+                    "name": "Configure scheduled task automation",
+                    "description": "Create scheduled task entries to execute code automatically on system events. Review artifacts to assess detection risk and reliability."
                 },
                 {
-                    "name": "Deploy email forwarding rule",
-                    "description": "Create an email forwarding rule to exfiltrate sensitive emails. Review artifacts to assess detection risk and data value."
+                    "name": "Modify registry startup parameters",
+                    "description": "Update Windows Registry run keys to execute code on user login. Review artifacts to assess detection risk and persistence reliability."
                 },
                 {
-                    "name": "Cover tracks",
-                    "description": "Delete logs, clear command history, and remove forensic artifacts. Reduces detection but suspicious log gaps may be noticed."
+                    "name": "Deploy email routing configuration",
+                    "description": "Create email forwarding rules to redirect sensitive messages. Review artifacts to assess detection risk and data exfiltration value."
                 },
                 {
-                    "name": "Deploy payloads",
-                    "description": "Deploy malware payloads (PowerShell scripts, executables) for C2 communication. Higher detection risk but provides remote control."
+                    "name": "Initialize payload deployment",
+                    "description": "Deploy PowerShell scripts and executables for remote communication. Higher detection risk but provides command and control capabilities."
                 }
             ],
             "blue": [
                 {
-                    "name": "Remove all persistence mechanisms",
-                    "description": "Immediately remove scheduled tasks, registry keys, email rules, and startup items. Review artifacts to identify all persistence methods."
-                },
-                {
-                    "name": "Quarantine malware",
-                    "description": "Quarantine all detected malware files (update.ps1, cred.exe, scan.exe, edgeupdate.vbs). Review artifacts to identify all malicious files."
-                },
-                {
-                    "name": "Terminate remote session",
-                    "description": "Disconnect Quick Assist session and block remote access tools. Review artifacts to confirm remote access status."
-                },
-                {
                     "name": "Collect forensic evidence",
-                    "description": "Gather persistence mechanism logs, malware samples, and system modification logs for analysis. Critical for understanding the attack but takes time."
+                    "description": "Gather persistence mechanism logs, malware samples, and system modification records. Critical for understanding the attack but time-consuming process."
                 },
                 {
-                    "name": "Isolate device",
-                    "description": "Disconnect the compromised device from the network to prevent lateral movement. Conservative approach but may impact business operations."
+                    "name": "Execute persistence removal procedure",
+                    "description": "Immediately remove scheduled tasks, registry keys, email rules, and startup items. Review artifacts to identify all persistence mechanisms."
+                },
+                {
+                    "name": "Quarantine detected malware artifacts",
+                    "description": "Isolate and remove all detected malicious files and scripts. Review artifacts to identify all malicious components."
+                },
+                {
+                    "name": "Terminate remote access sessions",
+                    "description": "Disconnect Quick Assist sessions and block remote access tools. Review artifacts to confirm remote access status."
+                },
+                {
+                    "name": "Execute network isolation protocol",
+                    "description": "Disconnect compromised device from network to prevent lateral movement. Conservative approach that may impact business operations."
                 }
             ]
         }
@@ -313,53 +313,53 @@ try:
         order_index=4,
         name="Phase 5: Initial Access & C2 Communication",
         briefing_text="The attacker has successfully executed the payload and established a Command and Control (C2) connection to an external server. Microsoft Defender for Endpoint has detected C2 communication to IP address 185.220.101.45 on port 443 (HTTPS).\n\nSecurity monitoring shows:\n- C2 connection established (09:29:45 UTC)\n- Regular beacon traffic (every 5 minutes)\n- 2.3 MB data uploaded to C2 server\n- 156 KB data downloaded from C2 server\n- Payload execution confirmed (update.ps1)\n- Remote command execution capabilities active\n\n**Your decision: How should you respond to this C2 communication?**\n\n**Remember:** Review the artifacts carefully. They contain C2 communication logs, network traffic analysis, and payload execution data. The artifacts will reveal the extent of the compromise and help determine the appropriate response. Immediate containment is required to prevent data exfiltration and lateral movement.",
-        red_objective="Establish C2 communication to gain remote control of the compromised system. Your goal is to deploy payloads, establish persistent C2 connection, and prepare for lateral movement and data exfiltration.",
+        red_objective="Verify C2 connection stability and execute reconnaissance commands. Your goal is to confirm the C2 channel is functional and begin network reconnaissance for lateral movement and data exfiltration.",
         blue_objective="Detect and terminate C2 communication to prevent the attacker from maintaining remote control. Your goal is to isolate the compromised device, block C2 traffic, and prevent data exfiltration.",
         default_duration_seconds=900,
         miro_frame_url="https://miro.com/app/board/example/frame5",
         available_actions={
             "red": [
                 {
-                    "name": "Establish C2 connection",
-                    "description": "Deploy payload and establish C2 communication with external server. Review artifacts to assess network connectivity and detection risk."
+                    "name": "Execute log sanitization procedure",
+                    "description": "Remove operational artifacts from system logs and clear command history. Reduces forensic visibility but may create suspicious gaps in audit trails."
                 },
                 {
-                    "name": "Execute credential dumper",
-                    "description": "Execute cred.exe to harvest additional saved credentials from the system. Review artifacts to assess detection risk and credential availability."
+                    "name": "Verify C2 channel stability",
+                    "description": "Test command and control connection reliability and functionality. Review artifacts to assess network connectivity and detection risk."
                 },
                 {
-                    "name": "Scan internal network",
-                    "description": "Execute scan.exe to identify vulnerable systems for lateral movement. Review artifacts to assess network access and detection risk."
+                    "name": "Execute credential extraction utility",
+                    "description": "Run credential dumper tool to harvest additional saved credentials. Review artifacts to assess detection risk and credential availability."
                 },
                 {
-                    "name": "Cover tracks",
-                    "description": "Delete logs, clear command history, and remove forensic artifacts. Reduces detection but suspicious log gaps may be noticed."
+                    "name": "Initiate network reconnaissance scan",
+                    "description": "Execute network scanning tool to identify vulnerable systems. Review artifacts to assess network access and detection risk."
                 },
                 {
-                    "name": "Exfiltrate data",
-                    "description": "Begin exfiltrating sensitive financial data via C2 connection. Higher value but increases detection risk."
+                    "name": "Begin data transfer operations",
+                    "description": "Start exfiltrating sensitive data via established communication channel. Higher value operation but increases detection risk."
                 }
             ],
             "blue": [
                 {
-                    "name": "Isolate device immediately",
-                    "description": "Immediately disconnect the compromised device from the network to prevent C2 communication and lateral movement. Review artifacts to confirm C2 activity."
-                },
-                {
-                    "name": "Block C2 server",
-                    "description": "Block the C2 server IP (185.220.101.45) at the firewall to terminate C2 communication. Review artifacts to identify C2 server address."
-                },
-                {
-                    "name": "Terminate malicious processes",
-                    "description": "Terminate all malicious processes (powershell.exe, cred.exe, scan.exe) to stop payload execution. Review artifacts to identify all malicious processes."
-                },
-                {
-                    "name": "Investigate data exfiltration",
-                    "description": "Review network traffic and system logs to determine what data was exfiltrated (2.3 MB uploaded). Critical for understanding the impact."
-                },
-                {
                     "name": "Collect forensic evidence",
-                    "description": "Gather C2 communication logs, network traffic captures, and payload samples for analysis. Critical for understanding the attack but takes time."
+                    "description": "Gather C2 communication logs, network traffic captures, and payload samples. Critical for understanding the attack but time-consuming process."
+                },
+                {
+                    "name": "Execute network isolation protocol",
+                    "description": "Immediately disconnect compromised device from network to prevent C2 communication and lateral movement. Review artifacts to confirm C2 activity."
+                },
+                {
+                    "name": "Deploy firewall blocking rules",
+                    "description": "Block C2 server IP address at network perimeter to terminate communication. Review artifacts to identify C2 server address."
+                },
+                {
+                    "name": "Terminate malicious process execution",
+                    "description": "Stop all malicious processes and payload execution. Review artifacts to identify all malicious processes."
+                },
+                {
+                    "name": "Analyze data exfiltration patterns",
+                    "description": "Review network traffic and system logs to determine exfiltrated data scope. Critical for understanding impact and breach notification requirements."
                 }
             ]
         }
