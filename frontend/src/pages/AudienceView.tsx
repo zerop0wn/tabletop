@@ -21,6 +21,7 @@ export default function AudienceView() {
   const phaseTransitionSoundRef = useRef<HTMLAudioElement | null>(null)
   const hasPlayedFirstPhaseSoundRef = useRef<boolean>(false)
   const phaseTransitionTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const audioUnlockedRef = useRef<boolean>(false)
 
   useEffect(() => {
     if (!gameIdentifier) return
@@ -31,28 +32,52 @@ export default function AudienceView() {
     audio.volume = 0.5 // Set volume to 50%
     audio.preload = 'auto'
     
-    // Try to unlock audio with a silent play (browser autoplay policy workaround)
+    phaseTransitionSoundRef.current = audio
+    
+    // Reset sound flag when game changes
+    hasPlayedFirstPhaseSoundRef.current = false
+    audioUnlockedRef.current = false
+    
+    // Try to unlock audio on any user interaction
     const unlockAudio = async () => {
+      if (audioUnlockedRef.current) return
       try {
         await audio.play()
         audio.pause()
         audio.currentTime = 0
+        audioUnlockedRef.current = true
         console.log('Audio unlocked successfully')
       } catch (err) {
         console.log('Audio unlock failed (will require user interaction):', err)
       }
     }
+    
+    // Try to unlock on page load (may fail due to autoplay policy)
     unlockAudio()
     
-    phaseTransitionSoundRef.current = audio
-    
-    // Reset sound flag when game changes
-    hasPlayedFirstPhaseSoundRef.current = false
+    // Also unlock on any user interaction (click, touch, keypress)
+    const events = ['click', 'touchstart', 'keydown']
+    const unlockHandlers = events.map(eventType => {
+      const handler = () => {
+        unlockAudio()
+        // Remove handlers after first successful unlock
+        if (audioUnlockedRef.current) {
+          events.forEach(et => {
+            document.removeEventListener(et, unlockHandlers[events.indexOf(et)])
+          })
+        }
+      }
+      document.addEventListener(eventType, handler, { once: true })
+      return handler
+    })
     
     fetchScoreboard()
     const interval = setInterval(fetchScoreboard, 3000) // Poll every 3 seconds for more real-time feel
     return () => {
       clearInterval(interval)
+      events.forEach((eventType, idx) => {
+        document.removeEventListener(eventType, unlockHandlers[idx])
+      })
       if (phaseTransitionSoundRef.current) {
         phaseTransitionSoundRef.current.pause()
         phaseTransitionSoundRef.current = null
@@ -62,11 +87,12 @@ export default function AudienceView() {
         phaseTransitionTimeoutRef.current = null
       }
       hasPlayedFirstPhaseSoundRef.current = false
+      audioUnlockedRef.current = false
     }
   }, [gameIdentifier])
 
   // Helper function to play sound
-  const playSound = () => {
+  const playSound = async () => {
     if (!phaseTransitionSoundRef.current) {
       // Reinitialize if needed
       const newAudio = new Audio('/sounds/phase-transition.wav')
@@ -77,44 +103,45 @@ export default function AudienceView() {
 
     const audio = phaseTransitionSoundRef.current
     
-    // Try to play immediately if ready
-    const tryPlay = async () => {
-      try {
-        audio.currentTime = 0
-        await audio.play()
-        console.log('Sound played successfully')
-        hasPlayedFirstPhaseSoundRef.current = true
-      } catch (err: any) {
-        console.error('Failed to play sound:', err)
-        if (err.name === 'NotAllowedError') {
-          console.warn('Audio autoplay blocked. User interaction required.')
-          // Try to unlock by creating a new audio instance and playing silently
-          const unlockAudio = new Audio('/sounds/phase-transition.wav')
-          unlockAudio.volume = 0.01
-          unlockAudio.play().then(() => {
-            unlockAudio.pause()
-            unlockAudio.currentTime = 0
-            // Now try again with the original audio
-            audio.play().then(() => {
-              console.log('Sound played after unlock')
-              hasPlayedFirstPhaseSoundRef.current = true
-            }).catch(e => console.error('Still failed after unlock:', e))
-          }).catch(e => console.error('Unlock failed:', e))
-        }
-      }
-    }
-
-    if (audio.readyState >= 2) {
-      // Audio is ready, play immediately
-      tryPlay()
-    } else {
-      // Wait for audio to load
-      const handleCanPlay = () => {
-        tryPlay()
-      }
-      audio.addEventListener('canplaythrough', handleCanPlay, { once: true })
-      // Also try to load it
+    // Ensure audio is loaded
+    if (audio.readyState < 2) {
       audio.load()
+      await new Promise<void>((resolve) => {
+        if (audio.readyState >= 2) {
+          resolve()
+        } else {
+          audio.addEventListener('canplaythrough', () => resolve(), { once: true })
+          // Timeout after 2 seconds
+          setTimeout(() => resolve(), 2000)
+        }
+      })
+    }
+    
+    // Try to play
+    try {
+      audio.currentTime = 0
+      await audio.play()
+      console.log('✅ Sound played successfully')
+      hasPlayedFirstPhaseSoundRef.current = true
+      audioUnlockedRef.current = true // Mark as unlocked for future plays
+    } catch (err: any) {
+      console.error('❌ Failed to play sound:', err)
+      if (err.name === 'NotAllowedError') {
+        console.warn('⚠️ Audio autoplay blocked. Audio needs to be unlocked by user interaction.')
+        console.warn('💡 User needs to click/touch anywhere on the page first to enable sound.')
+        // Try to unlock audio now
+        try {
+          await audio.play()
+          audio.pause()
+          audio.currentTime = 0
+          audioUnlockedRef.current = true
+          console.log('🔓 Audio unlocked, will try again on next phase')
+        } catch (unlockErr) {
+          console.error('❌ Audio unlock failed:', unlockErr)
+        }
+      } else {
+        console.error('❌ Other audio error:', err.message)
+      }
     }
   }
 
