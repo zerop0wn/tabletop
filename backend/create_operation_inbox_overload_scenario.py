@@ -17,12 +17,29 @@ from app.models import scenario_phase_artifacts
 
 db: Session = SessionLocal()
 
-# Helper function to get artifact content (placeholder - implement artifact generation later)
+# Helper function to get artifact content
 def get_artifact_content(function_name: str) -> str:
     """Get artifact content by calling the generation function directly."""
-    # TODO: Create artifact generation module similar to generate_email_bomb_teams_artifacts.py
-    # For now, return placeholder
-    return f"[Artifact content for {function_name} - TODO: implement artifact generation]"
+    import generate_operation_inbox_overload_artifacts as gen_module
+    
+    # Map function names to actual functions
+    function_map = {
+        'phase0_red': gen_module.generate_phase0_red,
+        'phase0_blue': gen_module.generate_phase0_blue,
+        'phase1_red': gen_module.generate_phase1_red,
+        'phase1_blue': gen_module.generate_phase1_blue,
+        'phase2_red': gen_module.generate_phase2_red,
+        'phase2_blue': gen_module.generate_phase2_blue,
+        'phase3_red': gen_module.generate_phase3_red,
+        'phase3_blue': gen_module.generate_phase3_blue,
+        'phase4_red': gen_module.generate_phase4_red,
+        'phase4_blue': gen_module.generate_phase4_blue,
+    }
+    
+    if function_name in function_map:
+        return function_map[function_name]()
+    else:
+        return f"[Artifact content generation failed: {function_name}]"
 
 try:
     # Check if scenario already exists
@@ -314,13 +331,23 @@ try:
     # Create artifacts for each phase (placeholder - implement artifact generation later)
     phases = [phase0, phase1, phase2, phase3, phase4]
     
-    # Create placeholder artifacts for each phase
+    # Create artifacts for each phase
+    phase_names = [
+        "Email Flood Disruption",
+        "Panic Driven Help-Seeking",
+        "Teams Impersonation Callback",
+        "MFA Reset Attempt & Endpoint Foothold",
+        "Persistence vs Containment"
+    ]
+    
     for phase_idx, phase in enumerate(phases):
+        phase_name = phase_names[phase_idx]
+        
         # Red Team artifact
         artifact_red = Artifact(
-            name=f"Phase {phase_idx} Red Team Report",
+            name=f"Phase {phase_idx}: {phase_name} - Red Team Report",
             type=ArtifactType.TOOL_OUTPUT,
-            description=f"Red Team operational report for Phase {phase_idx}.",
+            description=f"Red Team operational report for Phase {phase_idx}: {phase_name}. Contains campaign status, tactics, and readiness assessment.",
             file_url=None,
             embed_url=None,
             content=get_artifact_content(f'phase{phase_idx}_red')
@@ -330,9 +357,9 @@ try:
         
         # Blue Team artifact
         artifact_blue = Artifact(
-            name=f"Phase {phase_idx} Blue Team Alert",
+            name=f"Phase {phase_idx}: {phase_name} - Defender Alert",
             type=ArtifactType.LOG_SNIPPET,
-            description=f"Microsoft Defender alert for Phase {phase_idx}.",
+            description=f"Microsoft Defender security alert for Phase {phase_idx}: {phase_name}. Contains threat detection, analysis, and recommended actions.",
             file_url=None,
             embed_url=None,
             content=get_artifact_content(f'phase{phase_idx}_blue')
