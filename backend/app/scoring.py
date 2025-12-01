@@ -651,23 +651,23 @@ INTERMEDIATE_RANSOMWARE_SCORING: Dict[Tuple[int, str], Dict[str, int]] = {
         "Collect forensic evidence": 7,            # Important for analysis
     },
     
-    # Phase 5: Data Exfiltration & Ransomware Deployment
-    # Artifacts show DNS tunneling has lower detection risk vs HTTPS (well-monitored)
-    # Red Team should choose DNS tunneling
-    # Blue Team should prioritize DNS tunneling blocking
+    # Phase 5: Backup & Restoration (order_index=4) - REDESIGNED
+    # Artifacts show offsite backups are intact (36 hours old, within RPO) vs onsite backups encrypted
+    # Blue Team should prioritize restoring critical systems from offsite backups (fastest business recovery)
+    # Red Team should monitor recovery attempts (intelligence gathering, low risk)
     (4, "red"): {
-        "Use DNS tunneling": 10,                   # CORRECT - Artifacts show DNS tunneling has lower detection risk
-        "Use HTTPS tunnel": 6,                    # MEDIUM - Faster but higher detection risk
-        "Split across both": 7,                    # MEDIUM - Spreads risk
-        "Cover tracks": 6,                        # Secondary objective
-        "Establish persistence": 5,              # Secondary objective
+        "Monitor recovery attempts and collect intelligence": 10,    # CORRECT - Optimal post-encryption activity
+        "Cover tracks and remove evidence": 7,                      # Good - Secondary objective
+        "Attempt to disrupt recovery operations": 4,                 # Acceptable - Risky, limited effectiveness
+        "Establish persistence in recovery infrastructure": 1,      # Poor - High risk, low success probability
+        "Negotiate ransom payment": 0,                              # Counterproductive - Not Red Team action
     },
     (4, "blue"): {
-        "Block DNS tunneling": 10,                # CORRECT - Artifacts show DNS tunneling has detection gaps
-        "Block HTTPS exfiltration": 6,             # MEDIUM - HTTPS is well-monitored
-        "Deploy DLP countermeasures": 8,          # Critical - Enhance DLP coverage
-        "Collect forensic evidence": 7,           # Important for analysis
-        "Escalate to management": 5,             # Important but not immediate
+        "Restore from offsite backups (critical systems first)": 10,  # CORRECT - Optimal recovery strategy
+        "Full system recovery from offsite backups": 7,               # Good - Complete but slower
+        "Verify backup integrity before restoration": 4,              # Acceptable - Important but delays recovery
+        "Attempt to decrypt onsite backups": 1,                       # Poor - Wastes time, onsite backups encrypted
+        "Pay ransom and use decryption keys": 0,                     # Counterproductive - Funds criminals, backups available
     },
 }
 

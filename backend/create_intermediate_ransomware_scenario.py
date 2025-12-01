@@ -321,59 +321,59 @@ try:
     db.flush()
     print(f"✓ Created Phase 4 (ID: {phase4.id})")
     
-    # Phase 5: Data Exfiltration & Ransomware Deployment
+    # Phase 5: Backup & Restoration
     phase5 = ScenarioPhase(
         scenario_id=scenario.id,
         order_index=4,
-        name="Phase 5: Data Exfiltration & Ransomware Deployment",
-        briefing_text="Access to valuable data has been confirmed from the target database. Security monitoring indicates that the attacker is attempting to exfiltrate data using multiple methods.\n\nTwo exfiltration methods are being tested:\n- **HTTPS Tunnel**: Encrypted HTTPS connections to external servers, blending with normal web traffic\n- **DNS Tunneling**: Covert data exfiltration using DNS queries, hiding data in DNS request payloads\n\nData Loss Prevention (DLP) systems have detected anomalies in network traffic patterns, and security monitoring has collected information about detection capabilities for both methods.\n\nYour decision: **Which exfiltration method should be prioritized for blocking?**\n\n**Remember:** Review the artifacts carefully. They contain DLP alert analysis, network bandwidth monitoring, and detection capability assessments for both exfiltration methods. The artifacts will reveal which method is being actively used, which has better detection coverage, and which presents the highest ongoing risk.",
-        red_objective="Select the exfiltration method that offers the best balance of speed, reliability, and low detection risk. Your goal is to successfully exfiltrate data before deploying ransomware.",
-        blue_objective="Identify which exfiltration method is being actively used and prioritize blocking it. Your goal is to prevent data theft and prepare for ransomware deployment.",
-        default_duration_seconds=900,
+        name="Phase 5: Backup & Restoration",
+        briefing_text="The ransomware attack has reached its final stage. At 14:30, ransomware (identified as LockBit 3.0 variant) began encrypting systems across the network. Over 200 systems have been encrypted including file servers, application servers, and workstations. A ransom note has been displayed on affected systems demanding 50 Bitcoin (approximately $1.2M USD) for decryption keys.\n\nCritical business systems are offline. The backup system (BACKUP-01) was also encrypted, but offsite backups from 36 hours ago remain intact.\n\nSecurity monitoring shows:\n- 200+ systems encrypted (file servers, application servers, workstations)\n- Onsite backup system (BACKUP-01): ENCRYPTED\n- Offsite backups: INTACT (36 hours old, within RPO)\n- Recovery Point Objective (RPO): 36 hours\n- Recovery Time Objective (RTO): 48 hours\n- Estimated data loss: 14 hours (acceptable within RPO)\n\n**Your decision: How should you proceed with recovery and restoration?**\n\n**Remember:** Review the artifacts carefully. They contain backup system status reports, recovery metrics (RPO/RTO), backup integrity verification, and recovery time estimates. The artifacts will reveal which backup sources are viable, what the recovery timeline looks like, and which restoration strategy will minimize business impact.",
+        red_objective="Monitor recovery attempts and collect intelligence on the organization's restoration strategy. Your goal is to gather information about recovery timeline, backup sources, and restoration methods to assess negotiation leverage and potential future attack vectors.",
+        blue_objective="Restore business operations as quickly as possible while minimizing data loss. Your goal is to evaluate backup integrity, prioritize critical systems for restoration, and execute recovery procedures within RTO. Determine the optimal restoration strategy based on backup availability and business impact.",
+        default_duration_seconds=1200,
         miro_frame_url="https://miro.com/app/board/example/frame5",
         available_actions={
             "red": [
                 {
-                    "name": "Use HTTPS tunnel",
-                    "description": "Exfiltrate data using encrypted HTTPS connections. Review artifacts to assess detection risk and transfer speed."
+                    "name": "Monitor recovery attempts and collect intelligence",
+                    "description": "Monitor network traffic, backup system access, and recovery activities to gather intelligence on restoration strategy and timeline. Review artifacts to assess recovery progress."
                 },
                 {
-                    "name": "Use DNS tunneling",
-                    "description": "Exfiltrate data using DNS queries with encoded payloads. Review artifacts to assess detection risk and transfer speed."
+                    "name": "Cover tracks and remove evidence",
+                    "description": "Delete logs, clear command history, and remove forensic artifacts. Reduces detection but suspicious log gaps may be noticed. Review artifacts to assess remaining evidence."
                 },
                 {
-                    "name": "Split across both",
-                    "description": "Use both HTTPS and DNS tunneling to exfiltrate data. Higher throughput but also higher detection risk."
+                    "name": "Attempt to disrupt recovery operations",
+                    "description": "Actively attempt to disrupt or sabotage backup restoration processes. High detection risk but may delay recovery. Review artifacts to assess recovery infrastructure isolation."
                 },
                 {
-                    "name": "Cover tracks",
-                    "description": "Delete logs, clear command history, and remove forensic artifacts. Reduces detection but suspicious log gaps may be noticed."
+                    "name": "Establish persistence in recovery infrastructure",
+                    "description": "Attempt to establish persistence mechanisms in systems being restored. High detection risk and low success probability if recovery systems are isolated. Review artifacts to assess recovery infrastructure security."
                 },
                 {
-                    "name": "Establish persistence",
-                    "description": "Create additional persistence mechanisms. Ensures continued access even if exfiltration is discovered."
+                    "name": "Negotiate ransom payment",
+                    "description": "Engage in ransom negotiation to maximize payment likelihood. Not a Red Team action - victim initiates negotiation. Review artifacts to assess victim's recovery capabilities."
                 }
             ],
             "blue": [
                 {
-                    "name": "Block HTTPS exfiltration",
-                    "description": "Implement network controls to block suspicious HTTPS connections. Review artifacts to determine if this method is being used."
+                    "name": "Restore from offsite backups (critical systems first)",
+                    "description": "Prioritize restoring critical systems (domain controllers, file servers, ERP) from offsite backups first, then restore remaining systems. Review artifacts to assess backup integrity and recovery time estimates."
                 },
                 {
-                    "name": "Block DNS tunneling",
-                    "description": "Implement DNS filtering and monitoring to detect and block DNS tunneling. Review artifacts to determine if this method is being used."
+                    "name": "Full system recovery from offsite backups",
+                    "description": "Restore all systems from offsite backups in parallel, aiming for complete restoration. Slower to restore business operations but comprehensive. Review artifacts to assess full recovery timeline."
                 },
                 {
-                    "name": "Deploy DLP countermeasures",
-                    "description": "Enhance Data Loss Prevention controls to detect and block data exfiltration. Comprehensive defense but may impact legitimate traffic."
+                    "name": "Verify backup integrity before restoration",
+                    "description": "Perform comprehensive backup integrity checks and verification before beginning restoration. Important but adds delay before recovery starts. Review artifacts to assess backup integrity verification requirements."
                 },
                 {
-                    "name": "Collect forensic evidence",
-                    "description": "Gather logs, network traffic captures, and system artifacts for analysis. Critical for understanding the attack but takes time."
+                    "name": "Attempt to decrypt onsite backups",
+                    "description": "Attempt to decrypt or recover the encrypted onsite backup system before using offsite backups. Wastes time as onsite backups are not recoverable without decryption keys. Review artifacts to confirm onsite backup encryption status."
                 },
                 {
-                    "name": "Escalate to management",
-                    "description": "Notify executive leadership and prepare for potential ransomware deployment. Important for business continuity planning."
+                    "name": "Pay ransom and use decryption keys",
+                    "description": "Pay the ransom to obtain decryption keys, then decrypt systems and backups. Funds criminal activity and sets dangerous precedent. Offsite backups provide recovery without payment. Review artifacts to assess backup availability."
                 }
             ]
         }
@@ -634,56 +634,56 @@ try:
     print("\nCreating artifacts for Phase 5...")
     
     # Red Team Artifacts - Phase 5
-    exfil_testing = Artifact(
-        name="Exfiltration Method Testing",
+    recovery_monitoring = Artifact(
+        name="Recovery Attempt Monitoring Report",
         type=ArtifactType.TOOL_OUTPUT,
-        description="Testing results for HTTPS tunnel and DNS tunneling exfiltration methods. Includes speed, reliability, and detection risk assessment.",
+        description="Monitoring report of Blue Team recovery activities, backup system access, and restoration progress. Includes network traffic analysis and recovery timeline assessment.",
         file_url=None,  # Content stored in database
-        content=get_artifact_content("exfil_testing_phase5.txt"),
-        notes_for_gm="Shows HTTPS well-monitored, DNS tunneling has detection gaps. Red Team should choose DNS tunneling."
+        content=get_artifact_content("recovery_monitoring_phase5.txt"),
+        notes_for_gm="Shows Blue Team using offsite backups, recovery infrastructure isolated, monitoring provides valuable intelligence. Red Team should choose monitoring."
     )
-    db.add(exfil_testing)
+    db.add(recovery_monitoring)
     db.flush()
     
-    data_transfer = Artifact(
-        name="Data Transfer Analysis",
-        type=ArtifactType.TOOL_OUTPUT,
-        description="Analysis of data transfer capabilities for both exfiltration methods. Includes bandwidth, reliability, and detection risk comparison.",
+    intelligence_assessment = Artifact(
+        name="Intelligence Assessment: Recovery Strategy",
+        type=ArtifactType.INTEL_REPORT,
+        description="Assessment of victim's recovery strategy based on observed activities. Includes backup source analysis, recovery timeline estimates, and leverage assessment.",
         file_url=None,  # Content stored in database
-        content=get_artifact_content("data_transfer_phase5.txt"),
-        notes_for_gm="Shows HTTPS faster but detected, DNS slower but more reliable with lower detection. Confirms DNS is better choice."
+        content=get_artifact_content("intelligence_assessment_phase5.txt"),
+        notes_for_gm="Shows recovery infrastructure isolated (disruption difficult), offsite backups being used (expected), monitoring provides intelligence value. Confirms monitoring is optimal choice."
     )
-    db.add(data_transfer)
+    db.add(intelligence_assessment)
     db.flush()
     
     # Blue Team Artifacts - Phase 5
-    dlp_analysis = Artifact(
-        name="DLP Alert Analysis",
+    backup_status = Artifact(
+        name="Backup System Status Report",
         type=ArtifactType.INTEL_REPORT,
-        description="Microsoft Purview Data Loss Prevention alert analysis comparing detection capabilities for HTTPS and DNS tunneling exfiltration methods.",
+        description="Comprehensive backup system status report showing onsite and offsite backup availability, integrity, RPO/RTO metrics, and recovery time estimates.",
         file_url=None,  # Content stored in database
-        content=get_artifact_content("dlp_analysis_phase5.txt"),
-        notes_for_gm="Shows HTTPS well-monitored, DNS tunneling has detection gaps. Blue Team should prioritize DNS tunneling blocking."
+        content=get_artifact_content("backup_status_phase5.txt"),
+        notes_for_gm="Shows onsite backups encrypted (not recoverable), offsite backups intact (36 hours old, within RPO), critical systems first is optimal strategy."
     )
-    db.add(dlp_analysis)
+    db.add(backup_status)
     db.flush()
     
-    bandwidth_analysis = Artifact(
-        name="Network Bandwidth Analysis",
+    recovery_procedure = Artifact(
+        name="Recovery Procedure & Timeline Analysis",
         type=ArtifactType.LOG_SNIPPET,
-        description="Microsoft Defender for Cloud network bandwidth analysis showing anomalies for HTTPS and DNS traffic patterns.",
+        description="Detailed recovery procedure analysis including critical systems restoration timeline, full recovery estimates, and backup integrity verification requirements.",
         file_url=None,  # Content stored in database
-        content=get_artifact_content("bandwidth_analysis_phase5.txt"),
-        notes_for_gm="Shows HTTPS anomalies are clear, DNS anomalies less obvious. Confirms DNS tunneling is being used and needs attention."
+        content=get_artifact_content("recovery_procedure_phase5.txt"),
+        notes_for_gm="Shows critical systems first: 4-12 hours (meets RTO), full recovery: 48-72 hours, backup integrity verified. Confirms critical systems first is optimal."
     )
-    db.add(bandwidth_analysis)
+    db.add(recovery_procedure)
     db.flush()
     
     # Link artifacts to Phase 5
-    db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5.id, artifact_id=exfil_testing.id, team_role="red"))
-    db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5.id, artifact_id=data_transfer.id, team_role="red"))
-    db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5.id, artifact_id=dlp_analysis.id, team_role="blue"))
-    db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5.id, artifact_id=bandwidth_analysis.id, team_role="blue"))
+    db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5.id, artifact_id=recovery_monitoring.id, team_role="red"))
+    db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5.id, artifact_id=intelligence_assessment.id, team_role="red"))
+    db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5.id, artifact_id=backup_status.id, team_role="blue"))
+    db.execute(scenario_phase_artifacts.insert().values(phase_id=phase5.id, artifact_id=recovery_procedure.id, team_role="blue"))
     print("✓ Linked 4 artifacts to Phase 5")
     
     db.commit()

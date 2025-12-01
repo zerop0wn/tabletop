@@ -2269,32 +2269,82 @@ DB-CUST-PROD has proper network isolation and strong security controls.
 
 
 def create_phase5_artifacts():
-    """Phase 5: Data Exfiltration & Ransomware Deployment"""
+    """Phase 5: Backup & Restoration"""
     
-    # Red Team: Exfiltration Method Testing
-    content = """Exfiltration Method Testing Results
+    # Red Team: Recovery Attempt Monitoring
+    content = """Recovery Attempt Monitoring Report
 ===================================
-Test Date: 2024-01-15 12:00:00 UTC
-Source: DB-HR-PROD (compromised database access)
-Target: External C2 Server
+Monitoring Date: 2024-01-15 14:45:00 UTC
+Time Range: 2024-01-15 14:30:00 - 15:00:00 UTC
+Target: CORP.LOCAL
 Operator: RED-TEAM-ALPHA
+Status: Ransomware deployed, monitoring victim response
 
-TESTING METHODOLOGY:
+MONITORING ACTIVITIES:
+---------------------
+1. Network Traffic Analysis
+2. Backup System Access Monitoring
+3. Recovery Infrastructure Activity
+4. Restoration Progress Assessment
+
+OBSERVED ACTIVITIES:
 --------------------
-Two exfiltration methods tested:
-1. HTTPS Tunnel (encrypted HTTPS connections)
-2. DNS Tunneling (covert data exfiltration using DNS queries)
+Time: 14:35:00 UTC
+Activity: Backup system access detected
+Source: IT-Admin workstation (192.168.10.50)
+Target: Offsite backup storage (AWS S3)
+Protocol: HTTPS (encrypted backup access)
+Action: Backup integrity verification initiated
 
-Each method tested for:
-- Speed (data transfer rate)
-- Reliability (connection stability)
-- Detection risk (security tool response)
-- Stealth (visibility and monitoring)
+Time: 14:40:00 UTC
+Activity: Recovery infrastructure provisioning
+Source: IT-Admin workstation
+Target: Cloud recovery environment
+Protocol: HTTPS
+Action: Virtual machines being provisioned for restoration
 
-TEST RESULTS:
--------------
+Time: 14:42:00 UTC
+Activity: Backup restoration initiated
+Source: Recovery infrastructure
+Target: Offsite backup storage
+Protocol: HTTPS
+Action: Critical systems backup download started
 
-1. HTTPS TUNNEL
+RECOVERY STRATEGY ASSESSMENT:
+-----------------------------
+Backup Source: Offsite backups (AWS S3)
+Backup Age: 36 hours old (within RPO)
+Recovery Approach: Critical systems first
+Recovery Infrastructure: Isolated cloud environment
+Estimated Recovery Time: 48-72 hours
+
+INTELLIGENCE VALUE:
+-------------------
+Recovery Monitoring: HIGH VALUE
+- Provides timeline intelligence
+- Reveals recovery strategy
+- Shows backup source and age
+- Identifies recovery infrastructure
+- Assesses business impact timeline
+
+Disruption Attempt: LOW VALUE
+- Recovery infrastructure isolated (difficult to access)
+- Offsite backups secure (not accessible)
+- High detection risk
+- Limited effectiveness
+- May trigger additional security measures
+
+RECOMMENDATION:
+---------------
+Continue monitoring recovery attempts. Provides valuable intelligence on:
+1. Recovery timeline (48-72 hours estimated)
+2. Backup source (offsite backups confirmed)
+3. Recovery strategy (critical systems first)
+4. Business impact assessment
+5. Future attack vector intelligence
+
+Disruption attempts are high risk with low success probability.
+Monitoring provides maximum intelligence value with minimal risk.
 ---------------
 Method: Encrypted HTTPS connections to external server
 Protocol: HTTPS (TCP/443)
@@ -2395,385 +2445,281 @@ HTTPS Tunnel is faster but has higher detection risk and lower stealth.
 DNS Tunneling offers better balance of reliability and low detection risk.
 """
     
-    with open(ARTIFACTS_DIR / "exfil_testing_phase5.txt", 'w') as f:
+    with open(ARTIFACTS_DIR / "recovery_monitoring_phase5.txt", 'w') as f:
         f.write(content)
-    print("Created: exfil_testing_phase5.txt")
+    print("Created: recovery_monitoring_phase5.txt")
     
-    # Red Team: Data Transfer Analysis
-    content = """Data Transfer Analysis
-======================
-Analysis Date: 2024-01-15 12:15:00 UTC
-Source: DB-HR-PROD (compromised database)
-Target: External C2 Server
+    # Red Team: Intelligence Assessment
+    content = """Intelligence Assessment: Recovery Strategy
+==========================================
+Assessment Date: 2024-01-15 14:50:00 UTC
+Target: CORP.LOCAL
 Operator: RED-TEAM-ALPHA
+Status: Post-encryption intelligence gathering
 
-TRANSFER METHOD COMPARISON:
+RECOVERY STRATEGY ANALYSIS:
 ---------------------------
+Observed Strategy: Critical systems first from offsite backups
+Backup Source: Offsite (AWS S3, 36 hours old)
+Recovery Infrastructure: Isolated cloud environment
+Recovery Timeline: 48-72 hours estimated
+Business Impact: Critical systems offline, operations halted
 
-1. HTTPS TUNNEL
----------------
-Protocol: HTTPS (TCP/443)
-Server: 185.220.101.78:443
-Data Volume: 50 MB test transfer
+LEVERAGE ASSESSMENT:
+--------------------
+Current Leverage: MEDIUM
+- All systems encrypted (maximum impact achieved)
+- Onsite backups encrypted (backup destruction successful)
+- Offsite backups available (reduces leverage)
+- Recovery possible without payment (reduces leverage)
+- Business operations halted (maintains leverage)
 
-Transfer Characteristics:
-- Speed: ~10 MB/minute (FAST)
-- Bandwidth: High (visible spikes)
-- Connection: Stable, reliable
-- Latency: Low (15-20ms)
-- Success Rate: 100%
+Negotiation Leverage: DECREASING
+- Victim has viable recovery option (offsite backups)
+- Recovery timeline acceptable (48-72 hours)
+- No need to pay ransom for recovery
+- Leverage decreases as recovery progresses
 
-Detection Characteristics:
-- DLP Monitoring: ACTIVE (well-monitored)
-- Network Monitoring: ACTIVE (bandwidth analysis)
-- Alert Generation: HIGH (multiple alerts)
-- Visibility: HIGH (large transfers visible)
-- Blocking Risk: MEDIUM-HIGH (60%)
+FUTURE ATTACK VECTORS:
+----------------------
+Intelligence Gathered:
+1. Backup strategy: Offsite backups (AWS S3)
+2. Recovery infrastructure: Isolated cloud environment
+3. Recovery timeline: 48-72 hours
+4. Critical systems: Domain controllers, file servers, ERP
+5. Backup frequency: Every 12 hours
+6. RPO: 36 hours
+7. RTO: 48 hours
 
-Advantages:
-- Fast transfer speed
-- Reliable connection
-- High success rate
-
-Disadvantages:
-- High detection risk
-- Low stealth
-- High blocking probability
-- Visible bandwidth usage
-
-2. DNS TUNNELING
-----------------
-Protocol: DNS (UDP/53)
-Server: dns.exfil.tk (malicious DNS server)
-Data Volume: 50 MB test transfer
-
-Transfer Characteristics:
-- Speed: ~3.3 MB/minute (SLOW)
-- Bandwidth: Low (blends with normal DNS)
-- Connection: Good, occasional retries
-- Latency: Medium (50-100ms)
-- Success Rate: 95%
-
-Detection Characteristics:
-- DLP Monitoring: LIMITED (detection gaps)
-- Network Monitoring: LIMITED (DNS less monitored)
-- Alert Generation: LOW (few alerts)
-- Visibility: LOW (blends with normal traffic)
-- Blocking Risk: LOW (20%)
-
-Advantages:
-- Low detection risk
-- High stealth
-- Low blocking probability
-- Blends with normal DNS traffic
-
-Disadvantages:
-- Slower transfer speed
-- Occasional retries needed
-- Lower success rate (95%)
-
-COMPARISON SUMMARY:
--------------------
-Method          | Speed    | Reliability | Detection Risk | Stealth | Blocking Risk
-----------------|----------|-------------|----------------|---------|---------------
-HTTPS Tunnel    | FAST     | HIGH        | HIGH           | LOW     | MEDIUM-HIGH
-DNS Tunneling   | SLOW     | MEDIUM      | LOW            | HIGH    | LOW
+Future Attack Opportunities:
+- Target offsite backup access (if accessible)
+- Disrupt recovery infrastructure (if accessible)
+- Exploit recovery process vulnerabilities
+- Target backup systems in future attacks
 
 RECOMMENDATION:
 ---------------
-Use DNS Tunneling for exfiltration.
+Continue monitoring for intelligence gathering. Provides valuable information for:
+1. Future attack planning
+2. Backup system targeting
+3. Recovery infrastructure assessment
+4. Business impact timeline
+5. Negotiation leverage assessment
+
+Disruption attempts are high risk with low success probability.
+Monitoring provides maximum intelligence value with minimal risk.
+"""
+    
+    with open(ARTIFACTS_DIR / "intelligence_assessment_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: intelligence_assessment_phase5.txt")
+    
+    # Blue Team: Backup System Status
+    content = """Backup System Status Report
+============================
+Report Generated: 2024-01-15 14:35:00 UTC
+System: Veeam Backup & Replication v12.0
+Administrator: backup.admin@corp.local
+
+BACKUP SERVER STATUS
+--------------------
+Server Name: BACKUP-01.corp.local
+IP Address: 192.168.0.30
+Status: ENCRYPTED (as of 2024-01-15 10:00:00 UTC)
+Last Successful Backup: 2024-01-15 08:00:00 UTC
+Encryption Detected: 2024-01-15 10:00:00 UTC
+
+ONSITE BACKUP STORAGE
+---------------------
+Location: BACKUP-01 (Onsite)
+Status: ENCRYPTED
+Storage Type: Network Attached Storage (NAS)
+Total Capacity: 50 TB
+Used Capacity: 42 TB (84%)
+
+Backup Sets:
+  - System_Backup_2024-01-15_08-00-00: ENCRYPTED
+  - Database_Backup_2024-01-15_08-00-00: ENCRYPTED
+  - FileServer_Backup_2024-01-15_08-00-00: ENCRYPTED
+  - Application_Backup_2024-01-15_08-00-00: ENCRYPTED
+
+Recovery: NOT POSSIBLE - All backup files encrypted by ransomware
+
+OFFSITE BACKUP STORAGE
+----------------------
+Location: Secure Offsite Facility (Cloud)
+Status: INTACT
+Storage Provider: AWS S3 (encrypted at rest)
+Total Capacity: Unlimited
+Used Capacity: 38 TB
+
+Last Successful Backup: 2024-01-14 20:00:00 UTC
+Backup Frequency: Every 12 hours
+Retention Policy: 30 days
+
+Backup Sets Available:
+  ✓ System_Backup_2024-01-14_20-00-00: INTACT (36 hours old)
+  ✓ Database_Backup_2024-01-14_20-00-00: INTACT (36 hours old)
+  ✓ FileServer_Backup_2024-01-14_20-00-00: INTACT (36 hours old)
+  ✓ Application_Backup_2024-01-14_20-00-00: INTACT (36 hours old)
+  ✓ System_Backup_2024-01-14_08-00-00: INTACT (48 hours old)
+  ✓ Previous backups available going back 30 days
+
+BACKUP COVERAGE ANALYSIS
+------------------------
+Critical Systems Coverage: 95%
+  ✓ Domain Controllers: 2/2 backed up
+  ✓ File Servers: 15/15 backed up
+  ✓ Application Servers: 8/8 backed up
+  ✓ Database Servers: 5/5 backed up
+  ✓ Web Servers: 3/3 backed up
+
+User Data Coverage: 80%
+  ✓ User Home Directories: 80% coverage
+  ✓ Shared Drives: 95% coverage
+  ✓ Email Archives: 90% coverage
+  ⚠ Desktop Files: 60% coverage (not all users included)
+
+Application Data Coverage: 90%
+  ✓ ERP System: Backed up
+  ✓ CRM System: Backed up
+  ✓ Email Server: Backed up
+  ⚠ Development Servers: 70% coverage
+
+RECOVERY METRICS
+----------------
+Recovery Point Objective (RPO): 36 hours
+  - Maximum acceptable data loss: 36 hours
+  - Current backup age: 36 hours (WITHIN RPO)
+  - Status: ACCEPTABLE
+
+Recovery Time Objective (RTO): 48 hours
+  - Target recovery time: 48 hours
+  - Critical systems recovery: 4-12 hours (WITHIN RTO)
+  - Full recovery: 48-72 hours (WITHIN RTO)
+
+Data Loss Window: 14 hours
+  - Last backup: 2024-01-14 20:00:00 UTC
+  - Encryption detected: 2024-01-15 10:00:00 UTC
+  - Data loss: 14 hours of new/changed data (ACCEPTABLE)
+
+BACKUP INTEGRITY VERIFICATION
+-------------------------------
+Offsite Backup Integrity: VERIFIED
+  - Checksum verification: PASSED
+  - File structure verification: PASSED
+  - Backup completeness: CONFIRMED
+  - Corruption check: NO CORRUPTION DETECTED
+  - Status: READY FOR RESTORATION
+
+RECOMMENDATION
+--------------
+Proceed with offsite backup restoration. Recovery is feasible within RTO window.
+
+Optimal Strategy: Restore critical systems first
+  - Domain Controllers: 4 hours
+  - File Servers: 12 hours
+  - ERP System: 8 hours
+  - Total: 24 hours (meets RTO for critical systems)
+
+Full Recovery: 48-72 hours (meets RTO for all systems)
+
+Backup integrity verified. Offsite backups are intact and ready for restoration.
+"""
+    
+    with open(ARTIFACTS_DIR / "backup_status_phase5.txt", 'w') as f:
+        f.write(content)
+    print("Created: backup_status_phase5.txt")
+    
+    # Blue Team: Recovery Procedure & Timeline
+    content = """Recovery Procedure & Timeline Analysis
+==========================================
+Analysis Date: 2024-01-15 14:40:00 UTC
+Recovery Coordinator: IT-Admin@corp.local
+Backup Source: Offsite (AWS S3)
+Backup Age: 36 hours (within RPO)
+
+RECOVERY PROCEDURE:
+-------------------
+Step 1: Verify offsite backup integrity
+  - Status: COMPLETE (verified, no corruption)
+  - Time: 0.5 hours
+  - Result: Backups intact and ready
+
+Step 2: Provision recovery infrastructure
+  - Status: IN PROGRESS
+  - Time: 1 hour
+  - Infrastructure: Isolated cloud environment
+
+Step 3: Restore domain controllers
+  - Estimated Time: 4 hours
+  - Priority: CRITICAL (required for authentication)
+  - Systems: DC-01, DC-02
+
+Step 4: Restore file servers
+  - Estimated Time: 12 hours
+  - Priority: CRITICAL (required for business operations)
+  - Systems: FS-01 through FS-15
+
+Step 5: Restore application servers
+  - Estimated Time: 8 hours
+  - Priority: HIGH (ERP, CRM, Email)
+  - Systems: APP-01 through APP-08
+
+Step 6: Restore databases
+  - Estimated Time: 6 hours
+  - Priority: HIGH (critical data)
+  - Systems: DB-01 through DB-05
+
+Step 7: Restore user data
+  - Estimated Time: 18 hours
+  - Priority: MEDIUM (can be done in parallel)
+  - Coverage: 80% of user data
+
+Step 8: Verify system functionality
+  - Estimated Time: 4 hours
+  - Priority: CRITICAL (before going live)
+  - Scope: All restored systems
+
+RECOVERY TIMELINE ANALYSIS:
+---------------------------
+Critical Systems First Strategy:
+  - Domain Controllers: 4 hours
+  - File Servers: 12 hours
+  - ERP System: 8 hours
+  - Total: 24 hours (WITHIN RTO of 48 hours)
+  - Business Operations: RESTORED in 24 hours
+
+Full System Recovery Strategy:
+  - All Systems: 48-72 hours
+  - Total: 48-72 hours (WITHIN RTO of 48 hours)
+  - Business Operations: RESTORED in 48-72 hours
+
+COMPARISON:
+-----------
+Strategy          | Recovery Time | RTO Status | Business Impact
+------------------|---------------|------------|----------------
+Critical First    | 24 hours      | WITHIN     | Minimal (24h downtime)
+Full Recovery     | 48-72 hours   | WITHIN     | Moderate (48-72h downtime)
+
+RECOMMENDATION:
+---------------
+Restore critical systems first (Domain Controllers, File Servers, ERP).
 
 Reasons:
-1. Lower detection risk (limited DLP monitoring, detection gaps)
-2. Higher stealth (blends with normal DNS traffic)
-3. Lower blocking probability (20% vs 60%)
-4. Reliable enough (95% success rate, acceptable)
-5. Speed acceptable (3.3 MB/minute, sufficient for exfiltration)
+1. Meets RTO for critical systems (24 hours vs 48 hour RTO)
+2. Restores business operations faster (24 hours vs 48-72 hours)
+3. Minimizes business impact (faster recovery)
+4. Allows parallel restoration of non-critical systems
+5. Standard IR best practice (prioritize critical infrastructure)
 
-HTTPS Tunnel is faster but has significantly higher detection risk and 
-lower stealth. DNS Tunneling offers better balance for covert exfiltration.
-
-For time-sensitive exfiltration, consider splitting data across both methods,
-but prioritize DNS Tunneling for majority of data.
+Full system recovery is acceptable but slower. Critical systems first
+provides optimal balance of recovery time and business continuity.
 """
     
-    with open(ARTIFACTS_DIR / "data_transfer_phase5.txt", 'w') as f:
+    with open(ARTIFACTS_DIR / "recovery_procedure_phase5.txt", 'w') as f:
         f.write(content)
-    print("Created: data_transfer_phase5.txt")
-    
-    # Blue Team: DLP Alert Analysis
-    content = """Microsoft Purview Data Loss Prevention - Alert Analysis
-================================================================
-Analysis Date: 2024-01-15 12:20:00 UTC
-Time Range: 2024-01-15 12:00:00 - 12:30:00 UTC
-Scope: Data Exfiltration Detection
-
-DLP ALERT SUMMARY:
-------------------
-Total Alerts: 8
-High Severity: 5
-Medium Severity: 3
-Low Severity: 0
-
-ALERT BREAKDOWN BY METHOD:
---------------------------
-
-1. HTTPS TUNNEL EXFILTRATION
------------------------------
-Alerts Generated: 5
-Severity: HIGH (4), MEDIUM (1)
-
-Alert Details:
-Alert 1:
-- Time: 2024-01-15 12:05:15 UTC
-- Type: Large Data Transfer
-- Source: DB-HR-PROD (192.168.20.75)
-- Destination: 185.220.101.78:443
-- Protocol: HTTPS
-- Data Volume: 10 MB
-- Detection: DLP Policy "Large External Transfer"
-- Action: Alert generated
-
-Alert 2:
-- Time: 2024-01-15 12:06:30 UTC
-- Type: Sensitive Data Transfer
-- Source: DB-HR-PROD
-- Destination: 185.220.101.78:443
-- Protocol: HTTPS
-- Data Volume: 10 MB
-- Detection: DLP Policy "Sensitive Data External Transfer"
-- Action: Alert generated
-
-Alert 3:
-- Time: 2024-01-15 12:07:45 UTC
-- Type: Unusual Transfer Pattern
-- Source: DB-HR-PROD
-- Destination: 185.220.101.78:443
-- Protocol: HTTPS
-- Data Volume: 10 MB
-- Detection: DLP Policy "Unusual Transfer Pattern"
-- Action: Alert generated
-
-Alert 4:
-- Time: 2024-01-15 12:09:00 UTC
-- Type: Large Data Transfer
-- Source: DB-HR-PROD
-- Destination: 185.220.101.78:443
-- Protocol: HTTPS
-- Data Volume: 10 MB
-- Detection: DLP Policy "Large External Transfer"
-- Action: Alert generated
-
-Alert 5:
-- Time: 2024-01-15 12:10:15 UTC
-- Type: Sensitive Data Transfer
-- Source: DB-HR-PROD
-- Destination: 185.220.101.78:443
-- Protocol: HTTPS
-- Data Volume: 10 MB
-- Detection: DLP Policy "Sensitive Data External Transfer"
-- Action: Alert generated
-
-Detection Coverage: EXCELLENT
-- All HTTPS transfers detected
-- Multiple DLP policies triggered
-- High confidence detection
-- Well-monitored
-
-2. DNS TUNNELING EXFILTRATION
-------------------------------
-Alerts Generated: 3
-Severity: MEDIUM (3)
-
-Alert Details:
-Alert 1:
-- Time: 2024-01-15 12:12:00 UTC
-- Type: Unusual DNS Activity
-- Source: DB-HR-PROD
-- Destination: dns.exfil.tk (DNS server)
-- Protocol: DNS (UDP/53)
-- Data Volume: Unknown (DNS queries)
-- Detection: DLP Policy "Unusual DNS Activity" (limited coverage)
-- Action: Alert generated (low confidence)
-
-Alert 2:
-- Time: 2024-01-15 12:18:00 UTC
-- Type: Suspicious DNS Pattern
-- Source: DB-HR-PROD
-- Destination: dns.exfil.tk
-- Protocol: DNS (UDP/53)
-- Data Volume: Unknown
-- Detection: DLP Policy "Suspicious DNS Pattern" (limited coverage)
-- Action: Alert generated (medium confidence)
-
-Alert 3:
-- Time: 2024-01-15 12:24:00 UTC
-- Type: Unusual DNS Activity
-- Source: DB-HR-PROD
-- Destination: dns.exfil.tk
-- Protocol: DNS (UDP/53)
-- Data Volume: Unknown
-- Detection: DLP Policy "Unusual DNS Activity" (limited coverage)
-- Action: Alert generated (low confidence)
-
-Detection Coverage: LIMITED
-- Some DNS activity detected
-- Limited DLP policy coverage
-- Lower confidence detection
-- Less aggressive monitoring
-
-COMPARISON SUMMARY:
--------------------
-Method          | Alerts | Severity | Detection Coverage | Confidence
-----------------|--------|----------|-------------------|-----------
-HTTPS Tunnel    | 5      | HIGH     | EXCELLENT         | HIGH
-DNS Tunneling   | 3      | MEDIUM   | LIMITED           | LOW-MEDIUM
-
-RISK ASSESSMENT:
-----------------
-HTTPS Tunnel Risk: HIGH
-- Well-monitored
-- High confidence detection
-- Multiple alerts generated
-- Easy to identify and block
-
-DNS Tunneling Risk: MEDIUM
-- Limited monitoring
-- Lower confidence detection
-- Fewer alerts generated
-- Harder to identify and block
-
-RECOMMENDATION:
----------------
-PRIORITY: HIGH - DNS Tunneling requires enhanced monitoring
-
-Immediate Actions:
-1. Enhance DNS tunneling detection capabilities
-2. Implement DNS query analysis and monitoring
-3. Review and block suspicious DNS domains (dns.exfil.tk)
-4. Investigate DNS tunneling activity from DB-HR-PROD
-5. Consider blocking DNS exfiltration at network level
-
-HTTPS Tunnel exfiltration is well-monitored with excellent detection coverage.
-DNS Tunneling has limited detection coverage and represents a higher ongoing risk.
-
-Both methods detected, but DNS Tunneling requires enhanced monitoring and blocking.
-"""
-    
-    with open(ARTIFACTS_DIR / "dlp_analysis_phase5.txt", 'w') as f:
-        f.write(content)
-    print("Created: dlp_analysis_phase5.txt")
-    
-    # Blue Team: Network Bandwidth Analysis
-    content = """Microsoft Defender for Cloud - Network Bandwidth Analysis
-==================================================================
-Analysis Date: 2024-01-15 12:25:00 UTC
-Time Range: 2024-01-15 12:00:00 - 12:30:00 UTC
-Source: DB-HR-PROD (192.168.20.75)
-
-BANDWIDTH ANALYSIS:
--------------------
-
-1. HTTPS TRAFFIC
------------------
-Time Range: 2024-01-15 12:00:00 - 12:15:00 UTC
-Destination: 185.220.101.78:443
-Protocol: HTTPS (TCP/443)
-
-Bandwidth Characteristics:
-- Baseline: ~1-2 MB/minute (normal database operations)
-- Anomaly Period: 12:05:00 - 12:10:00 UTC
-- Peak Bandwidth: ~10 MB/minute (5x normal)
-- Total Data Transferred: ~50 MB
-- Connection Duration: 5 minutes
-- Transfer Pattern: Sustained high bandwidth
-
-Anomaly Detection: CLEAR
-- Significant bandwidth spike detected
-- Sustained high bandwidth usage
-- Unusual transfer pattern
-- Clear anomaly indicators
-
-Alert Generation: HIGH
-- Multiple bandwidth alerts generated
-- Clear anomaly detection
-- High confidence alerts
-- Easy to identify
-
-Analysis: HTTPS traffic shows CLEAR anomalies with significant bandwidth spikes.
-Easy to identify and block.
-
-2. DNS TRAFFIC
---------------
-Time Range: 2024-01-15 12:00:00 - 12:30:00 UTC
-Destination: dns.exfil.tk (DNS server)
-Protocol: DNS (UDP/53)
-
-Bandwidth Characteristics:
-- Baseline: ~100-200 KB/minute (normal DNS queries)
-- Anomaly Period: 12:10:00 - 12:25:00 UTC
-- Peak Bandwidth: ~300-400 KB/minute (2x normal)
-- Total Data Transferred: ~50 MB (estimated, encoded in DNS queries)
-- Query Duration: 15 minutes
-- Transfer Pattern: Sustained moderate increase
-
-Anomaly Detection: LESS OBVIOUS
-- Moderate bandwidth increase (2x normal)
-- Blends with normal DNS traffic
-- Less obvious anomaly indicators
-- Requires deeper analysis
-
-Alert Generation: LOW
-- Few bandwidth alerts generated
-- Lower confidence alerts
-- Harder to identify
-- Requires correlation analysis
-
-Analysis: DNS traffic shows LESS OBVIOUS anomalies with moderate bandwidth increase.
-Harder to identify and may blend with normal DNS traffic.
-
-COMPARISON SUMMARY:
--------------------
-Method          | Bandwidth Spike | Anomaly Detection | Alert Gen | Visibility
-----------------|-----------------|------------------|-----------|------------
-HTTPS Tunnel    | 5x normal       | CLEAR            | HIGH      | HIGH
-DNS Tunneling   | 2x normal       | LESS OBVIOUS     | LOW       | LOW
-
-RISK ASSESSMENT:
-----------------
-HTTPS Tunnel Risk: HIGH
-- Clear bandwidth anomalies
-- Easy to identify
-- High confidence detection
-- Well-monitored
-
-DNS Tunneling Risk: MEDIUM-HIGH
-- Less obvious bandwidth anomalies
-- Harder to identify
-- Lower confidence detection
-- Less aggressive monitoring
-
-RECOMMENDATION:
----------------
-PRIORITY: HIGH - DNS Tunneling requires enhanced monitoring
-
-Immediate Actions:
-1. Enhance DNS traffic monitoring and analysis
-2. Implement DNS query pattern analysis
-3. Review and block suspicious DNS domains (dns.exfil.tk)
-4. Investigate DNS tunneling activity from DB-HR-PROD
-5. Consider DNS filtering and monitoring enhancements
-
-HTTPS Tunnel exfiltration shows clear bandwidth anomalies and is well-monitored.
-DNS Tunneling shows less obvious anomalies and requires enhanced monitoring.
-
-Both methods show anomalies, but DNS Tunneling is less obvious and represents 
-a higher ongoing risk due to limited detection capabilities.
-"""
-    
-    with open(ARTIFACTS_DIR / "bandwidth_analysis_phase5.txt", 'w') as f:
-        f.write(content)
-    print("Created: bandwidth_analysis_phase5.txt")
+    print("Created: recovery_procedure_phase5.txt")
 
 
 if __name__ == "__main__":
