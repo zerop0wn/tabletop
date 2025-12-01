@@ -404,8 +404,8 @@ export default function PlayerView() {
                 ))}
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
-                <span>1 = Least Likely</span>
-                <span>10 = Highly Likely</span>
+                <span>1 = Least Effective</span>
+                <span>10 = Most Effective</span>
               </div>
               {effectivenessRating === null && (
                 <p className="text-sm text-red-500 mt-2">Please select a rating before submitting</p>
