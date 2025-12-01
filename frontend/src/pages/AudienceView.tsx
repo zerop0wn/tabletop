@@ -57,27 +57,20 @@ export default function AudienceView() {
     
     // Also unlock on any user interaction (click, touch, keypress)
     const events = ['click', 'touchstart', 'keydown']
-    const unlockHandlers = events.map(eventType => {
+    const unlockHandlers: Array<() => void> = []
+    
+    events.forEach(eventType => {
       const handler = () => {
         unlockAudio()
-        // Remove handlers after first successful unlock
-        if (audioUnlockedRef.current) {
-          events.forEach(et => {
-            document.removeEventListener(et, unlockHandlers[events.indexOf(et)])
-          })
-        }
       }
       document.addEventListener(eventType, handler, { once: true })
-      return handler
+      unlockHandlers.push(handler)
     })
     
     fetchScoreboard()
     const interval = setInterval(fetchScoreboard, 3000) // Poll every 3 seconds for more real-time feel
     return () => {
       clearInterval(interval)
-      events.forEach((eventType, idx) => {
-        document.removeEventListener(eventType, unlockHandlers[idx])
-      })
       if (phaseTransitionSoundRef.current) {
         phaseTransitionSoundRef.current.pause()
         phaseTransitionSoundRef.current = null
