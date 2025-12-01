@@ -35,8 +35,20 @@ fi
 echo "✓ Backend container is running"
 echo ""
 
-# Step 1: Copy scenario creation script and create scenario
-echo "Step 1: Creating scenario in database..."
+# Step 1: Copy artifact generation script
+echo "Step 1: Copying artifact generation script..."
+docker cp backend/generate_operation_inbox_overload_artifacts.py "$BACKEND_CONTAINER:/app/generate_operation_inbox_overload_artifacts.py"
+
+if [ $? -ne 0 ]; then
+    echo "❌ Error copying artifact generation script"
+    exit 1
+fi
+
+echo "✓ Artifact generation script copied"
+echo ""
+
+# Step 2: Copy scenario creation script and create scenario
+echo "Step 2: Creating scenario in database..."
 docker cp backend/create_operation_inbox_overload_scenario.py "$BACKEND_CONTAINER:/app/create_operation_inbox_overload_scenario.py"
 docker exec "$BACKEND_CONTAINER" python /app/create_operation_inbox_overload_scenario.py
 
@@ -57,9 +69,8 @@ echo "- Phase 3: MFA Reset Attempt & Endpoint Foothold"
 echo "- Phase 4: Persistence vs Containment"
 echo "- 0-10 scoring scale with clear optimal choices"
 echo "- Focus on identity and endpoint containment decisions"
-echo ""
-echo "Note: Artifacts are currently placeholders. Implement artifact generation"
-echo "      functions to populate realistic artifacts for each phase."
+echo "- Detailed Defender/E5 security tool artifacts for Blue Team"
+echo "- Realistic Red Team social engineering and tool outputs"
 echo ""
 echo "You can now create a game using this scenario from the GM console."
 
