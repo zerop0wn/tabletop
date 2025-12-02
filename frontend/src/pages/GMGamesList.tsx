@@ -100,7 +100,7 @@ export default function GMGamesList() {
           <div className="flex flex-wrap gap-2">
             <button
               onClick={() => navigate('/gm/scenarios/new')}
-              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+              className="flex-1 sm:flex-none px-4 py-2.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 text-sm sm:text-base font-medium"
             >
               Create Scenario
             </button>
