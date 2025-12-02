@@ -99,6 +99,12 @@ export default function GMGamesList() {
           <h1 className="text-2xl sm:text-3xl font-bold">Game Manager Console</h1>
           <div className="flex flex-wrap gap-2">
             <button
+              onClick={() => navigate('/gm/scenarios/new')}
+              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+            >
+              Create Scenario
+            </button>
+            <button
               onClick={() => navigate('/gm/games/new')}
               className="flex-1 sm:flex-none px-4 py-2.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm sm:text-base font-medium"
             >

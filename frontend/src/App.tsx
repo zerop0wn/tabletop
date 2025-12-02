@@ -3,6 +3,7 @@ import GMLogin from './pages/GMLogin'
 import GMGamesList from './pages/GMGamesList'
 import GMGameDashboard from './pages/GMGameDashboard'
 import GMCreateGame from './pages/GMCreateGame'
+import GMScenarioBuilder from './pages/GMScenarioBuilder'
 import PlayerJoin from './pages/PlayerJoin'
 import PlayerView from './pages/PlayerView'
 import AudienceView from './pages/AudienceView'
@@ -32,6 +33,7 @@ function App() {
         } />
         <Route path="/gm/login" element={<GMLogin />} />
         <Route path="/gm" element={<GMGamesList />} />
+        <Route path="/gm/scenarios/new" element={<GMScenarioBuilder />} />
         <Route path="/gm/games/new" element={<GMCreateGame />} />
         <Route path="/gm/games/:id" element={<GMGameDashboard />} />
         <Route path="/gm/games/:id/after-action-report" element={<AfterActionReportView />} />

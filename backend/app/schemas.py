@@ -32,6 +32,20 @@ class ArtifactResponse(ArtifactBase):
         from_attributes = True
 
 
+class ArtifactCreate(ArtifactBase):
+    notes_for_gm: Optional[str] = None
+
+
+class ArtifactUpdate(BaseModel):
+    name: Optional[str] = None
+    type: Optional[ArtifactType] = None
+    description: Optional[str] = None
+    file_url: Optional[str] = None
+    embed_url: Optional[str] = None
+    content: Optional[str] = None
+    notes_for_gm: Optional[str] = None
+
+
 class ScenarioPhaseBase(BaseModel):
     order_index: int
     name: str
@@ -66,6 +80,47 @@ class ScenarioResponse(ScenarioBase):
 
     class Config:
         from_attributes = True
+
+
+# Schema for linking artifacts to phases
+class PhaseArtifactLink(BaseModel):
+    artifact_id: Optional[int] = None  # For existing artifacts
+    artifact: Optional[ArtifactCreate] = None  # For new artifacts to create
+    team_role: Optional[str] = None  # "red", "blue", or None for both teams
+    
+    class Config:
+        # Allow both artifact_id and artifact, but at least one should be provided
+        # Validation will be done in the endpoint
+        pass
+
+
+class ScenarioPhaseCreate(ScenarioPhaseBase):
+    available_actions: Optional[Dict[str, List[Dict[str, str]]]] = None
+    artifacts: List[PhaseArtifactLink] = []  # Links to artifacts (existing or new)
+
+
+class ScenarioPhaseUpdate(BaseModel):
+    order_index: Optional[int] = None
+    name: Optional[str] = None
+    briefing_text: Optional[str] = None
+    red_objective: Optional[str] = None
+    blue_objective: Optional[str] = None
+    default_duration_seconds: Optional[int] = None
+    miro_frame_url: Optional[str] = None
+    available_actions: Optional[Dict[str, List[Dict[str, str]]]] = None
+    gm_prompt_questions: Optional[List[str]] = None
+    artifacts: Optional[List[PhaseArtifactLink]] = None
+
+
+class ScenarioCreate(ScenarioBase):
+    phases: List[ScenarioPhaseCreate] = []
+
+
+class ScenarioUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    miro_board_url: Optional[str] = None
+    phases: Optional[List[ScenarioPhaseCreate]] = None
 
 
 # Game schemas
@@ -315,6 +370,27 @@ class PlayerReportCardResponse(BaseModel):
     average_effectiveness_rating: Optional[float] = None  # Average of player's effectiveness ratings
     phases: List[PhaseReportCardEntry] = []
     game_completed_at: Optional[datetime] = None
+
+
+# Template schemas
+class ScenarioTemplateBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+    template_data: Dict[str, Any]
+    is_public: bool = False
+
+
+class ScenarioTemplateCreate(ScenarioTemplateBase):
+    pass
+
+
+class ScenarioTemplateResponse(ScenarioTemplateBase):
+    id: int
+    created_by_gm_id: Optional[int] = None
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
 
 
 # Update forward references

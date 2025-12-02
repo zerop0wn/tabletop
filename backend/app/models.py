@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text, JSON, Enum as SQLEnum
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Text, JSON, Enum as SQLEnum, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from datetime import datetime
@@ -234,4 +234,18 @@ class AfterActionReport(Base):
 
     game = relationship("Game")
     gm = relationship("GMUser")
+
+
+class ScenarioTemplate(Base):
+    __tablename__ = "scenario_templates"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    description = Column(Text)
+    template_data = Column(JSON, nullable=False)  # Stores the template structure
+    created_by_gm_id = Column(Integer, ForeignKey("gm_users.id"), nullable=True)
+    is_public = Column(Boolean, default=False)  # Can be shared with other GMs
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    created_by = relationship("GMUser")
 

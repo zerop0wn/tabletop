@@ -38,6 +38,72 @@ export interface Artifact {
   file_url?: string
   embed_url?: string
   content?: string  // Text content stored in database
+  notes_for_gm?: string
+}
+
+export type ArtifactType = 'log_snippet' | 'screenshot' | 'email' | 'tool_output' | 'intel_report'
+
+export interface ArtifactCreate {
+  name: string
+  type: ArtifactType
+  description?: string
+  file_url?: string
+  embed_url?: string
+  content?: string
+  notes_for_gm?: string
+}
+
+export interface PhaseArtifactLink {
+  artifact_id?: number
+  artifact?: ArtifactCreate
+  team_role?: 'red' | 'blue' | null
+}
+
+export interface ScenarioPhaseCreate {
+  order_index: number
+  name: string
+  briefing_text?: string
+  red_objective?: string
+  blue_objective?: string
+  default_duration_seconds?: number
+  miro_frame_url?: string
+  available_actions?: {
+    red?: Array<{ name: string; description: string }>
+    blue?: Array<{ name: string; description: string }>
+  }
+  gm_prompt_questions?: string[]
+  artifacts: PhaseArtifactLink[]
+}
+
+export interface ScenarioCreate {
+  name: string
+  description?: string
+  miro_board_url?: string
+  phases: ScenarioPhaseCreate[]
+}
+
+export interface ScenarioUpdate {
+  name?: string
+  description?: string
+  miro_board_url?: string
+  phases?: ScenarioPhaseCreate[]
+}
+
+export interface ScenarioTemplate {
+  id: number
+  name: string
+  description?: string
+  template_data: Record<string, any>
+  created_by_gm_id?: number
+  is_public: boolean
+  created_at: string
+}
+
+export interface ScenarioTemplateCreate {
+  name: string
+  description?: string
+  template_data: Record<string, any>
+  is_public?: boolean
 }
 
 export interface Game {
