@@ -6,9 +6,8 @@ sys.path.insert(0, '/app')
 
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
-from app.models import Game, Scenario, ScenarioPhase, PhaseDecision, Team
+from app.models import Game, Scenario, ScenarioPhase, PhaseDecision, Team, DecisionStatus
 from app.scoring import SCORING_MATRICES, get_optimal_score
-from app.enums import DecisionStatus
 
 db: Session = SessionLocal()
 
