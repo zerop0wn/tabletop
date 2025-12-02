@@ -185,3 +185,29 @@ export interface Scoreboard {
   recent_events: GlobalEvent[]
 }
 
+export interface PhaseReportCardEntry {
+  phase_id: number
+  phase_name: string
+  phase_order: number
+  player_vote?: string
+  player_effectiveness_rating?: number
+  player_comments?: string
+  team_decision?: string
+  score_received: number
+  max_possible_score?: number
+}
+
+export interface PlayerReportCard {
+  player_id: number
+  player_name: string
+  team_id: number
+  team_name: string
+  team_role: string
+  game_id: number
+  scenario_name: string
+  total_score: number
+  average_effectiveness_rating?: number
+  phases: PhaseReportCardEntry[]
+  game_completed_at?: string
+}
+

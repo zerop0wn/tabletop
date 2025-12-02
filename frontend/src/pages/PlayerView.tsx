@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import apiClient from '../api/client'
 import { PlayerState } from '../types'
+import PlayerReportCardView from './PlayerReportCard'
 
 interface ActionInfo {
   name: string
@@ -183,6 +184,11 @@ export default function PlayerView() {
   const teamBgColor = state.team_role === 'red' ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200'
   const teamTextColor = state.team_role === 'red' ? 'text-red-800' : 'text-blue-800'
   const teamBadgeColor = state.team_role === 'red' ? 'bg-red-600' : 'bg-blue-600'
+
+  // Show report card if game is finished
+  if (state.game_status === 'finished') {
+    return <PlayerReportCardView />
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">

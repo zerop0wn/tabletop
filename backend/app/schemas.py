@@ -289,6 +289,33 @@ class AfterActionReportResponse(BaseModel):
     phase_analyses: List[PhaseAnalysis]
 
 
+# Player Report Card schemas
+class PhaseReportCardEntry(BaseModel):
+    phase_id: int
+    phase_name: str
+    phase_order: int
+    player_vote: Optional[str] = None  # Action the player voted for
+    player_effectiveness_rating: Optional[int] = None
+    player_comments: Optional[str] = None
+    team_decision: Optional[str] = None  # Team's final decision
+    score_received: int = 0  # Score for this phase
+    max_possible_score: Optional[int] = None  # Max score possible for this phase
+
+
+class PlayerReportCardResponse(BaseModel):
+    player_id: int
+    player_name: str
+    team_id: int
+    team_name: str
+    team_role: str
+    game_id: int
+    scenario_name: str
+    total_score: int  # Total score across all phases
+    average_effectiveness_rating: Optional[float] = None  # Average of player's effectiveness ratings
+    phases: List[PhaseReportCardEntry] = []
+    game_completed_at: Optional[datetime] = None
+
+
 # Update forward references
 PlayerStateResponse.model_rebuild()
 VotingStatusResponse.model_rebuild()

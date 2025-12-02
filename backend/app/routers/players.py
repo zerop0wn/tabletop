@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, func
 import sqlalchemy as sa
 from app.database import get_db
-from app.models import Game, Team, Player, ScenarioPhase, PhaseDecision, DecisionStatus, PlayerVote, Artifact, scenario_phase_artifacts
-from app.schemas import JoinRequest, JoinResponse, PlayerStateResponse, VotingStatusResponse, PlayerVoteResponse
+from app.models import Game, Team, Player, ScenarioPhase, PhaseDecision, DecisionStatus, PlayerVote, Artifact, scenario_phase_artifacts, ScoreEvent
+from app.schemas import JoinRequest, JoinResponse, PlayerStateResponse, VotingStatusResponse, PlayerVoteResponse, PlayerReportCardResponse, PhaseReportCardEntry
 from typing import Optional
 
 router = APIRouter()
@@ -198,5 +198,96 @@ def get_player_state(game_id: int, player_id: int, db: Session = Depends(get_db)
         has_voted=has_voted,
         team_voting_status=team_voting_status,
         available_actions=available_actions,
+    )
+
+
+@router.get("/games/{game_id}/player/{player_id}/report-card", response_model=PlayerReportCardResponse)
+def get_player_report_card(game_id: int, player_id: int, db: Session = Depends(get_db)):
+    """Get a summary report card for a player showing their actions and effectiveness across all phases"""
+    player = db.query(Player).filter(Player.id == player_id, Player.game_id == game_id).first()
+    if not player:
+        raise HTTPException(status_code=404, detail="Player not found")
+
+    game = db.query(Game).filter(Game.id == game_id).first()
+    if not game:
+        raise HTTPException(status_code=404, detail="Game not found")
+
+    # Get all phases for this scenario, ordered by order_index
+    phases = db.query(ScenarioPhase).filter(
+        ScenarioPhase.scenario_id == game.scenario_id
+    ).order_by(ScenarioPhase.order_index).all()
+
+    phase_entries = []
+    total_score = 0
+    effectiveness_ratings = []
+
+    for phase in phases:
+        # Get player's vote for this phase
+        player_vote = db.query(PlayerVote).filter(
+            PlayerVote.player_id == player_id,
+            PlayerVote.phase_id == phase.id,
+            PlayerVote.game_id == game_id
+        ).first()
+
+        # Get team's decision for this phase
+        team_decision = db.query(PhaseDecision).filter(
+            PhaseDecision.game_id == game_id,
+            PhaseDecision.team_id == player.team_id,
+            PhaseDecision.phase_id == phase.id
+        ).first()
+
+        # Get score for this phase
+        phase_score = db.query(func.coalesce(func.sum(ScoreEvent.delta), 0)).filter(
+            ScoreEvent.game_id == game_id,
+            ScoreEvent.team_id == player.team_id,
+            ScoreEvent.phase_id == phase.id
+        ).scalar() or 0
+
+        total_score += int(phase_score)
+
+        # Extract team decision action
+        team_decision_action = None
+        if team_decision and team_decision.actions:
+            if isinstance(team_decision.actions, dict):
+                if "selected" in team_decision.actions:
+                    selected = team_decision.actions["selected"]
+                    if isinstance(selected, list) and len(selected) > 0:
+                        team_decision_action = selected[0]
+                    elif isinstance(selected, str):
+                        team_decision_action = selected
+
+        # Collect effectiveness rating
+        if player_vote and player_vote.effectiveness_rating is not None:
+            effectiveness_ratings.append(player_vote.effectiveness_rating)
+
+        phase_entries.append(PhaseReportCardEntry(
+            phase_id=phase.id,
+            phase_name=phase.name,
+            phase_order=phase.order_index,
+            player_vote=player_vote.selected_action if player_vote else None,
+            player_effectiveness_rating=player_vote.effectiveness_rating if player_vote else None,
+            player_comments=player_vote.comments if player_vote else None,
+            team_decision=team_decision_action,
+            score_received=int(phase_score),
+            max_possible_score=10  # Most scenarios use 0-10 scale
+        ))
+
+    # Calculate average effectiveness rating
+    average_effectiveness_rating = None
+    if effectiveness_ratings:
+        average_effectiveness_rating = sum(effectiveness_ratings) / len(effectiveness_ratings)
+
+    return PlayerReportCardResponse(
+        player_id=player.id,
+        player_name=player.display_name,
+        team_id=player.team_id,
+        team_name=player.team.name,
+        team_role=player.team.role,
+        game_id=game.id,
+        scenario_name=game.scenario.name if game.scenario else "Unknown",
+        total_score=total_score,
+        average_effectiveness_rating=average_effectiveness_rating,
+        phases=phase_entries,
+        game_completed_at=game.updated_at if game.status.value == "finished" else None
     )
 
