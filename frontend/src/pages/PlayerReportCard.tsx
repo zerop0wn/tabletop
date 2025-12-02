@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import apiClient from '../api/client'
 import { PlayerReportCard } from '../types'
 
 export default function PlayerReportCardView() {
   const { gameId, playerId } = useParams<{ gameId: string; playerId: string }>()
+  const navigate = useNavigate()
   const [reportCard, setReportCard] = useState<PlayerReportCard | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -77,8 +78,16 @@ export default function PlayerReportCardView() {
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-3xl font-bold">Your Performance Report Card</h1>
-            <div className={`px-4 py-2 rounded-lg ${teamBadgeColor} text-white font-semibold`}>
-              {reportCard.team_role === 'red' ? 'Red Team' : 'Blue Team'}
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate('/play/join')}
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 font-medium text-sm"
+              >
+                Join New Game
+              </button>
+              <div className={`px-4 py-2 rounded-lg ${teamBadgeColor} text-white font-semibold`}>
+                {reportCard.team_role === 'red' ? 'Red Team' : 'Blue Team'}
+              </div>
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

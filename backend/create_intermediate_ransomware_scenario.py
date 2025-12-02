@@ -140,7 +140,11 @@ try:
                     "description": "Implement security controls like patches, endpoint protection, or network segmentation. Proactive defense but may impact system availability."
                 }
             ]
-        }
+        },
+        gm_prompt_questions=[
+            "How would your organization detect a spear-phishing campaign targeting multiple departments? What security tools and processes would alert you?",
+            "What would be the business impact if both HR and Operations departments were compromised simultaneously? How would you prioritize containment?"
+        ]
     )
     db.add(phase1)
     db.flush()
@@ -201,7 +205,11 @@ try:
                     "description": "Implement security controls to prevent persistence mechanisms. Proactive defense but may impact system availability."
                 }
             ]
-        }
+        },
+        gm_prompt_questions=[
+            "How effective is your organization at detecting persistence mechanisms like scheduled tasks, registry modifications, and WMI event subscriptions?",
+            "What would be the operational impact if an attacker maintained persistent access to a critical workstation for weeks or months?"
+        ]
     )
     db.add(phase2)
     db.flush()
@@ -258,7 +266,11 @@ try:
                     "description": "Gather logs, memory dumps, and system artifacts for analysis. Critical for understanding the attack but takes time."
                 }
             ]
-        }
+        },
+        gm_prompt_questions=[
+            "How would your security team detect privilege escalation attempts on production servers? What monitoring and alerting capabilities do you have?",
+            "What would be the business impact if an attacker gained administrative access to your file servers or application servers?"
+        ]
     )
     db.add(phase3)
     db.flush()
@@ -315,7 +327,11 @@ try:
                     "description": "Gather logs, network traffic captures, and system artifacts for analysis. Critical for understanding the attack but takes time."
                 }
             ]
-        }
+        },
+        gm_prompt_questions=[
+            "How would your organization detect unauthorized access to production databases? What database monitoring and network segmentation controls are in place?",
+            "What would be the regulatory and business impact if customer data or employee records were accessed or exfiltrated?"
+        ]
     )
     db.add(phase4)
     db.flush()
@@ -376,7 +392,11 @@ try:
                     "description": "Pay the ransom to obtain decryption keys, then decrypt systems and backups. Funds criminal activity and sets dangerous precedent. Offsite backups provide recovery without payment. Review artifacts to assess backup availability."
                 }
             ]
-        }
+        },
+        gm_prompt_questions=[
+            "How would your organization respond to a ransomware attack that encrypted 200+ systems? What is your recovery time objective (RTO) and recovery point objective (RPO)?",
+            "What would be the business impact of a 24-72 hour system outage? How would you communicate with customers, partners, and employees during recovery?"
+        ]
     )
     db.add(phase5)
     db.flush()

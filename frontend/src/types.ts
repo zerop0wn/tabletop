@@ -27,6 +27,7 @@ export interface ScenarioPhase {
     red?: Array<{ name: string; description: string }>
     blue?: Array<{ name: string; description: string }>
   }
+  gm_prompt_questions?: string[]  // List of 2 prompt questions for GM
 }
 
 export interface Artifact {

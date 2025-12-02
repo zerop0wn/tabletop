@@ -275,10 +275,27 @@ export default function GMGameDashboard() {
             </div>
 
             {game.current_phase && (
-              <div className="mt-6 p-4 bg-gray-50 rounded-md">
-                <h3 className="font-semibold mb-2">Briefing:</h3>
-                <p className="text-sm text-gray-700">{game.current_phase.briefing_text}</p>
-              </div>
+              <>
+                <div className="mt-6 p-4 bg-gray-50 rounded-md">
+                  <h3 className="font-semibold mb-2">Briefing:</h3>
+                  <p className="text-sm text-gray-700">{game.current_phase.briefing_text}</p>
+                </div>
+                {game.current_phase.gm_prompt_questions && game.current_phase.gm_prompt_questions.length > 0 && (
+                  <div className="mt-4 p-4 bg-purple-50 border-2 border-purple-200 rounded-md">
+                    <h3 className="font-semibold mb-3 text-purple-900">💡 Discussion Prompts for Players</h3>
+                    <p className="text-sm text-purple-700 mb-3">
+                      Use these questions to guide discussion and help players think deeper about the scenario:
+                    </p>
+                    <ul className="space-y-2">
+                      {game.current_phase.gm_prompt_questions.map((question, index) => (
+                        <li key={index} className="text-sm text-purple-800">
+                          <span className="font-semibold">{index + 1}.</span> {question}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </>
             )}
           </div>
 

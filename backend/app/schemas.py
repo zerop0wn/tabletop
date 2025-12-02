@@ -40,6 +40,7 @@ class ScenarioPhaseBase(BaseModel):
     blue_objective: Optional[str] = None
     default_duration_seconds: Optional[int] = None
     miro_frame_url: Optional[str] = None
+    gm_prompt_questions: Optional[List[str]] = None  # List of 2 prompt questions for GM
 
 
 class ScenarioPhaseResponse(ScenarioPhaseBase):

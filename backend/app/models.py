@@ -71,6 +71,7 @@ class ScenarioPhase(Base):
     default_duration_seconds = Column(Integer, nullable=True)
     miro_frame_url = Column(String, nullable=True)
     available_actions = Column(JSON, nullable=True)  # Phase-specific actions: {"red": [...], "blue": [...]}
+    gm_prompt_questions = Column(JSON, nullable=True)  # List of 2 prompt questions for GM: ["question1", "question2"]
 
     scenario = relationship("Scenario", back_populates="phases")
     artifacts = relationship("Artifact", secondary="scenario_phase_artifacts", back_populates="phases")

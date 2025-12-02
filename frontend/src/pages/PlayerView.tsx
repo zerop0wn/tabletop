@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import apiClient from '../api/client'
 import { PlayerState } from '../types'
 import PlayerReportCardView from './PlayerReportCard'
@@ -57,6 +57,7 @@ const RED_TEAM_ACTIONS: ActionInfo[] = [
 
 export default function PlayerView() {
   const { gameId, playerId } = useParams<{ gameId: string; playerId: string }>()
+  const navigate = useNavigate()
   const [state, setState] = useState<PlayerState | null>(null)
   const [selectedAction, setSelectedAction] = useState<string>('')
   const [effectivenessRating, setEffectivenessRating] = useState<number | null>(null)
@@ -195,11 +196,19 @@ export default function PlayerView() {
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">Team Decision Pad</h1>
-          {state.team_role && (
-            <div className={`px-4 py-2 rounded-lg ${teamBadgeColor} text-white font-semibold`}>
-              {state.team_role === 'red' ? 'Red Team' : 'Blue Team'}
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate('/play/join')}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 font-medium text-sm"
+            >
+              Join New Game
+            </button>
+            {state.team_role && (
+              <div className={`px-4 py-2 rounded-lg ${teamBadgeColor} text-white font-semibold`}>
+                {state.team_role === 'red' ? 'Red Team' : 'Blue Team'}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Phase Info */}
