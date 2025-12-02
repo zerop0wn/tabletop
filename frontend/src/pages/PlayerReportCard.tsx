@@ -143,7 +143,7 @@ export default function PlayerReportCardView() {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-2xl font-bold mb-4">Phase-by-Phase Breakdown</h2>
           <div className="space-y-4">
-            {reportCard.phases.map((phase, index) => (
+            {reportCard.phases.map((phase) => (
               <div
                 key={phase.phase_id}
                 className={`p-4 rounded-lg border-2 ${teamBorderColor} ${teamBgColor}`}
