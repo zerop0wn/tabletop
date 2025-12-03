@@ -44,21 +44,46 @@ export default function GMCreateGame() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold mb-6">Create New Game</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Create New Game</h1>
+          <button
+            onClick={() => navigate('/gm/scenarios/new')}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+          >
+            Create Scenario
+          </button>
+        </div>
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Select Scenario</label>
-            <select
-              value={selectedScenarioId || ''}
-              onChange={(e) => setSelectedScenarioId(parseInt(e.target.value))}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            >
-              {scenarios.map((scenario) => (
-                <option key={scenario.id} value={scenario.id}>
-                  {scenario.name}
-                </option>
-              ))}
-            </select>
+            <div className="flex justify-between items-center mb-2">
+              <label className="block text-sm font-medium">Select Scenario</label>
+              {scenarios.length === 0 && (
+                <span className="text-sm text-gray-500">No scenarios available</span>
+              )}
+            </div>
+            {scenarios.length === 0 ? (
+              <div className="border-2 border-dashed border-gray-300 rounded-md p-8 text-center">
+                <p className="text-gray-600 mb-4">No scenarios found. Create one to get started!</p>
+                <button
+                  onClick={() => navigate('/gm/scenarios/new')}
+                  className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                >
+                  Create Your First Scenario
+                </button>
+              </div>
+            ) : (
+              <select
+                value={selectedScenarioId || ''}
+                onChange={(e) => setSelectedScenarioId(parseInt(e.target.value))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              >
+                {scenarios.map((scenario) => (
+                  <option key={scenario.id} value={scenario.id}>
+                    {scenario.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
           <div className="flex gap-4">
             <button

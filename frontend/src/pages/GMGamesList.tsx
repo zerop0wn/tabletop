@@ -125,6 +125,22 @@ export default function GMGamesList() {
           </div>
         </div>
 
+        {/* Create Scenario Card - Prominent */}
+        <div className="mb-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow-lg p-6 text-white">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">Create a New Scenario</h2>
+              <p className="text-purple-100">Build custom cyber incident response scenarios with phases, artifacts, and team objectives</p>
+            </div>
+            <button
+              onClick={() => navigate('/gm/scenarios/new')}
+              className="px-6 py-3 bg-white text-purple-600 rounded-md hover:bg-purple-50 font-semibold text-lg shadow-md transition-all"
+            >
+              Create Scenario →
+            </button>
+          </div>
+        </div>
+
         {/* Desktop Table View */}
         <div className="hidden md:block bg-white rounded-lg shadow-md overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
