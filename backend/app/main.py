@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.database import engine, Base
-from app.routers import auth, scenarios, games, players, decisions, scoreboard, artifacts
+from app.routers import auth, scenarios, games, players, decisions, scoreboard, artifacts, ce_plus
 
 # Create tables
 Base.metadata.create_all(bind=engine)
@@ -28,6 +28,7 @@ app.include_router(players.router, prefix="", tags=["players"])
 app.include_router(decisions.router, prefix="/games", tags=["decisions"])
 app.include_router(scoreboard.router, prefix="/games", tags=["scoreboard"])
 app.include_router(artifacts.router, prefix="/artifacts", tags=["artifacts"])
+app.include_router(ce_plus.router, prefix="/ce-plus", tags=["ce-plus"])
 
 
 @app.get("/")
