@@ -42,32 +42,6 @@ export default function TemplateLibrary({ onLoadTemplate, onClose }: TemplateLib
     }
   }
 
-  const _handleSaveCurrentAsTemplate = async (scenarioData: any) => {
-    if (!newTemplateName.trim()) {
-      alert('Please enter a template name')
-      return
-    }
-
-    try {
-      const templateData: ScenarioTemplateCreate = {
-        name: newTemplateName,
-        description: newTemplateDescription || undefined,
-        template_data: scenarioData,
-        is_public: isPublic
-      }
-      
-      await apiClient.post('/scenarios/templates', templateData)
-      setShowCreateForm(false)
-      setNewTemplateName('')
-      setNewTemplateDescription('')
-      setIsPublic(false)
-      fetchTemplates()
-      alert('Template saved successfully!')
-    } catch (err: any) {
-      console.error('Failed to save template:', err)
-      alert(err.response?.data?.detail || 'Failed to save template')
-    }
-  }
 
   if (loading) {
     return (
