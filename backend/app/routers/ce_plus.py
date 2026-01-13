@@ -191,6 +191,51 @@ def create_apk_with_eicar():
     return zip_buffer.getvalue()
 
 
+def create_jar_with_eicar():
+    """Create a JAR file (ZIP-based) containing EICAR."""
+    # JAR is a ZIP file with Java-specific structure
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        # Minimal JAR structure with manifest
+        zip_file.writestr('META-INF/MANIFEST.MF', f'''Manifest-Version: 1.0
+{EICAR_TEST_STRING}
+Main-Class: Test
+''')
+        # Create a simple Java class file placeholder
+        zip_file.writestr('Test.class', b'\xca\xfe\xba\xbe' + EICAR_TEST_STRING.encode('utf-8')[:60])
+        zip_file.writestr('Test.java', f'// {EICAR_TEST_STRING}\npublic class Test {{ public static void main(String[] args) {{ }} }}')
+    return zip_buffer.getvalue()
+
+
+def create_python_file():
+    """Create a Python script with EICAR."""
+    py_content = f'# {EICAR_TEST_STRING}\nprint("CE Plus Test File")\n'
+    return py_content.encode('utf-8')
+
+
+def create_javascript_file():
+    """Create a JavaScript file with EICAR."""
+    js_content = f'// {EICAR_TEST_STRING}\nconsole.log("CE Plus Test File");\n'
+    return js_content.encode('utf-8')
+
+
+def create_msi_zip():
+    """Create a ZIP containing MSI-like structure (simplified)."""
+    # MSI files are complex, so we'll create a ZIP that simulates it
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        zip_file.writestr('test.msi', EICAR_TEST_STRING)
+        zip_file.writestr('META-INF/manifest.xml', f'<?xml version="1.0"?><manifest>{EICAR_TEST_STRING}</manifest>')
+    return zip_buffer.getvalue()
+
+
+def create_scr_file():
+    """Create a Windows screensaver file with EICAR."""
+    # SCR files are essentially EXE files, we'll use a simple structure
+    scr_content = b'MZ' + EICAR_TEST_STRING.encode('utf-8') + b'\x00' * 100
+    return scr_content
+
+
 @router.get("/")
 async def get_ce_plus_info():
     """Get information about available CE Plus malware tests."""
@@ -204,36 +249,12 @@ async def get_ce_plus_info():
                 "description": "Standard EICAR test patterns recognized by all antivirus software",
                 "platforms": [
                     {
-                        "id": "windows",
-                        "name": "Windows",
+                        "id": "all",
+                        "name": "All Platforms",
                         "tests": [
-                            {"id": "eicar_com", "name": "EICAR.COM", "description": "Standard EICAR test file (.com)", "type": "executable"},
-                            {"id": "eicar_txt", "name": "EICAR.TXT", "description": "EICAR test file (.txt)", "type": "text"},
-                            {"id": "eicar_zip", "name": "EICAR.ZIP", "description": "EICAR test file in ZIP archive", "type": "container"},
-                        ]
-                    },
-                    {
-                        "id": "mac",
-                        "name": "macOS",
-                        "tests": [
-                            {"id": "eicar_txt", "name": "EICAR.TXT", "description": "EICAR test file (.txt)", "type": "text"},
-                            {"id": "eicar_zip", "name": "EICAR.ZIP", "description": "EICAR test file in ZIP archive", "type": "container"},
-                        ]
-                    },
-                    {
-                        "id": "ios",
-                        "name": "iOS",
-                        "tests": [
-                            {"id": "eicar_txt", "name": "EICAR.TXT", "description": "EICAR test file (.txt)", "type": "text"},
-                            {"id": "eicar_zip", "name": "EICAR.ZIP", "description": "EICAR test file in ZIP archive", "type": "container"},
-                        ]
-                    },
-                    {
-                        "id": "android",
-                        "name": "Android",
-                        "tests": [
-                            {"id": "eicar_txt", "name": "EICAR.TXT", "description": "EICAR test file (.txt)", "type": "text"},
-                            {"id": "eicar_zip", "name": "EICAR.ZIP", "description": "EICAR test file in ZIP archive", "type": "container"},
+                            {"id": "eicar_com", "name": "EICAR.COM", "description": "Standard EICAR test file (.com) - Windows executable format", "type": "executable"},
+                            {"id": "eicar_txt", "name": "EICAR.TXT", "description": "EICAR test file (.txt) - Universal text format", "type": "text"},
+                            {"id": "eicar_zip", "name": "EICAR.ZIP", "description": "EICAR test file in ZIP archive - Universal container format", "type": "container"},
                         ]
                     },
                 ]
@@ -250,6 +271,8 @@ async def get_ce_plus_info():
                             {"id": "bat_file", "name": "test.bat", "description": "Batch script with EICAR pattern", "type": "executable"},
                             {"id": "ps1_file", "name": "test.ps1", "description": "PowerShell script with EICAR pattern", "type": "executable"},
                             {"id": "vbs_file", "name": "test.vbs", "description": "VBScript with EICAR pattern", "type": "executable"},
+                            {"id": "scr_file", "name": "test.scr", "description": "Windows screensaver file with EICAR pattern", "type": "executable"},
+                            {"id": "msi_zip", "name": "test.msi (in ZIP)", "description": "MSI installer in ZIP archive", "type": "container"},
                             {"id": "exe_zip", "name": "test.exe (in ZIP)", "description": "Executable file in ZIP archive", "type": "container"},
                         ]
                     },
@@ -258,6 +281,7 @@ async def get_ce_plus_info():
                         "name": "macOS",
                         "tests": [
                             {"id": "sh_file", "name": "test.sh", "description": "Bash script with EICAR pattern", "type": "executable"},
+                            {"id": "py_file", "name": "test.py", "description": "Python script with EICAR pattern", "type": "executable"},
                             {"id": "dmg_file", "name": "test.dmg", "description": "DMG disk image with EICAR", "type": "container"},
                             {"id": "pkg_zip", "name": "test.pkg (in ZIP)", "description": "Package file in ZIP archive", "type": "container"},
                         ]
@@ -268,6 +292,22 @@ async def get_ce_plus_info():
                         "tests": [
                             {"id": "malicious_apk", "name": "malicious.apk", "description": "Malicious APK file with EICAR pattern", "type": "executable"},
                             {"id": "apk_zip", "name": "malicious.apk (in ZIP)", "description": "Malicious APK in ZIP archive", "type": "container"},
+                        ]
+                    },
+                    {
+                        "id": "java",
+                        "name": "Java (Cross-Platform)",
+                        "tests": [
+                            {"id": "jar_file", "name": "test.jar", "description": "Java JAR file with EICAR pattern", "type": "executable"},
+                            {"id": "jar_zip", "name": "test.jar (in ZIP)", "description": "Java JAR file in ZIP archive", "type": "container"},
+                        ]
+                    },
+                    {
+                        "id": "scripts",
+                        "name": "Script Files (Cross-Platform)",
+                        "tests": [
+                            {"id": "py_file", "name": "test.py", "description": "Python script with EICAR pattern", "type": "executable"},
+                            {"id": "js_file", "name": "test.js", "description": "JavaScript file with EICAR pattern", "type": "executable"},
                         ]
                     },
                 ]
@@ -321,7 +361,7 @@ async def download_test_file(category: str, platform: str, test_id: str):
         )
     
     # Validate platform
-    valid_platforms = ["windows", "mac", "ios", "android", "all"]
+    valid_platforms = ["windows", "mac", "ios", "android", "java", "scripts", "all"]
     if platform not in valid_platforms:
         return Response(
             content=f"Invalid platform. Must be one of: {', '.join(valid_platforms)}",
@@ -330,17 +370,17 @@ async def download_test_file(category: str, platform: str, test_id: str):
     
     # EICAR category
     if category == "eicar":
-        if test_id == "eicar_com" and platform == "windows":
+        if test_id == "eicar_com" and platform == "all":
             content = EICAR_TEST_STRING.encode('utf-8')
             filename = "EICAR.COM"
             media_type = "application/x-msdownload"
             
-        elif test_id == "eicar_txt":
+        elif test_id == "eicar_txt" and platform == "all":
             content = EICAR_TEST_STRING.encode('utf-8')
             filename = "EICAR.TXT"
             media_type = "text/plain"
             
-        elif test_id == "eicar_zip":
+        elif test_id == "eicar_zip" and platform == "all":
             content = create_zip_with_eicar()
             filename = "EICAR.ZIP"
             media_type = "application/zip"
@@ -368,6 +408,16 @@ async def download_test_file(category: str, platform: str, test_id: str):
             filename = "test.vbs"
             media_type = "application/x-vbs"
             
+        elif test_id == "scr_file" and platform == "windows":
+            content = create_scr_file()
+            filename = "test.scr"
+            media_type = "application/x-msdownload"
+            
+        elif test_id == "msi_zip" and platform == "windows":
+            content = create_msi_zip()
+            filename = "test.zip"
+            media_type = "application/zip"
+            
         elif test_id == "exe_zip" and platform == "windows":
             # Create ZIP containing a .bat file (simulating .exe in ZIP)
             zip_buffer = io.BytesIO()
@@ -381,6 +431,11 @@ async def download_test_file(category: str, platform: str, test_id: str):
             content = create_bash_file()
             filename = "test.sh"
             media_type = "application/x-sh"
+            
+        elif test_id == "py_file" and platform == "mac":
+            content = create_python_file()
+            filename = "test.py"
+            media_type = "text/x-python"
             
         elif test_id == "dmg_file" and platform == "mac":
             # DMG file (simplified - ZIP format)
@@ -408,6 +463,29 @@ async def download_test_file(category: str, platform: str, test_id: str):
             content = zip_buffer.getvalue()
             filename = "malicious.zip"
             media_type = "application/zip"
+            
+        elif test_id == "jar_file" and platform == "java":
+            content = create_jar_with_eicar()
+            filename = "test.jar"
+            media_type = "application/java-archive"
+            
+        elif test_id == "jar_zip" and platform == "java":
+            zip_buffer = io.BytesIO()
+            with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+                zip_file.writestr("test.jar", create_jar_with_eicar())
+            content = zip_buffer.getvalue()
+            filename = "test.zip"
+            media_type = "application/zip"
+            
+        elif test_id == "py_file" and platform == "scripts":
+            content = create_python_file()
+            filename = "test.py"
+            media_type = "text/x-python"
+            
+        elif test_id == "js_file" and platform == "scripts":
+            content = create_javascript_file()
+            filename = "test.js"
+            media_type = "application/javascript"
             
         else:
             return Response(
