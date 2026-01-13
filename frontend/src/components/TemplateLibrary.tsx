@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import apiClient from '../api/client'
-import { ScenarioTemplate, ScenarioTemplateCreate } from '../types'
+import { ScenarioTemplate } from '../types'
 
 interface TemplateLibraryProps {
   onLoadTemplate: (template: ScenarioTemplate) => void
