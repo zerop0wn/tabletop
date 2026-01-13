@@ -7,8 +7,7 @@ import {
   ScenarioPhaseCreate,
   ArtifactCreate,
   PhaseArtifactLink,
-  ArtifactType,
-  ScenarioTemplate
+  ArtifactType
 } from '../types'
 
 type Step = 'scenario' | 'phases' | 'artifacts' | 'review'

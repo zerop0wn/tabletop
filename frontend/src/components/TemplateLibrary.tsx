@@ -42,7 +42,7 @@ export default function TemplateLibrary({ onLoadTemplate, onClose }: TemplateLib
     }
   }
 
-  const handleSaveCurrentAsTemplate = async (scenarioData: any) => {
+  const _handleSaveCurrentAsTemplate = async (scenarioData: any) => {
     if (!newTemplateName.trim()) {
       alert('Please enter a template name')
       return
